@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dev Notes — Estudio técnico</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0A0E1A;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #E2E8F0;
+  }
+
+  /* ───── HEADER ───── */
+  .header {
+    padding: 56px 64px 44px;
+    border-bottom: 1px solid #1E2A40;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(20,184,166,0.05) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .site-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #6366F1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .site-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 18px; height: 2px;
+    background: #6366F1;
+    border-radius: 1px;
+  }
+  h1 {
+    font-size: 54px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  h1 span {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.25);
+  }
+  .header-desc {
+    font-size: 15px;
+    color: #6B7FA3;
+    line-height: 1.65;
+    max-width: 480px;
+    font-weight: 400;
+  }
+  .header-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+  .stat-item { text-align: right; }
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: #E2E8F0;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #3B4C68;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+  .stat-divider {
+    width: 32px; height: 1px;
+    background: #1E2A40;
+    align-self: flex-end;
+  }
+
+  /* ───── MAIN ───── */
+  main {
+    flex: 1;
+    padding: 52px 64px 64px;
+  }
+  .main-inner { max-width: 960px; margin: 0 auto; }
+
+  /* ───── SECTION LABEL ───── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #6366F1;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .section-title-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #3B4C68;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .section-line {
+    flex: 1; height: 1px;
+    background: #1E2A40;
+  }
+
+  /* ───── TOPIC GROUPS ───── */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 14px;
+  }
+
+  .topic-group {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .topic-group:hover { border-color: #2D3E5A; }
+  .topic-group.tg-active:hover { border-color: rgba(255,153,0,0.35); }
+
+  .tg-bar { height: 3px; width: 100%; }
+  .bar-amber  { background: linear-gradient(90deg, #FF9900, #F59E0B); }
+  .bar-indigo { background: linear-gradient(90deg, #6366F1, #818CF8); }
+  .bar-teal   { background: linear-gradient(90deg, #14B8A6, #2DD4BF); }
+  .bar-pink   { background: linear-gradient(90deg, #EC4899, #F472B6); }
+
+  .tg-inner { padding: 22px 24px 20px; }
+
+  .tg-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .tg-icon-title { display: flex; align-items: center; gap: 12px; }
+  .tg-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .icon-amber  { background: rgba(255,153,0,0.1); }
+  .icon-indigo { background: rgba(99,102,241,0.1); }
+  .icon-teal   { background: rgba(20,184,166,0.1); }
+  .icon-pink   { background: rgba(236,72,153,0.1); }
+
+  .tg-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #3B4C68;
+    margin-bottom: 4px;
+  }
+  .tg-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #E2E8F0;
+    line-height: 1.2;
+  }
+
+  .status-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+  .sp-active { background: rgba(255,153,0,0.1);  color: #FCD34D; border: 1px solid rgba(255,153,0,0.22); }
+  .sp-soon   { background: rgba(45,62,90,0.4);   color: #3B4C68; border: 1px solid #1A2236; }
+
+  .tg-desc {
+    font-size: 13px;
+    color: #6B7FA3;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .modules-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+
+  .module-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #0A0E1A;
+    border: 1px solid #1A2236;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+    gap: 10px;
+  }
+  .module-link:hover {
+    background: #0D1220;
+    border-color: rgba(255,153,0,0.3);
+  }
+  .module-link.ml-locked {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
+  .ml-left { display: flex; align-items: center; gap: 10px; }
+  .ml-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%; flex-shrink: 0;
+  }
+  .dot-amber  { background: #FF9900; }
+  .dot-gray   { background: #2D3E5A; }
+  .dot-indigo { background: #6366F1; }
+  .dot-teal   { background: #14B8A6; }
+  .dot-pink   { background: #EC4899; }
+
+  .ml-text { font-size: 13px; color: #94A3B8; }
+  .ml-meta { font-size: 10px; color: #3B4C68; font-family: 'DM Mono', monospace; white-space: nowrap; }
+  .ml-arrow { font-size: 12px; color: #FF9900; opacity: 0; transition: opacity 0.15s, transform 0.15s; transform: translateX(-3px); }
+  .module-link:hover .ml-arrow { opacity: 1; transform: translateX(0); }
+
+  .tg-footer {
+    border-top: 1px solid #1A2236;
+    padding-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tg-count { font-size: 11px; color: #3B4C68; font-family: 'DM Mono', monospace; }
+  .tg-progress { display: flex; align-items: center; gap: 8px; }
+  .tg-bar-track { width: 64px; height: 3px; background: #1E2A40; border-radius: 2px; overflow: hidden; }
+  .tg-bar-fill  { height: 100%; border-radius: 2px; background: #FF9900; }
+  .tg-pct { font-family: 'Space Mono', monospace; font-size: 9px; color: #FF9900; }
+
+  /* ───── COMING NOTE ───── */
+  .coming-note {
+    margin-top: 32px;
+    padding: 16px 20px;
+    background: #0F1625;
+    border: 1px dashed #1E2A40;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .coming-note-icon { font-size: 18px; flex-shrink: 0; opacity: 0.4; }
+  .coming-note-text {
+    font-size: 12px;
+    color: #3B4C68;
+    line-height: 1.55;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ───── FOOTER ───── */
+  footer {
+    border-top: 1px solid #1E2A40;
+    padding: 20px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #080C17;
+  }
+  .footer-left {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #2D3E5A;
+    letter-spacing: 0.06em;
+  }
+  .footer-brand {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6366F1;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="site-eyebrow">Dev Notes</div>
+        <h1>Notas técnicas<br><span>&amp; aprendizaje</span></h1>
+        <p class="header-desc">Apuntes, infografías y guías de estudio sobre ingeniería de software. Desde certificaciones cloud hasta patrones de arquitectura y buenas prácticas.</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-item">
+          <div class="stat-num">01</div>
+          <div class="stat-label">TEMAS ACTIVOS</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num">15</div>
+          <div class="stat-label">CONCEPTOS PUBLICADOS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <div class="main-inner">
+
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title-text">Temas de estudio</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="topics-grid">
+
+      <!-- ══ AWS CLOUD PRACTITIONER ══ -->
+      <div class="topic-group tg-active">
+        <div class="tg-bar bar-amber"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-amber">☁</div>
+              <div>
+                <div class="tg-label">CERTIFICACIÓN</div>
+                <div class="tg-title">AWS Cloud Practitioner</div>
+              </div>
+            </div>
+            <span class="status-pill sp-active">EN CURSO</span>
+          </div>
+          <p class="tg-desc">Plan de 4 semanas para dominar los fundamentos de AWS y aprobar el examen CLF-C02. Infografías por dominio con ejemplos reales y tips de examen.</p>
+          <div class="modules-list">
+            <a class="module-link" href="aws_semana1_infografia.html">
+              <div class="ml-left">
+                <span class="ml-dot dot-amber"></span>
+                <span class="ml-text">Semana 1 — Conceptos de Nube y Seguridad</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="ml-meta">15 conceptos</span>
+                <span class="ml-arrow">→</span>
+              </div>
+            </a>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Semana 2 — Cómputo, Redes y Almacenamiento</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Semana 3 — Bases de Datos y Arquitectura Cloud</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Semana 4 — Facturación, Precios y Repaso Final</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">1 / 4 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill" style="width:25%"></div></div>
+              <span class="tg-pct">25%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ARQUITECTURA HEXAGONAL ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-indigo"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-indigo">⬡</div>
+              <div>
+                <div class="tg-label">ARQUITECTURA</div>
+                <div class="tg-title">Arquitectura Hexagonal</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Ports &amp; Adapters, separación de dominio e infraestructura, inversión de dependencias y aplicación práctica en proyectos reales.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Fundamentos y principios core</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Ports, Adapters y capas</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill" style="width:0%"></div></div>
+              <span class="tg-pct" style="color:#3B4C68">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ DDD ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-teal"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-teal">🧩</div>
+              <div>
+                <div class="tg-label">DISEÑO DE SOFTWARE</div>
+                <div class="tg-title">Domain-Driven Design</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Ubiquitous language, bounded contexts, aggregates, value objects y cómo estructurar software alrededor del dominio del negocio.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Conceptos estratégicos de DDD</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Tácticas: Entidades, VO, Aggregates</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill" style="width:0%"></div></div>
+              <span class="tg-pct" style="color:#3B4C68">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TESTING ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-pink"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-pink">🧪</div>
+              <div>
+                <div class="tg-label">CALIDAD DE SOFTWARE</div>
+                <div class="tg-title">Testing</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Pirámide de testing, unit tests, integration tests, TDD, mocks &amp; stubs, y estrategias de cobertura en proyectos de producción.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Pirámide de testing y fundamentos</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">TDD — Test Driven Development</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill" style="width:0%"></div></div>
+              <span class="tg-pct" style="color:#3B4C68">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /topics-grid -->
+
+    <div class="coming-note">
+      <span class="coming-note-icon">🗂</span>
+      <span class="coming-note-text">Más temas en preparación: SOLID, Clean Architecture, patrones de diseño, DevOps, y más. El contenido se publica a medida que avanza el estudio.</span>
+    </div>
+
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-left">DEV NOTES · APUNTES DE INGENIERÍA DE SOFTWARE</span>
+  <span class="footer-brand">dev-notes</span>
+</footer>
+
+</body>
+</html>

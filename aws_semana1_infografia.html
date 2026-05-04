@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0A0E1A;
+    font-family: 'DM Sans', sans-serif;
+    width: 1200px;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ───── HEADER ───── */
+  .header {
+    background: #0A0E1A;
+    padding: 48px 56px 32px;
+    border-bottom: 1px solid #1E2A40;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(255,153,0,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .week-badge {
+    background: #FF9900;
+    color: #0A0E1A;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .header h1 span { color: #FF9900; }
+  .header-sub {
+    font-size: 15px;
+    color: #6B7FA3;
+    margin-top: 8px;
+    font-weight: 400;
+  }
+  .aws-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF9900;
+    background: rgba(255,153,0,0.08);
+    border: 1px solid rgba(255,153,0,0.3);
+    padding: 8px 16px;
+    border-radius: 4px;
+    letter-spacing: 0.12em;
+  }
+  .header-pills {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .pill-a { color: #64B5F6; border-color: rgba(100,181,246,0.3); background: rgba(100,181,246,0.07); }
+  .pill-b { color: #81C784; border-color: rgba(129,199,132,0.3); background: rgba(129,199,132,0.07); }
+  .pill-c { color: #FFB74D; border-color: rgba(255,183,77,0.3); background: rgba(255,183,77,0.07); }
+  .pill-d { color: #CE93D8; border-color: rgba(206,147,216,0.3); background: rgba(206,147,216,0.07); }
+
+  /* ───── BODY ───── */
+  .body { padding: 0 56px 56px; background: #0A0E1A; }
+
+  /* ───── SECTION LABEL ───── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 32px 0 16px;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #FF9900;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .section-title-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7FA3;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: #1E2A40;
+  }
+
+  /* ───── CONCEPT CARDS GRID ───── */
+  .cards-grid {
+    display: grid;
+    gap: 10px;
+  }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g1 { grid-template-columns: 1fr; }
+
+  .card {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+  .card.c-blue::before { background: #3B82F6; }
+  .card.c-green::before { background: #22C55E; }
+  .card.c-amber::before { background: #FF9900; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-teal::before { background: #14B8A6; }
+  .card.c-pink::before { background: #EC4899; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .icon-blue { background: rgba(59,130,246,0.12); }
+  .icon-green { background: rgba(34,197,94,0.12); }
+  .icon-amber { background: rgba(255,153,0,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-teal { background: rgba(20,184,166,0.12); }
+  .icon-pink { background: rgba(236,72,153,0.12); }
+
+  .card-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: #3B4C68;
+    margin-top: 2px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #E2E8F0;
+    line-height: 1.2;
+  }
+  .card-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .kw {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .kw-blue { background: rgba(59,130,246,0.12); color: #93C5FD; }
+  .kw-green { background: rgba(34,197,94,0.12); color: #86EFAC; }
+  .kw-amber { background: rgba(255,153,0,0.12); color: #FCD34D; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .kw-teal { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .kw-pink { background: rgba(236,72,153,0.12); color: #F9A8D4; }
+
+  .card-desc {
+    font-size: 12px;
+    color: #8899B8;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .card-example {
+    font-size: 11.5px;
+    color: #64748B;
+    line-height: 1.55;
+    border-top: 1px solid #1A2236;
+    padding-top: 10px;
+  }
+  .card-example strong {
+    color: #94A3B8;
+    font-weight: 500;
+  }
+  .tip-box {
+    background: rgba(255,153,0,0.06);
+    border: 1px solid rgba(255,153,0,0.18);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: #FCD34D;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .tip-box::before { content: '⚡ '; }
+
+  /* ───── SPECIAL: Managed vs Unmanaged row ───── */
+  .split-card {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .split-half {
+    padding: 18px 22px;
+    position: relative;
+  }
+  .split-half:first-child { border-right: 1px solid #1E2A40; }
+  .split-half::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+  }
+  .split-half.sh-green::before { background: #22C55E; }
+  .split-half.sh-amber::before { background: #F59E0B; }
+  .split-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sl-green { color: #22C55E; }
+  .sl-amber { color: #F59E0B; }
+
+  /* ───── SUPPORT TIERS ───── */
+  .support-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .support-tier {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .support-tier::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .t-basic::before { background: #475569; }
+  .t-dev::before { background: #3B82F6; }
+  .t-biz::before { background: #22C55E; }
+  .t-ent::before { background: #FF9900; }
+  .tier-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .t-basic .tier-name { color: #64748B; }
+  .t-dev .tier-name { color: #93C5FD; }
+  .t-biz .tier-name { color: #86EFAC; }
+  .t-ent .tier-name { color: #FF9900; }
+  .tier-desc { font-size: 11px; color: #64748B; line-height: 1.5; }
+  .tier-tag {
+    font-size: 9px;
+    margin-top: 8px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .t-ent .tier-tag { background: rgba(255,153,0,0.12); color: #FCD34D; }
+
+  /* ───── SHARED RESPONSIBILITY ───── */
+  .resp-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .resp-col {
+    padding: 22px 24px;
+  }
+  .resp-col:last-child { background: rgba(34,197,94,0.04); }
+  .resp-col:first-child { background: rgba(59,130,246,0.04); }
+  .resp-divider {
+    width: 1px;
+    background: #1E2A40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .resp-divider-icon {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .resp-col-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .rt-blue { color: #3B82F6; }
+  .rt-green { color: #22C55E; }
+  .resp-subtitle {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 12px;
+  }
+  .rs-blue { color: #64748B; }
+  .rs-green { color: #64748B; }
+  .resp-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+    font-size: 12px;
+    color: #8899B8;
+  }
+  .resp-item::before {
+    content: '';
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ri-blue::before { background: #3B82F6; }
+  .ri-green::before { background: #22C55E; }
+  .resp-analogy {
+    background: #0A0E1A;
+    border: 1px solid #1E2A40;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 11.5px;
+    color: #64748B;
+    line-height: 1.6;
+    margin-top: 10px;
+    grid-column: 1 / -1;
+  }
+
+  /* ───── TRUSTED ADVISOR ───── */
+  .ta-card {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    padding: 22px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+  .ta-pillars {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .ta-pillar {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .tp1 { color: #93C5FD; border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.07); }
+  .tp2 { color: #86EFAC; border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.07); }
+  .tp3 { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+  .tp4 { color: #F9A8D4; border-color: rgba(249,168,212,0.3); background: rgba(249,168,212,0.07); }
+  .tp5 { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
+  .ta-visual {
+    width: 120px; height: 120px;
+    border: 2px solid #1E2A40;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    position: relative;
+    background: radial-gradient(circle at center, rgba(255,153,0,0.06), transparent);
+  }
+  .ta-visual::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,153,0,0.15);
+  }
+
+  /* ───── FOOTER ───── */
+  .footer {
+    background: #080C17;
+    border-top: 1px solid #1E2A40;
+    padding: 20px 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #2D3E5A;
+    letter-spacing: 0.06em;
+  }
+  .footer-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #FF9900;
+    letter-spacing: 0.06em;
+  }
+
+  /* DIVIDER LINE */
+  .divider { height: 1px; background: #1A2236; margin: 8px 0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="week-badge">SEMANA 01 / 04</div>
+      <h1>AWS CLOUD<br><span>PRACTITIONER</span></h1>
+      <p class="header-sub">15 conceptos fundamentales que debes dominar esta semana</p>
+    </div>
+    <div class="aws-logo">AWS CLF-C02</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">☁ Infraestructura Global</span>
+    <span class="pill pill-b">🔐 Seguridad e Identidad</span>
+    <span class="pill pill-c">🎧 Gestión y Soporte</span>
+    <span class="pill pill-d">🤝 Responsabilidad Compartida</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECTION 1 -->
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title-text">Conceptos de Infraestructura Global y Nube</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <!-- Cloud Computing -->
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">☁</div>
+        <div>
+          <div class="card-num">01</div>
+          <div class="card-title">Cloud Computing</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">Bajo demanda</span>
+        <span class="kw kw-blue">Pago por uso</span>
+      </div>
+      <div class="card-desc">Entrega de potencia de cómputo, bases de datos y aplicaciones vía internet, sin necesidad de comprar hardware físico.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> En vez de comprar un servidor para un proyecto de 3 meses, alquilas en AWS y lo apagas al terminar.</div>
+    </div>
+    <!-- Ventajas -->
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🚀</div>
+        <div>
+          <div class="card-num">02</div>
+          <div class="card-title">Ventajas de la nube</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">Variable expense</span>
+        <span class="kw kw-blue">Elasticidad</span>
+        <span class="kw kw-blue">Agilidad</span>
+      </div>
+      <div class="card-desc">Agilidad, elasticidad y capacidad de volverse global en minutos. Cambias CapEx por OpEx.</div>
+      <div class="card-example"><strong>Analogía:</strong> Como el suministro eléctrico — no construyes una planta para prender una ampolleta, solo usas lo que necesitas.</div>
+    </div>
+    <!-- Economía de escala -->
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">📦</div>
+        <div>
+          <div class="card-num">03</div>
+          <div class="card-title">Economía de escala</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">Lower pay-as-you-go</span>
+        <span class="kw kw-blue">Beneficio masivo</span>
+      </div>
+      <div class="card-desc">AWS adquiere hardware masivamente y traslada el ahorro al usuario final.</div>
+      <div class="card-example"><strong>Analogía:</strong> Comprar en el mayorista (AWS) sale más barato por unidad que en el almacén de la esquina.</div>
+    </div>
+  </div>
+
+  <div class="cards-grid g3" style="margin-top:10px">
+    <!-- Región -->
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">🌎</div>
+        <div>
+          <div class="card-num">04</div>
+          <div class="card-title">Región</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">Latencia</span>
+        <span class="kw kw-teal">Cumplimiento legal</span>
+        <span class="kw kw-teal">Aislamiento</span>
+      </div>
+      <div class="card-desc">Ubicación física en el mundo donde AWS tiene clústeres de centros de datos. Son completamente independientes entre sí.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Eliges São Paulo para que tus usuarios en Chile tengan menor latencia.</div>
+    </div>
+    <!-- AZ -->
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">🏢</div>
+        <div>
+          <div class="card-num">05</div>
+          <div class="card-title">Zona de Disponibilidad</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">Alta disponibilidad</span>
+        <span class="kw kw-teal">Tolerancia a fallos</span>
+      </div>
+      <div class="card-desc">Uno o más centros de datos discretos con energía y red redundante dentro de una Región.</div>
+      <div class="card-example"><strong>Analogía:</strong> Edificios distintos en la misma ciudad. Si uno se inunda, el otro sigue operando.</div>
+      <div class="tip-box">Diseña siempre en Multi-AZ para alta disponibilidad.</div>
+    </div>
+    <!-- Edge -->
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">⚡</div>
+        <div>
+          <div class="card-num">08</div>
+          <div class="card-title">Edge Locations</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">CloudFront</span>
+        <span class="kw kw-teal">Caching</span>
+        <span class="kw kw-teal">CDN</span>
+      </div>
+      <div class="card-desc">Sitios distribuidos globalmente que sirven contenido estático con baja latencia a usuarios finales.</div>
+      <div class="card-example"><strong>Analogía:</strong> Una sucursal local de biblioteca — no viajas a la sede central para buscar el libro, lo recoges en tu barrio.</div>
+    </div>
+  </div>
+
+  <!-- Managed vs Unmanaged -->
+  <div class="split-card" style="margin-top:10px">
+    <div class="split-half sh-green">
+      <div class="split-label sl-green">06 — Servicios Gestionados (Sincrónicos)</div>
+      <div class="card-keywords" style="margin-bottom:8px">
+        <span class="kw kw-green">S3</span>
+        <span class="kw kw-green">DynamoDB</span>
+        <span class="kw kw-green">Auto-replicación</span>
+      </div>
+      <div class="card-desc">Replican datos entre múltiples AZs de forma automática. AWS se encarga de toda la resiliencia — tú no configuras nada.</div>
+    </div>
+    <div class="split-half sh-amber">
+      <div class="split-label sl-amber">07 — Servicios No Gestionados (Configurables)</div>
+      <div class="card-keywords" style="margin-bottom:8px">
+        <span class="kw kw-amber">EC2</span>
+        <span class="kw kw-amber">RDS</span>
+        <span class="kw kw-amber">Multi-AZ manual</span>
+      </div>
+      <div class="card-desc">Debes configurar explícitamente el despliegue "Multi-AZ". Si lanzas solo en AZ-A y esa AZ falla, tu servicio se cae.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: IAM -->
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title-text">Seguridad e Identidad — IAM</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <!-- IAM -->
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🔑</div>
+        <div>
+          <div class="card-num">09</div>
+          <div class="card-title">AWS IAM</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">Control de acceso</span>
+        <span class="kw kw-purple">Permisos</span>
+        <span class="kw kw-purple">Global</span>
+      </div>
+      <div class="card-desc">Servicio para administrar quién puede acceder a qué recursos de forma segura. Es global — no vive en una sola Región.</div>
+      <div class="card-example"><strong>Analogía:</strong> Sistema de control de acceso de una oficina: quién entra a qué piso y qué puede hacer ahí.</div>
+      <div class="tip-box">IAM es global. Un usuario creado en Chillán puede acceder a recursos en Virginia sin replicación.</div>
+    </div>
+    <!-- MFA -->
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">📱</div>
+        <div>
+          <div class="card-num">13</div>
+          <div class="card-title">MFA — Multi-Factor Auth</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">Seguridad extra</span>
+        <span class="kw kw-purple">Protección de Root</span>
+      </div>
+      <div class="card-desc">Capa adicional que exige un código de un segundo dispositivo, además de la contraseña, para autenticarse.</div>
+      <div class="card-example"><strong>Analogía:</strong> El token que pide el banco en tu celular después de ingresar tu clave secreta.</div>
+      <div class="tip-box">Habilita MFA en el Root User inmediatamente al crear la cuenta AWS.</div>
+    </div>
+  </div>
+
+  <div class="cards-grid g3" style="margin-top:10px">
+    <!-- IAM Users -->
+    <div class="card c-pink">
+      <div class="card-header">
+        <div class="card-icon icon-pink">👤</div>
+        <div>
+          <div class="card-num">10</div>
+          <div class="card-title">IAM Users</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-pink">Largo plazo</span>
+        <span class="kw kw-pink">Credenciales fijas</span>
+      </div>
+      <div class="card-desc">Identidad con nombre y credenciales permanentes para una persona o aplicación específica.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Cuenta "Juan Pérez" con su propia contraseña para acceder a la consola de AWS.</div>
+    </div>
+    <!-- IAM Groups -->
+    <div class="card c-pink">
+      <div class="card-header">
+        <div class="card-icon icon-pink">👥</div>
+        <div>
+          <div class="card-num">11</div>
+          <div class="card-title">IAM Groups</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-pink">Gestión masiva</span>
+        <span class="kw kw-pink">Por función</span>
+      </div>
+      <div class="card-desc">Colección de usuarios a los que se aplican políticas de forma masiva y eficiente.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Grupo "Developers" con permiso para ver logs, pero no para borrar bases de datos.</div>
+    </div>
+    <!-- IAM Roles -->
+    <div class="card c-pink">
+      <div class="card-header">
+        <div class="card-icon icon-pink">🎭</div>
+        <div>
+          <div class="card-num">12</div>
+          <div class="card-title">IAM Roles</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-pink">Acceso temporal</span>
+        <span class="kw kw-pink">Sin contraseñas</span>
+      </div>
+      <div class="card-desc">Identidad temporal para que servicios o usuarios asuman permisos específicos sin credenciales fijas.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Darle permiso a Lambda para leer S3 sin hardcoded credentials en el código.</div>
+      <div class="tip-box">Roles = para servicios AWS. Users = para personas. Siempre prefiere Roles en código.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Soporte -->
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title-text">Gestión y Soporte</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card" style="border-color:#1E2A40; padding-bottom:22px">
+    <div class="card-header">
+      <div class="card-icon icon-amber">🎧</div>
+      <div>
+        <div class="card-num">14</div>
+        <div class="card-title">Planes de Soporte AWS</div>
+      </div>
+    </div>
+    <div class="card-desc" style="margin-bottom:0">Niveles de asistencia técnica con distintos tiempos de respuesta y acceso a recursos especializados.</div>
+    <div class="support-grid">
+      <div class="support-tier t-basic">
+        <div class="tier-name">BASIC</div>
+        <div class="tier-desc">Solo facturación y cuenta. Sin soporte técnico.</div>
+      </div>
+      <div class="support-tier t-dev">
+        <div class="tier-name">DEVELOPER</div>
+        <div class="tier-desc">Soporte en horario laboral. Respuesta &lt;12h.</div>
+      </div>
+      <div class="support-tier t-biz">
+        <div class="tier-name">BUSINESS</div>
+        <div class="tier-desc">24/7. Respuesta &lt;1h para críticos. Trusted Advisor completo.</div>
+      </div>
+      <div class="support-tier t-ent">
+        <div class="tier-name">ENTERPRISE</div>
+        <div class="tier-desc">24/7. Respuesta &lt;15min. TAM dedicado incluido.</div>
+        <div class="tier-tag">TAM — "Rolls Royce"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Responsabilidad compartida -->
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title-text">Modelo de Responsabilidad Compartida</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="resp-grid">
+    <div class="resp-col">
+      <div class="resp-col-title rt-blue">Responsabilidad de AWS</div>
+      <div class="resp-subtitle rs-blue">Seguridad <em>"DE"</em> la nube</div>
+      <div class="resp-item ri-blue">Infraestructura global</div>
+      <div class="resp-item ri-blue">Hardware físico y centros de datos</div>
+      <div class="resp-item ri-blue">Software de virtualización</div>
+      <div class="resp-item ri-blue">Redes y conectividad</div>
+      <div class="resp-item ri-blue">Seguridad física de los edificios</div>
+    </div>
+    <div class="resp-divider">
+      <div class="resp-divider-icon">🤝</div>
+    </div>
+    <div class="resp-col">
+      <div class="resp-col-title rt-green">Responsabilidad del Cliente</div>
+      <div class="resp-subtitle rs-green">Seguridad <em>"EN"</em> la nube</div>
+      <div class="resp-item ri-green">Datos y cifrado</div>
+      <div class="resp-item ri-green">Gestión de identidades (IAM)</div>
+      <div class="resp-item ri-green">Configuración de red y firewalls</div>
+      <div class="resp-item ri-green">Parches del sistema operativo (EC2)</div>
+      <div class="resp-item ri-green">Aplicaciones y acceso de usuarios</div>
+    </div>
+  </div>
+  <div class="resp-analogy" style="background:#0A0E1A; border:1px solid #1E2A40; border-top:none; border-radius:0 0 12px 12px; padding:12px 24px">
+    🏢 <strong style="color:#94A3B8">Analogía del arriendo:</strong> <span style="color:#64748B">El dueño del edificio (AWS) asegura la estructura, cañerías y el ascensor. Tú (el inquilino) cierras la puerta con llave, decides quién entra y qué guardas adentro.</span>
+  </div>
+
+  <!-- SECTION 5: Trusted Advisor -->
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title-text">AWS Trusted Advisor</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="ta-card">
+    <div>
+      <div class="card-header" style="margin-bottom:8px">
+        <div class="card-icon icon-amber">🔍</div>
+        <div>
+          <div class="card-num">15</div>
+          <div class="card-title">AWS Trusted Advisor</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-amber">Recomendaciones</span>
+        <span class="kw kw-amber">Checkups automáticos</span>
+        <span class="kw kw-amber">Best practices</span>
+      </div>
+      <div class="card-desc">Herramienta que analiza tu cuenta y sugiere mejoras en 5 pilares clave de buenas prácticas de AWS.</div>
+      <div class="card-example" style="margin-top:4px"><strong>Analogía:</strong> Un "linter" de infraestructura que te avisa si dejaste un puerto abierto, si estás gastando de más, o si una AZ tiene baja disponibilidad.</div>
+      <div class="ta-pillars">
+        <span class="ta-pillar tp1">Seguridad</span>
+        <span class="ta-pillar tp2">Ahorro de costos</span>
+        <span class="ta-pillar tp3">Rendimiento</span>
+        <span class="ta-pillar tp4">Tolerancia a fallos</span>
+        <span class="ta-pillar tp5">Límites de servicio</span>
+      </div>
+    </div>
+    <div class="ta-visual">🛡️</div>
+  </div>
+
+</div><!-- /body -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 01 DE 04 — CONCEPTOS FUNDAMENTALES</span>
+  <span class="footer-count">15 CONCEPTOS · CLF-C02</span>
+</div>
+
+</body>
+</html>
