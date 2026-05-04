@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0A0E1A;
+    font-family: 'DM Sans', sans-serif;
+    width: 1200px;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ───── HEADER ───── */
+  .header {
+    background: #0A0E1A;
+    padding: 48px 56px 32px;
+    border-bottom: 1px solid #1E2A40;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 100px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(20,184,166,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .week-badge {
+    background: #3B82F6;
+    color: #ffffff;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .header h1 span { color: #3B82F6; }
+  .header-sub {
+    font-size: 15px;
+    color: #6B7FA3;
+    margin-top: 8px;
+    font-weight: 400;
+  }
+  .aws-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF9900;
+    background: rgba(255,153,0,0.08);
+    border: 1px solid rgba(255,153,0,0.3);
+    padding: 8px 16px;
+    border-radius: 4px;
+    letter-spacing: 0.12em;
+  }
+  .header-pills {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .pill-a { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+  .pill-b { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
+  .pill-c { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+  .pill-d { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+
+  /* ───── BODY ───── */
+  .body { padding: 0 56px 56px; background: #0A0E1A; }
+
+  /* ───── SECTION LABEL ───── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 32px 0 16px;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #3B82F6;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .section-title-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7FA3;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: #1E2A40;
+  }
+
+  /* ───── CARDS ───── */
+  .cards-grid { display: grid; gap: 10px; }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g1 { grid-template-columns: 1fr; }
+
+  .card {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-amber::before  { background: #FF9900; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-pink::before   { background: #EC4899; }
+  .card.c-indigo::before { background: #6366F1; }
+  .card.c-sky::before    { background: #0EA5E9; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-amber  { background: rgba(255,153,0,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+  .icon-indigo { background: rgba(99,102,241,0.12); }
+  .icon-sky    { background: rgba(14,165,233,0.12); }
+
+  .card-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: #3B4C68;
+    margin-top: 2px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #E2E8F0;
+    line-height: 1.2;
+  }
+  .card-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .kw {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .kw-blue   { background: rgba(59,130,246,0.12);  color: #93C5FD; }
+  .kw-teal   { background: rgba(20,184,166,0.12);  color: #5EEAD4; }
+  .kw-amber  { background: rgba(255,153,0,0.12);   color: #FCD34D; }
+  .kw-purple { background: rgba(168,85,247,0.12);  color: #D8B4FE; }
+  .kw-green  { background: rgba(34,197,94,0.12);   color: #86EFAC; }
+  .kw-pink   { background: rgba(236,72,153,0.12);  color: #F9A8D4; }
+  .kw-indigo { background: rgba(99,102,241,0.12);  color: #A5B4FC; }
+  .kw-sky    { background: rgba(14,165,233,0.12);  color: #7DD3FC; }
+
+  .card-desc {
+    font-size: 12px;
+    color: #8899B8;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .card-example {
+    font-size: 11.5px;
+    color: #64748B;
+    line-height: 1.55;
+    border-top: 1px solid #1A2236;
+    padding-top: 10px;
+  }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+  .tip-box {
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.18);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: #93C5FD;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .tip-box::before { content: '⚡ '; }
+  .tip-amber {
+    background: rgba(255,153,0,0.06);
+    border: 1px solid rgba(255,153,0,0.18);
+    color: #FCD34D;
+  }
+  .tip-green {
+    background: rgba(34,197,94,0.06);
+    border: 1px solid rgba(34,197,94,0.18);
+    color: #86EFAC;
+  }
+
+  /* ───── COMPARISON BLOCK (EC2 vs Lambda vs Containers) ───── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .compare-col {
+    padding: 18px 18px 20px;
+    border-right: 1px solid #1A2236;
+    position: relative;
+  }
+  .compare-col:last-child { border-right: none; }
+  .compare-col::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .cc-blue::before   { background: #3B82F6; }
+  .cc-teal::before   { background: #14B8A6; }
+  .cc-purple::before { background: #A855F7; }
+  .cc-amber::before  { background: #FF9900; }
+
+  .compare-service {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .cs-blue   { color: #3B82F6; }
+  .cs-teal   { color: #14B8A6; }
+  .cs-purple { color: #A855F7; }
+  .cs-amber  { color: #FF9900; }
+
+  .compare-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #E2E8F0;
+    margin-bottom: 10px;
+  }
+  .compare-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .cr-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 11px;
+    color: #64748B;
+    line-height: 1.4;
+  }
+  .cr-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #3B4C68;
+    white-space: nowrap;
+    padding-top: 1px;
+    min-width: 52px;
+  }
+  .cr-val { color: #8899B8; font-size: 11px; }
+
+  /* ───── NETWORK FLOW DIAGRAM ───── */
+  .net-diagram {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    padding: 22px 24px;
+  }
+  .net-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: #3B4C68;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .net-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .net-node {
+    background: #0A0E1A;
+    border: 1px solid #1E2A40;
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+  .nn-icon { font-size: 18px; margin-bottom: 4px; }
+  .nn-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94A3B8;
+    line-height: 1.2;
+  }
+  .nn-sub {
+    font-size: 9px;
+    color: #3B4C68;
+    font-family: 'DM Mono', monospace;
+    margin-top: 2px;
+  }
+  .net-arrow {
+    color: #2D3E5A;
+    font-size: 18px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .net-arrow.arr-labeled { display: flex; flex-direction: column; align-items: center; }
+  .arr-label { font-size: 9px; color: #3B4C68; font-family: 'DM Mono', monospace; margin-bottom: 2px; }
+
+  /* ───── SPLIT CARD ───── */
+  .split-card {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .split-half { padding: 18px 22px; position: relative; }
+  .split-half:first-child { border-right: 1px solid #1E2A40; }
+  .split-half::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+  }
+  .sh-blue::before   { background: #3B82F6; }
+  .sh-purple::before { background: #A855F7; }
+  .sh-teal::before   { background: #14B8A6; }
+  .sh-amber::before  { background: #FF9900; }
+
+  .split-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sl-blue   { color: #3B82F6; }
+  .sl-purple { color: #A855F7; }
+  .sl-teal   { color: #14B8A6; }
+  .sl-amber  { color: #FF9900; }
+
+  /* ───── FOOTER ───── */
+  .footer {
+    background: #080C17;
+    border-top: 1px solid #1E2A40;
+    padding: 20px 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #2D3E5A;
+    letter-spacing: 0.06em;
+  }
+  .footer-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #3B82F6;
+    letter-spacing: 0.06em;
+  }
+
+  /* ───── BACK LINK ───── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #3B4C68;
+    text-decoration: none;
+    margin-bottom: 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: #6B7FA3; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="week-badge">SEMANA 02 / 04</div>
+        <h1>Cómputo, Redes<br><span>& Almacenamiento</span></h1>
+        <p class="header-sub">16 servicios core de AWS para arquitecturas modernas en producción</p>
+      </div>
+    </div>
+    <div class="aws-logo">AWS CLF-C02</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🖥 Servicios de cómputo</span>
+    <span class="pill pill-b">🌐 Redes y entrega</span>
+    <span class="pill pill-c">📦 Almacenamiento</span>
+    <span class="pill pill-d">⚖️ Escalabilidad</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 1 — SERVICIOS DE CÓMPUTO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title-text">Servicios de cómputo — ¿Cuánto control necesitas?</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Tabla comparativa: EC2 / Lambda / ECS / Fargate -->
+  <div class="compare-grid">
+    <div class="compare-col cc-blue">
+      <div class="compare-service cs-blue">01 — IAAS</div>
+      <div class="compare-name">Amazon EC2</div>
+      <div class="compare-row">
+        <div class="cr-item"><span class="cr-label">Control</span><span class="cr-val">Total — acceso SSH, elige OS, instala lo que quieras</span></div>
+        <div class="cr-item"><span class="cr-label">Gestión</span><span class="cr-val">Tú parcheas, configuras y monitoreas el servidor</span></div>
+        <div class="cr-item"><span class="cr-label">Pago</span><span class="cr-val">Por hora/segundo mientras la instancia esté encendida</span></div>
+        <div class="cr-item"><span class="cr-label">Ideal para</span><span class="cr-val">Apps 24/7, monolitos, acceso a SO específico</span></div>
+      </div>
+    </div>
+    <div class="compare-col cc-teal">
+      <div class="compare-service cs-teal">02 — SERVERLESS</div>
+      <div class="compare-name">AWS Lambda</div>
+      <div class="compare-row">
+        <div class="cr-item"><span class="cr-label">Control</span><span class="cr-val">Solo tu código — no ves ni tocas el servidor</span></div>
+        <div class="cr-item"><span class="cr-label">Gestión</span><span class="cr-val">AWS gestiona todo el runtime e infraestructura</span></div>
+        <div class="cr-item"><span class="cr-label">Pago</span><span class="cr-val">Por milisegundo de ejecución + nº de invocaciones</span></div>
+        <div class="cr-item"><span class="cr-label">Ideal para</span><span class="cr-val">Eventos, triggers, tareas cortas y esporádicas</span></div>
+      </div>
+    </div>
+    <div class="compare-col cc-purple">
+      <div class="compare-service cs-purple">03 — CONTENEDORES</div>
+      <div class="compare-name">ECS / EKS</div>
+      <div class="compare-row">
+        <div class="cr-item"><span class="cr-label">Control</span><span class="cr-val">Gestionas contenedores Docker / Kubernetes</span></div>
+        <div class="cr-item"><span class="cr-label">Gestión</span><span class="cr-val">AWS gestiona el orquestador, tú los workloads</span></div>
+        <div class="cr-item"><span class="cr-label">Pago</span><span class="cr-val">Por los recursos subyacentes (EC2 o Fargate)</span></div>
+        <div class="cr-item"><span class="cr-label">Ideal para</span><span class="cr-val">Microservicios en Docker, equipos con experiencia K8s</span></div>
+      </div>
+    </div>
+    <div class="compare-col cc-amber">
+      <div class="compare-service cs-amber">04 — SERVERLESS CONTAINERS</div>
+      <div class="compare-name">AWS Fargate</div>
+      <div class="compare-row">
+        <div class="cr-item"><span class="cr-label">Control</span><span class="cr-val">Solo defines CPU/RAM del contenedor</span></div>
+        <div class="cr-item"><span class="cr-label">Gestión</span><span class="cr-val">No hay EC2 que administrar — AWS lo hace todo</span></div>
+        <div class="cr-item"><span class="cr-label">Pago</span><span class="cr-val">Por los recursos asignados al contenedor</span></div>
+        <div class="cr-item"><span class="cr-label">Ideal para</span><span class="cr-val">Contenedores sin querer gestionar servidores</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards detalle: EC2 + Lambda -->
+  <div class="cards-grid g2" style="margin-top:10px">
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🖥</div>
+        <div>
+          <div class="card-num">01</div>
+          <div class="card-title">Amazon EC2</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">IaaS</span>
+        <span class="kw kw-blue">Instancias</span>
+        <span class="kw kw-blue">Control total</span>
+        <span class="kw kw-blue">SSH</span>
+      </div>
+      <div class="card-desc">Servidores virtuales en la nube donde tú tienes control total del sistema operativo, red y almacenamiento. Puedes elegir entre cientos de tipos de instancia (CPU optimizada, memoria, GPU, etc.).</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Tienes un monolito en Java que necesita un OS específico; lo instalas en una EC2 como si fuera un VPS tradicional.</div>
+      <div class="tip-box">Si necesitas correr algo 24/7 o acceso al sistema operativo (SSH), elige EC2. Si solo quieres pagar por los segundos que corre tu código, elige Lambda.</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">⚡</div>
+        <div>
+          <div class="card-num">02</div>
+          <div class="card-title">AWS Lambda</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">Serverless</span>
+        <span class="kw kw-teal">Event-driven</span>
+        <span class="kw kw-teal">Pago por ejecución</span>
+      </div>
+      <div class="card-desc">Ejecuta código sin administrar servidores. Se activa por eventos (S3 upload, API Gateway, SQS, etc.), corre la función y se apaga. Escala automáticamente de 0 a miles de ejecuciones simultáneas.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Una función que se activa solo cuando alguien sube una foto para redimensionarla y luego se apaga.</div>
+      <div class="tip-box">Límite de 15 minutos por ejecución. Para procesos largos usa EC2 o ECS. El "cold start" es una latencia inicial cuando la función lleva tiempo sin usarse.</div>
+    </div>
+  </div>
+
+  <!-- Cards detalle: ECS/EKS + Fargate + Lightsail -->
+  <div class="cards-grid g3" style="margin-top:10px">
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🐳</div>
+        <div>
+          <div class="card-num">03</div>
+          <div class="card-title">Amazon ECS / EKS</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">Contenedores</span>
+        <span class="kw kw-purple">Docker</span>
+        <span class="kw kw-purple">Kubernetes</span>
+      </div>
+      <div class="card-desc">ECS es el orquestador de contenedores nativo de AWS. EKS es Kubernetes administrado por AWS. Ambos gestionan el despliegue, salud y escalado de tus contenedores.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Arquitectura de microservicios en Docker donde AWS gestiona el despliegue y la salud de los nodos.</div>
+    </div>
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">🚀</div>
+        <div>
+          <div class="card-num">04</div>
+          <div class="card-title">AWS Fargate</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-amber">Serverless containers</span>
+        <span class="kw kw-amber">Sin EC2</span>
+      </div>
+      <div class="card-desc">Motor de cómputo para ECS/EKS que elimina la necesidad de gestionar las EC2 subyacentes. Solo defines cuánta CPU y RAM necesita tu contenedor.</div>
+      <div class="card-example"><strong>Analogía:</strong> Delivery de comida — te llega el plato (tu contenedor) sin preocuparte por quién conduce la moto (el servidor).</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">🌱</div>
+        <div>
+          <div class="card-num">05</div>
+          <div class="card-title">Amazon Lightsail</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">Simplicidad</span>
+        <span class="kw kw-green">Precio fijo</span>
+        <span class="kw kw-green">VPS principiantes</span>
+      </div>
+      <div class="card-desc">Versión simplificada de AWS para quien no quiere configurar VPCs, Security Groups ni balanceadores. Precio mensual fijo predecible.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Levantar un blog en WordPress o una app pequeña rápidamente sin complejidad de infraestructura.</div>
+      <div class="tip-box tip-green">Lightsail = AWS con "rueditas de entrenamiento". Cuando crezcas, migras a EC2 + VPC.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 2 — REDES Y ENTREGA DE CONTENIDO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title-text">Redes, conectividad y entrega de contenido</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- Diagrama de flujo de red -->
+  <div class="net-diagram">
+    <div class="net-title">Flujo típico: usuario → tu aplicación en AWS</div>
+    <div class="net-flow">
+      <div class="net-node">
+        <div class="nn-icon">🌍</div>
+        <div class="nn-name">Usuario</div>
+        <div class="nn-sub">Chile / mundo</div>
+      </div>
+      <div class="net-arrow arr-labeled">
+        <div class="arr-label">DNS</div>
+        <div>→</div>
+      </div>
+      <div class="net-node" style="border-color:rgba(52,211,153,0.3)">
+        <div class="nn-icon">🌐</div>
+        <div class="nn-name">Route 53</div>
+        <div class="nn-sub">DNS resolution</div>
+      </div>
+      <div class="net-arrow arr-labeled">
+        <div class="arr-label">HTTP/S</div>
+        <div>→</div>
+      </div>
+      <div class="net-node" style="border-color:rgba(251,191,36,0.3)">
+        <div class="nn-icon">☁</div>
+        <div class="nn-name">CloudFront</div>
+        <div class="nn-sub">CDN / Edge</div>
+      </div>
+      <div class="net-arrow arr-labeled">
+        <div class="arr-label">origin req.</div>
+        <div>→</div>
+      </div>
+      <div class="net-node" style="border-color:rgba(147,197,253,0.3)">
+        <div class="nn-icon">⚖️</div>
+        <div class="nn-name">ELB</div>
+        <div class="nn-sub">Load Balancer</div>
+      </div>
+      <div class="net-arrow arr-labeled">
+        <div class="arr-label">distribuye</div>
+        <div>→</div>
+      </div>
+      <div class="net-node" style="border-color:rgba(167,139,250,0.3)">
+        <div class="nn-icon">🔒</div>
+        <div class="nn-name">VPC</div>
+        <div class="nn-sub">+ Security Groups</div>
+      </div>
+      <div class="net-arrow">→</div>
+      <div class="net-node" style="border-color:rgba(59,130,246,0.3)">
+        <div class="nn-icon">🖥</div>
+        <div class="nn-name">EC2 / Lambda</div>
+        <div class="nn-sub">tu app</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards de red -->
+  <div class="cards-grid g2" style="margin-top:10px">
+    <div class="card c-indigo">
+      <div class="card-header">
+        <div class="card-icon icon-indigo">🏡</div>
+        <div>
+          <div class="card-num">06</div>
+          <div class="card-title">Amazon VPC</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-indigo">Red aislada</span>
+        <span class="kw kw-indigo">Subnets</span>
+        <span class="kw kw-indigo">IP Range</span>
+        <span class="kw kw-indigo">Pública / Privada</span>
+      </div>
+      <div class="card-desc">Tu red privada virtual aislada lógicamente dentro de la nube de AWS. Tú controlas el rango de IPs, subredes, tablas de ruteo y puertas de enlace. Puedes tener subnets públicas (acceso a internet) y privadas (solo internas).</div>
+      <div class="card-example"><strong>Analogía:</strong> Tu propia "parcela" con cerca perimetral dentro de la gran ciudad de AWS. Tú decides quién entra y quién sale.</div>
+      <div class="tip-box">Casi todos los servicios de cómputo viven dentro de una VPC. Si no hay red, no hay comunicación. Por defecto AWS te crea una VPC default en cada región.</div>
+    </div>
+    <div class="card c-pink">
+      <div class="card-header">
+        <div class="card-icon icon-pink">🛡</div>
+        <div>
+          <div class="card-num">07</div>
+          <div class="card-title">Security Groups</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-pink">Stateful</span>
+        <span class="kw kw-pink">Firewall de instancia</span>
+        <span class="kw kw-pink">Solo Allow</span>
+      </div>
+      <div class="card-desc">Firewall virtual que controla el tráfico de entrada (inbound) y salida (outbound) de instancias y recursos. Son stateful: si permites la entrada, la respuesta sale automáticamente.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Abrir el puerto 8080 solo para el tráfico que viene de tu balanceador de carga para tu API Spring Boot.</div>
+      <div class="tip-box">Por defecto bloquean todo el tráfico entrante. Solo puedes crear reglas para <em>permitir</em> — no existen reglas de "deny" explícito como en los NACLs.</div>
+    </div>
+  </div>
+
+  <div class="cards-grid g3" style="margin-top:10px">
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">☁</div>
+        <div>
+          <div class="card-num">08</div>
+          <div class="card-title">Amazon CloudFront</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-amber">CDN</span>
+        <span class="kw kw-amber">Baja latencia</span>
+        <span class="kw kw-amber">Edge Locations</span>
+        <span class="kw kw-amber">HTTPS</span>
+      </div>
+      <div class="card-desc">Red de distribución de contenido (CDN) global. Cachea tu contenido en Edge Locations cercanas al usuario para reducir la latencia y el costo de transferencia.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Imágenes y archivos JS cacheados en nodos de Chile para que la web cargue al instante desde Santiago.</div>
+      <div class="tip-box tip-amber">CloudFront también protege contra DDoS integrado con AWS Shield. No solo es para estáticos — sirve también APIs dinámicas.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">🌐</div>
+        <div>
+          <div class="card-num">09</div>
+          <div class="card-title">Amazon Route 53</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">DNS</span>
+        <span class="kw kw-green">Dominios</span>
+        <span class="kw kw-green">Health checks</span>
+        <span class="kw kw-green">Failover</span>
+      </div>
+      <div class="card-desc">Servicio de DNS altamente disponible y escalable. Traduce nombres de dominio a direcciones IP. Soporta health checks para failover automático entre regiones.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Traducir tuapp.com a la IP de tu Load Balancer en AWS. Si la región falla, redirige a otra automáticamente.</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🌍</div>
+        <div>
+          <div class="card-num">10</div>
+          <div class="card-title">AWS Global Accelerator</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">IP estática fija</span>
+        <span class="kw kw-blue">Red interna AWS</span>
+        <span class="kw kw-blue">Ruta óptima</span>
+      </div>
+      <div class="card-desc">Mejora el rendimiento enrutando el tráfico por la red global privada de AWS (no por internet público), reduciendo latencia y jitter. Provee IPs estáticas fijas como punto de entrada.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Tu API en EE.UU. recibe tráfico de Chile entrando al backbone de AWS desde el nodo más cercano, evitando la congestión de internet.</div>
+      <div class="tip-box">Diferencia clave vs CloudFront: Global Accelerator no cachea — optimiza la ruta TCP/UDP. CloudFront cachea contenido HTTP.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 3 — ESCALABILIDAD Y BALANCEO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title-text">Escalabilidad y alta disponibilidad</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-sky">
+      <div class="card-header">
+        <div class="card-icon icon-sky">⚖️</div>
+        <div>
+          <div class="card-num">11</div>
+          <div class="card-title">Elastic Load Balancing (ELB)</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-sky">Distribución de carga</span>
+        <span class="kw kw-sky">Alta disponibilidad</span>
+        <span class="kw kw-sky">ALB / NLB / GLB</span>
+      </div>
+      <div class="card-desc">Distribuye automáticamente el tráfico entrante entre múltiples destinos (EC2, Lambda, contenedores). Existen tres tipos: ALB (HTTP/HTTPS, nivel aplicación), NLB (TCP/UDP, ultra alta performance) y GLB (appliances de red).</div>
+      <div class="card-example"><strong>Analogía:</strong> Un recepcionista que dirige a los clientes a la ventanilla desocupada para que nadie espere de más.</div>
+      <div class="tip-box">El ELB siempre va dentro de una VPC y distribuye tráfico entre AZs. Úsalo junto con Auto Scaling para máxima resiliencia.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">📈</div>
+        <div>
+          <div class="card-num">12</div>
+          <div class="card-title">AWS Auto Scaling</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">Elasticidad</span>
+        <span class="kw kw-green">Scale out / in</span>
+        <span class="kw kw-green">Métricas</span>
+        <span class="kw kw-green">Políticas</span>
+      </div>
+      <div class="card-desc">Ajusta automáticamente la cantidad de recursos (instancias EC2, tareas ECS, etc.) según la demanda real, basándose en métricas de CloudWatch como CPU, memoria o requests por segundo.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Un evento especial genera pico de tráfico → AWS crea 3 servidores más → el tráfico baja → los elimina automáticamente.</div>
+      <div class="tip-box">Configura siempre un mínimo, máximo y capacidad deseada. Combínalo con ELB para no perder requests durante el escalado.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 4 — ALMACENAMIENTO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title-text">Almacenamiento — tipos y cuándo usar cada uno</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">🪣</div>
+        <div>
+          <div class="card-num">13</div>
+          <div class="card-title">Amazon S3</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-amber">Object Storage</span>
+        <span class="kw kw-amber">Ilimitado</span>
+        <span class="kw kw-amber">Durabilidad 11 nines</span>
+      </div>
+      <div class="card-desc">Almacenamiento de objetos altamente duradero (99.999999999%). Ideal para archivos, imágenes, backups, datasets. No es un sistema de archivos — los objetos se acceden por URL/API.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Guardar todas las fotos de perfil de usuarios, los reportes generados y los backups de base de datos.</div>
+      <div class="tip-box tip-amber">S3 replica datos en mínimo 3 AZs automáticamente. Es el servicio de almacenamiento más usado de AWS. Tiene clases de storage para optimizar costos (S3 Standard, Infrequent Access, Glacier).</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">💾</div>
+        <div>
+          <div class="card-num">14</div>
+          <div class="card-title">Amazon EBS</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">Block Storage</span>
+        <span class="kw kw-blue">Disco de EC2</span>
+        <span class="kw kw-blue">AZ-level</span>
+      </div>
+      <div class="card-desc">Almacenamiento en bloque de alta performance para EC2. Funciona como un disco duro virtual que adjuntas a tu instancia. Persiste aunque la EC2 se apague.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> El disco donde vive el sistema operativo y los archivos de tu servidor de base de datos PostgreSQL en EC2.</div>
+      <div class="tip-box">Un volumen EBS solo puede estar adjunto a una EC2 a la vez (en la misma AZ). Para compartir entre instancias usa EFS.</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">📂</div>
+        <div>
+          <div class="card-num">15</div>
+          <div class="card-title">Amazon EFS</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">File Storage</span>
+        <span class="kw kw-teal">Multi-instancia</span>
+        <span class="kw kw-teal">Escala automática</span>
+      </div>
+      <div class="card-desc">Sistema de archivos NFS administrado que puede montarse simultáneamente en múltiples instancias EC2 en distintas AZs. Escala automáticamente según el uso.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Un cluster de 10 EC2 que necesitan acceder y escribir en los mismos archivos de configuración compartidos.</div>
+    </div>
+  </div>
+
+  <!-- Tabla comparativa de storage -->
+  <div class="split-card" style="margin-top:10px; grid-template-columns: 1fr 1fr 1fr; display:grid">
+    <div class="split-half sh-amber" style="border-right: 1px solid #1E2A40">
+      <div class="split-label sl-amber">S3 — Object Storage</div>
+      <div class="card-keywords" style="margin-bottom:8px">
+        <span class="kw kw-amber">Archivos / Multimedia</span>
+        <span class="kw kw-amber">Backups</span>
+      </div>
+      <div class="card-desc" style="font-size:11px">Acceso por URL. Sin límite de tamaño. Duradero entre múltiples AZs. No se adjunta a EC2.</div>
+    </div>
+    <div class="split-half sh-blue" style="border-right: 1px solid #1E2A40">
+      <div class="split-label sl-blue">EBS — Block Storage</div>
+      <div class="card-keywords" style="margin-bottom:8px">
+        <span class="kw kw-blue">OS / Bases de datos</span>
+        <span class="kw kw-blue">Alta I/O</span>
+      </div>
+      <div class="card-desc" style="font-size:11px">Disco virtual para EC2. Alta performance. Solo en 1 AZ. Una instancia a la vez (salvo Multi-Attach).</div>
+    </div>
+    <div class="split-half sh-teal">
+      <div class="split-label sl-teal">EFS — File Storage</div>
+      <div class="card-keywords" style="margin-bottom:8px">
+        <span class="kw kw-teal">Multi-instancia</span>
+        <span class="kw kw-teal">Archivos compartidos</span>
+      </div>
+      <div class="card-desc" style="font-size:11px">Sistema de archivos NFS. Múltiples EC2 simultáneas. Escala solo. Más caro que EBS por GB.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 5 — CONCEPTO EXTRA: AWS SNS / SQS
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-title-text">Mensajería — desacopla tus servicios</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">📬</div>
+        <div>
+          <div class="card-num">16</div>
+          <div class="card-title">Amazon SQS</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">Cola de mensajes</span>
+        <span class="kw kw-purple">Desacoplamiento</span>
+        <span class="kw kw-purple">Pull</span>
+      </div>
+      <div class="card-desc">Servicio de cola de mensajes totalmente administrado. Permite que componentes de tu aplicación se comuniquen de forma asíncrona sin dependencia directa. El consumidor "jala" mensajes de la cola cuando está listo.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Un servicio de pagos pone el resultado en una cola; el servicio de email lo consume cuando tiene disponibilidad, sin que el usuario espere.</div>
+      <div class="tip-box">SQS desacopla productores de consumidores. Si el consumidor cae, los mensajes se quedan en la cola y no se pierden.</div>
+    </div>
+    <div class="card c-pink">
+      <div class="card-header">
+        <div class="card-icon icon-pink">📣</div>
+        <div>
+          <div class="card-num">17</div>
+          <div class="card-title">Amazon SNS</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-pink">Pub/Sub</span>
+        <span class="kw kw-pink">Notificaciones</span>
+        <span class="kw kw-pink">Push</span>
+      </div>
+      <div class="card-desc">Servicio de notificaciones pub/sub. Un productor publica en un "topic" y SNS envía el mensaje a todos los suscriptores simultáneamente (SQS, Lambda, email, SMS, HTTP).</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Cuando un usuario hace una compra, SNS notifica a la vez al servicio de inventario, al de facturación y al de email en un solo disparo.</div>
+      <div class="tip-box tip-green">Fan-out pattern: SQS + SNS juntos. SNS publica a múltiples colas SQS para procesar el mismo evento de forma independiente.</div>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 02 DE 04 — CÓMPUTO, REDES Y ALMACENAMIENTO</span>
+  <span class="footer-count">17 SERVICIOS · CLF-C02</span>
+</div>
+
+</body>
+</html>
