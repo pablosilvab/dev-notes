@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0A0E1A;
+    font-family: 'DM Sans', sans-serif;
+    width: 1200px;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ───── HEADER ───── */
+  .header {
+    background: #0A0E1A;
+    padding: 48px 56px 32px;
+    border-bottom: 1px solid #1E2A40;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .week-badge {
+    background: #22C55E;
+    color: #0A0E1A;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .header h1 span { color: #22C55E; }
+  .header-sub {
+    font-size: 15px;
+    color: #6B7FA3;
+    margin-top: 8px;
+    font-weight: 400;
+  }
+  .aws-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF9900;
+    background: rgba(255,153,0,0.08);
+    border: 1px solid rgba(255,153,0,0.3);
+    padding: 8px 16px;
+    border-radius: 4px;
+    letter-spacing: 0.12em;
+  }
+  .header-pills {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+  .pill-a { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-b { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+  .pill-c { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+  .pill-d { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+
+  /* ───── BODY ───── */
+  .body { padding: 0 56px 56px; background: #0A0E1A; }
+
+  /* ───── SECTION LABEL ───── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 32px 0 16px;
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .sn-green  { color: #22C55E; }
+  .sn-blue   { color: #3B82F6; }
+  .sn-purple { color: #A855F7; }
+  .sn-amber  { color: #FF9900; }
+
+  .section-title-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7FA3;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  /* ───── CARDS ───── */
+  .cards-grid { display: grid; gap: 10px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g1 { grid-template-columns: 1fr; }
+
+  .card {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-amber::before  { background: #FF9900; }
+  .card.c-pink::before   { background: #EC4899; }
+  .card.c-indigo::before { background: #6366F1; }
+  .card.c-sky::before    { background: #0EA5E9; }
+  .card.c-rose::before   { background: #F43F5E; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-amber  { background: rgba(255,153,0,0.12); }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+  .icon-indigo { background: rgba(99,102,241,0.12); }
+  .icon-sky    { background: rgba(14,165,233,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+
+  .card-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: #3B4C68;
+    margin-top: 2px;
+  }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-blue   { background: rgba(59,130,246,0.12);  color: #93C5FD; }
+  .kw-teal   { background: rgba(20,184,166,0.12);  color: #5EEAD4; }
+  .kw-purple { background: rgba(168,85,247,0.12);  color: #D8B4FE; }
+  .kw-amber  { background: rgba(255,153,0,0.12);   color: #FCD34D; }
+  .kw-pink   { background: rgba(236,72,153,0.12);  color: #F9A8D4; }
+  .kw-indigo { background: rgba(99,102,241,0.12);  color: #A5B4FC; }
+  .kw-sky    { background: rgba(14,165,233,0.12);  color: #7DD3FC; }
+  .kw-rose   { background: rgba(244,63,94,0.12);   color: #FDA4AF; }
+
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example {
+    font-size: 11.5px; color: #64748B; line-height: 1.55;
+    border-top: 1px solid #1A2236; padding-top: 10px;
+  }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+
+  .tip-box {
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .tip-box::before { content: '⚡ '; }
+  .tip-green  { background: rgba(34,197,94,0.06);  border: 1px solid rgba(34,197,94,0.18);  color: #86EFAC; }
+  .tip-blue   { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.18); color: #93C5FD; }
+  .tip-amber  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.18);  color: #FCD34D; }
+  .tip-purple { background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.18); color: #D8B4FE; }
+  .tip-rose   { background: rgba(244,63,94,0.06);  border: 1px solid rgba(244,63,94,0.18);  color: #FDA4AF; }
+
+  /* ───── DECISION TABLE ───── */
+  .decision-table {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+  .dt-header {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr 1fr;
+    background: #080C17;
+    border-bottom: 1px solid #1E2A40;
+    padding: 0;
+  }
+  .dt-cell {
+    padding: 11px 14px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: #3B4C68;
+    border-right: 1px solid #1A2236;
+    letter-spacing: 0.04em;
+  }
+  .dt-cell:last-child { border-right: none; }
+  .dt-cell.dt-head { color: #6B7FA3; font-weight: 500; }
+  .dt-row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr 1fr;
+    border-bottom: 1px solid #1A2236;
+    transition: background 0.1s;
+  }
+  .dt-row:last-child { border-bottom: none; }
+  .dt-row:hover { background: rgba(255,255,255,0.015); }
+  .dt-service {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-right: 1px solid #1A2236;
+  }
+  .dt-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green  { background: #22C55E; }
+  .dot-blue   { background: #3B82F6; }
+  .dot-teal   { background: #14B8A6; }
+  .dot-purple { background: #A855F7; }
+  .dot-amber  { background: #FF9900; }
+  .dot-rose   { background: #F43F5E; }
+  .dot-indigo { background: #6366F1; }
+  .dot-sky    { background: #0EA5E9; }
+  .dt-sname { font-size: 12px; font-weight: 600; color: #E2E8F0; }
+  .dt-val {
+    padding: 12px 14px;
+    font-size: 11px;
+    color: #64748B;
+    border-right: 1px solid #1A2236;
+    line-height: 1.4;
+  }
+  .dt-val:last-child { border-right: none; }
+  .dt-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .db-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .db-blue   { background: rgba(59,130,246,0.12);  color: #93C5FD; }
+  .db-purple { background: rgba(168,85,247,0.12);  color: #D8B4FE; }
+  .db-amber  { background: rgba(255,153,0,0.12);   color: #FCD34D; }
+  .db-rose   { background: rgba(244,63,94,0.12);   color: #FDA4AF; }
+  .db-teal   { background: rgba(20,184,166,0.12);  color: #5EEAD4; }
+
+  /* ───── EXAM DECISION GUIDE ───── */
+  .decision-guide {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-top: 10px;
+  }
+  .dg-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: #3B4C68;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .dg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .dg-item {
+    background: #0A0E1A;
+    border: 1px solid #1A2236;
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .dg-keyword {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .dg-arrow {
+    font-size: 10px;
+    color: #3B4C68;
+    margin: 4px 0;
+  }
+  .dg-answer {
+    font-size: 13px;
+    font-weight: 600;
+    color: #E2E8F0;
+    margin-bottom: 3px;
+  }
+  .dg-why { font-size: 11px; color: #4A5E7A; line-height: 1.4; }
+
+  /* ───── SPLIT CARD ───── */
+  .split-card {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .split-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  .split-half { padding: 18px 22px; position: relative; }
+  .split-half:not(:last-child) { border-right: 1px solid #1E2A40; }
+  .split-half::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; width: 100%; height: 3px;
+  }
+  .sh-green::before  { background: #22C55E; }
+  .sh-blue::before   { background: #3B82F6; }
+  .sh-teal::before   { background: #14B8A6; }
+  .sh-purple::before { background: #A855F7; }
+  .sh-amber::before  { background: #FF9900; }
+  .sh-rose::before   { background: #F43F5E; }
+
+  .split-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sl-green  { color: #22C55E; }
+  .sl-blue   { color: #3B82F6; }
+  .sl-teal   { color: #14B8A6; }
+  .sl-purple { color: #A855F7; }
+  .sl-amber  { color: #FF9900; }
+  .sl-rose   { color: #F43F5E; }
+
+  /* ───── CALLOUT BOX ───── */
+  .callout {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 10px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .callout-green  { background: rgba(34,197,94,0.05);  border: 1px solid rgba(34,197,94,0.18); }
+  .callout-amber  { background: rgba(255,153,0,0.05);  border: 1px solid rgba(255,153,0,0.18); }
+  .callout-purple { background: rgba(168,85,247,0.05); border: 1px solid rgba(168,85,247,0.18); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-content {}
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .ct-green  { color: #86EFAC; }
+  .ct-amber  { color: #FCD34D; }
+  .ct-purple { color: #D8B4FE; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+
+  /* ───── BACK LINK ───── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: #3B4C68; text-decoration: none; transition: color 0.15s;
+  }
+  .back-link:hover { color: #6B7FA3; }
+
+  /* ───── FOOTER ───── */
+  .footer {
+    background: #080C17;
+    border-top: 1px solid #1E2A40;
+    padding: 20px 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em;
+  }
+  .footer-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: #22C55E; letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="week-badge">SEMANA 03 / 04</div>
+        <h1>Bases de Datos<br><span>& Almacenamiento</span></h1>
+        <p class="header-sub">13 servicios para persistir, consultar y mover datos en AWS</p>
+      </div>
+    </div>
+    <div class="aws-logo">AWS CLF-C02</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🗄 Almacenamiento de objetos</span>
+    <span class="pill pill-b">🔷 Bases de datos SQL</span>
+    <span class="pill pill-c">⚡ NoSQL & Caché</span>
+    <span class="pill pill-d">📊 Analytics & Migración</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 1 — ALMACENAMIENTO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-green">01</span>
+    <span class="section-title-text">Almacenamiento — objetos, bloques y archivos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <!-- S3 -->
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">🪣</div>
+        <div>
+          <div class="card-num">01</div>
+          <div class="card-title">Amazon S3</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-amber">Object Storage</span>
+        <span class="kw kw-amber">Buckets</span>
+        <span class="kw kw-amber">11 nines</span>
+        <span class="kw kw-amber">URL/API</span>
+      </div>
+      <div class="card-desc">Almacenamiento de objetos escalable e ilimitado. No es un sistema de archivos — los objetos se acceden por URL o API. Replica automáticamente en mínimo 3 AZs.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Guardar los PDFs de facturas o las fotos de perfil de usuarios de tu app.</div>
+      <div class="tip-box tip-amber">Memoriza: 99.999999999% de durabilidad (11 nueves). Si guardas 10 millones de objetos, podrías perder uno cada 10,000 años.</div>
+    </div>
+    <!-- EBS -->
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">💾</div>
+        <div>
+          <div class="card-num">02</div>
+          <div class="card-title">Amazon EBS</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">Block Storage</span>
+        <span class="kw kw-blue">Disco EC2</span>
+        <span class="kw kw-blue">Snapshot</span>
+        <span class="kw kw-blue">AZ-level</span>
+      </div>
+      <div class="card-desc">Almacenamiento en bloque de alto rendimiento para EC2. Funciona como un disco SSD virtual que adjuntas a tu instancia. Persiste aunque la EC2 se apague. Se pueden tomar snapshots como backups.</div>
+      <div class="card-example"><strong>Ayuda memoria:</strong> Es el "pendrive SSD" que conectas a tu servidor virtual para instalar el sistema operativo.</div>
+      <div class="tip-box tip-blue">Un volumen EBS solo puede estar adjunto a una EC2 a la vez (en la misma AZ). Para compartir entre múltiples instancias, usa EFS.</div>
+    </div>
+    <!-- EFS -->
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">📂</div>
+        <div>
+          <div class="card-num">03</div>
+          <div class="card-title">Amazon EFS</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">NFS</span>
+        <span class="kw kw-teal">Compartido</span>
+        <span class="kw kw-teal">Multi-instancia</span>
+        <span class="kw kw-teal">Auto-escala</span>
+      </div>
+      <div class="card-desc">Sistema de archivos compartido y elástico que puede ser montado simultáneamente en múltiples instancias EC2 en distintas AZs. Escala automáticamente según el uso, sin que debas aprovisionar capacidad.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Un clúster de servidores Java que necesitan leer y escribir en una misma carpeta compartida de reportes.</div>
+    </div>
+  </div>
+
+  <!-- Comparativa de almacenamiento -->
+  <div class="split-card split-grid-3" style="margin-top:10px">
+    <div class="split-half sh-amber">
+      <div class="split-label sl-amber">S3 — Object</div>
+      <div class="card-keywords" style="margin-bottom:8px">
+        <span class="kw kw-amber">Archivos / Media</span>
+        <span class="kw kw-amber">Backups</span>
+      </div>
+      <div class="card-desc" style="font-size:11px">Acceso por URL. Sin límite de tamaño. Duradero en 3+ AZs. <strong style="color:#94A3B8">No se adjunta a EC2.</strong></div>
+    </div>
+    <div class="split-half sh-blue">
+      <div class="split-label sl-blue">EBS — Block</div>
+      <div class="card-keywords" style="margin-bottom:8px">
+        <span class="kw kw-blue">OS / Bases de datos</span>
+        <span class="kw kw-blue">Alta I/O</span>
+      </div>
+      <div class="card-desc" style="font-size:11px">Disco virtual para 1 EC2 a la vez. Alta performance. Solo en 1 AZ. <strong style="color:#94A3B8">Requiere EC2 para usarse.</strong></div>
+    </div>
+    <div class="split-half sh-teal">
+      <div class="split-label sl-teal">EFS — File</div>
+      <div class="card-keywords" style="margin-bottom:8px">
+        <span class="kw kw-teal">Multi-instancia</span>
+        <span class="kw kw-teal">Compartido</span>
+      </div>
+      <div class="card-desc" style="font-size:11px">NFS compartido entre muchas EC2. Escala solo. Multi-AZ. <strong style="color:#94A3B8">Más caro por GB que EBS.</strong></div>
+    </div>
+  </div>
+
+  <!-- S3 Glacier -->
+  <div class="cards-grid g1" style="margin-top:10px">
+    <div class="card c-indigo">
+      <div class="card-header">
+        <div class="card-icon icon-indigo">🧊</div>
+        <div>
+          <div class="card-num">04</div>
+          <div class="card-title">S3 Glacier — Archivo a largo plazo</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-indigo">Bajo costo</span>
+        <span class="kw kw-indigo">Archivo frío</span>
+        <span class="kw kw-indigo">Recuperación en minutos/horas</span>
+        <span class="kw kw-indigo">Cumplimiento legal</span>
+      </div>
+      <div class="card-desc">Clase de almacenamiento de S3 diseñada para datos que se consultan muy rara vez. Costo por GB mucho menor que S3 Standard, pero con tiempos de recuperación que van desde minutos (Glacier Instant) hasta horas (Glacier Deep Archive).</div>
+      <div class="card-example" style="border:none; padding:0; margin-top:4px"><strong>Ejemplo:</strong> Guardar registros legales de hace 5 años que solo necesitas si hay una auditoría. También para backups de largo plazo que debes retener por regulaciones.</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px">
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:10px 12px">
+          <div style="font-family:'Space Mono',monospace; font-size:9px; color:#6366F1; margin-bottom:4px">GLACIER INSTANT</div>
+          <div style="font-size:11px; color:#8899B8">Recuperación en milisegundos. Acceso 1x por trimestre.</div>
+        </div>
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:10px 12px">
+          <div style="font-family:'Space Mono',monospace; font-size:9px; color:#6366F1; margin-bottom:4px">GLACIER FLEXIBLE</div>
+          <div style="font-size:11px; color:#8899B8">Recuperación en 1–5 min (Expedited) o 3–5 h (Standard).</div>
+        </div>
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:10px 12px">
+          <div style="font-family:'Space Mono',monospace; font-size:9px; color:#6366F1; margin-bottom:4px">DEEP ARCHIVE</div>
+          <div style="font-size:11px; color:#8899B8">El más barato. Recuperación en 12 h. Datos raramente accedidos.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 2 — BASES DE DATOS SQL
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-blue">02</span>
+    <span class="section-title-text">Bases de datos relacionales (SQL)</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <!-- RDS -->
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🗄</div>
+        <div>
+          <div class="card-num">05</div>
+          <div class="card-title">Amazon RDS</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">SQL</span>
+        <span class="kw kw-blue">Managed</span>
+        <span class="kw kw-blue">Multi-AZ</span>
+        <span class="kw kw-blue">Backup automático</span>
+        <span class="kw kw-blue">Read Replicas</span>
+      </div>
+      <div class="card-desc">Servicio gestionado para bases de datos relacionales. AWS se encarga del parcheo del SO, backups automáticos y failover Multi-AZ. Soporta MySQL, PostgreSQL, MariaDB, Oracle y SQL Server.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Tu base de datos PostgreSQL que requiere integridad transaccional (ACID) para un sistema de pagos o e-commerce.</div>
+      <div class="tip-box tip-blue">Con Multi-AZ, RDS mantiene una réplica sincrónica en otra AZ. Si la primaria falla, el failover es automático en ~1–2 minutos.</div>
+    </div>
+    <!-- Aurora -->
+    <div class="card c-rose">
+      <div class="card-header">
+        <div class="card-icon icon-rose">🌅</div>
+        <div>
+          <div class="card-num">06</div>
+          <div class="card-title">Amazon Aurora</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-rose">MySQL / PostgreSQL</span>
+        <span class="kw kw-rose">5x más rápida</span>
+        <span class="kw kw-rose">Alta disponibilidad</span>
+        <span class="kw kw-rose">Storage auto-escala</span>
+      </div>
+      <div class="card-desc">Base de datos relacional propietaria de AWS, compatible con MySQL y PostgreSQL pero diseñada desde cero para la nube. 5x más rápida que MySQL estándar y 3x que PostgreSQL. El storage escala automáticamente hasta 128 TB.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Tu app creció y la RDS de Postgres ya no aguanta el tráfico de lectura/escritura — migras a Aurora.</div>
+      <div class="tip-box tip-rose">Aurora replica los datos 6 veces en 3 AZs automáticamente. Aurora Serverless escala la capacidad de cómputo automáticamente según la demanda.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 3 — NOSQL Y CACHÉ
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-purple">03</span>
+    <span class="section-title-text">NoSQL, caché en memoria y analytics</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <!-- DynamoDB -->
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">⚡</div>
+        <div>
+          <div class="card-num">07</div>
+          <div class="card-title">Amazon DynamoDB</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">NoSQL</span>
+        <span class="kw kw-purple">Serverless</span>
+        <span class="kw kw-purple">Milisegundos</span>
+        <span class="kw kw-purple">Key-Value</span>
+      </div>
+      <div class="card-desc">Base de datos NoSQL de clave-valor completamente gestionada y serverless. Rendimiento consistente en milisegundos a cualquier escala. No necesitas gestionar clusters ni capacidad.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Guardar sesiones de usuario o carritos de compra que necesitan ser consultados en milisegundos sin importar cuántos usuarios haya.</div>
+      <div class="tip-box tip-purple">En el examen: "esquema flexible" o "escalabilidad horizontal masiva" → DynamoDB. "Consultas complejas" o "Joins" → RDS.</div>
+    </div>
+    <!-- ElastiCache -->
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">🚀</div>
+        <div>
+          <div class="card-num">08</div>
+          <div class="card-title">Amazon ElastiCache</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">In-memory</span>
+        <span class="kw kw-green">Redis / Memcached</span>
+        <span class="kw kw-green">Caché</span>
+        <span class="kw kw-green">Acelerar BD</span>
+      </div>
+      <div class="card-desc">Servicio de caché en memoria gestionado que soporta Redis y Memcached. Almacena resultados de consultas frecuentes para responder en microsegundos sin ir a la base de datos.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Los resultados de las consultas más frecuentes a RDS se guardan en Redis — el 80% de los requests nunca llega a la BD.</div>
+      <div class="tip-box tip-green">Patrón clásico: App → ElastiCache (hit) → responde inmediato. App → ElastiCache (miss) → consulta RDS → guarda en caché → responde.</div>
+    </div>
+    <!-- Redshift -->
+    <div class="card c-sky">
+      <div class="card-header">
+        <div class="card-icon icon-sky">📊</div>
+        <div>
+          <div class="card-num">09</div>
+          <div class="card-title">Amazon Redshift</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-sky">Data Warehouse</span>
+        <span class="kw kw-sky">OLAP</span>
+        <span class="kw kw-sky">Análisis masivo</span>
+        <span class="kw kw-sky">BI</span>
+      </div>
+      <div class="card-desc">Data warehouse columnar para análisis complejo (OLAP) y Business Intelligence. No es para transacciones del día a día (OLTP) — es para queries analíticos pesados sobre petabytes de datos históricos.</div>
+      <div class="card-example"><strong>Ayuda memoria:</strong> No lo usa tu app de producción. Lo usa el equipo de datos para hacer queries pesadas sobre años de historial de ventas.</div>
+      <div class="tip-box tip-blue">OLTP (transacciones rápidas) → RDS / Aurora / DynamoDB. OLAP (análisis histórico, reportes) → Redshift.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 4 — MIGRACIÓN
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-amber">04</span>
+    <span class="section-title-text">Migración de datos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <!-- DMS -->
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">🚛</div>
+        <div>
+          <div class="card-num">10</div>
+          <div class="card-title">AWS Database Migration Service (DMS)</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-amber">Migración</span>
+        <span class="kw kw-amber">Downtime mínimo</span>
+        <span class="kw kw-amber">Homogéneo / Heterogéneo</span>
+        <span class="kw kw-amber">Replicación continua</span>
+      </div>
+      <div class="card-desc">Servicio para migrar bases de datos a AWS de forma rápida y con downtime mínimo. Soporta migraciones homogéneas (Oracle → Oracle en RDS) y heterogéneas (Oracle → Aurora PostgreSQL). La app sigue funcionando durante la migración.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Mover tu base de datos On-premise de la oficina a AWS RDS mientras la app sigue sirviendo tráfico real.</div>
+      <div class="tip-box tip-amber">Para migraciones heterogéneas (distinto motor), DMS usa el Schema Conversion Tool (SCT) para convertir el esquema automáticamente.</div>
+    </div>
+    <!-- AWS Snow Family -->
+    <div class="card c-pink">
+      <div class="card-header">
+        <div class="card-icon icon-pink">📦</div>
+        <div>
+          <div class="card-num">11</div>
+          <div class="card-title">AWS Snow Family</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-pink">Migración física</span>
+        <span class="kw kw-pink">Snowball / Snowcone</span>
+        <span class="kw kw-pink">Sin internet</span>
+        <span class="kw kw-pink">Edge computing</span>
+      </div>
+      <div class="card-desc">Dispositivos físicos que AWS te envía para transferir grandes volúmenes de datos (desde TB hasta EB) cuando no es viable hacerlo por internet. También permiten procesar datos en ubicaciones sin conectividad.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Tienes 200 TB de datos en un datacenter propio y subirlos por internet tardaría meses — AWS te manda un Snowball Edge, cargas los datos y lo devuelves.</div>
+      <div class="tip-box tip-rose">En el examen: si mencionan "migrar petabytes" o "sin banda ancha suficiente" → Snow Family. Si mencionan migración online con la app corriendo → DMS.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 5 — TABLA COMPARATIVA COMPLETA
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-green">05</span>
+    <span class="section-title-text">Guía rápida — ¿qué servicio usar?</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="decision-table">
+    <div class="dt-header">
+      <div class="dt-cell dt-head">Servicio</div>
+      <div class="dt-cell dt-head">Tipo</div>
+      <div class="dt-cell dt-head">Cuándo usarlo</div>
+      <div class="dt-cell dt-head">Escala</div>
+      <div class="dt-cell dt-head">Gestión</div>
+      <div class="dt-cell dt-head">Keyword examen</div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-amber"></span><span class="dt-sname">S3</span></div>
+      <div class="dt-val"><span class="dt-badge db-amber">Object</span></div>
+      <div class="dt-val">Archivos, imágenes, backups, sitios estáticos</div>
+      <div class="dt-val">Ilimitado</div>
+      <div class="dt-val">Totalmente gestionado</div>
+      <div class="dt-val"><span class="dt-badge db-amber">11 nines · URL</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-blue"></span><span class="dt-sname">EBS</span></div>
+      <div class="dt-val"><span class="dt-badge db-blue">Block</span></div>
+      <div class="dt-val">Disco del OS, base de datos en EC2</div>
+      <div class="dt-val">Hasta 64 TB / vol.</div>
+      <div class="dt-val">Tú gestionas el SO</div>
+      <div class="dt-val"><span class="dt-badge db-blue">Snapshot · AZ</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-teal"></span><span class="dt-sname">EFS</span></div>
+      <div class="dt-val"><span class="dt-badge db-teal">File NFS</span></div>
+      <div class="dt-val">Archivos compartidos entre muchas EC2</div>
+      <div class="dt-val">Auto-escala</div>
+      <div class="dt-val">Totalmente gestionado</div>
+      <div class="dt-val"><span class="dt-badge db-teal">Multi-AZ · NFS</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-indigo"></span><span class="dt-sname">S3 Glacier</span></div>
+      <div class="dt-val"><span class="dt-badge" style="background:rgba(99,102,241,0.12);color:#A5B4FC">Archivo frío</span></div>
+      <div class="dt-val">Datos raramente accedidos, cumplimiento legal</div>
+      <div class="dt-val">Ilimitado</div>
+      <div class="dt-val">Totalmente gestionado</div>
+      <div class="dt-val"><span class="dt-badge" style="background:rgba(99,102,241,0.12);color:#A5B4FC">Bajo costo · Horas</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-blue"></span><span class="dt-sname">RDS</span></div>
+      <div class="dt-val"><span class="dt-badge db-blue">SQL relacional</span></div>
+      <div class="dt-val">ACID, joins, esquema fijo, transacciones</div>
+      <div class="dt-val">Manual / Read Replicas</div>
+      <div class="dt-val">Gestionado (AWS parchea)</div>
+      <div class="dt-val"><span class="dt-badge db-blue">Multi-AZ · SQL</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-rose"></span><span class="dt-sname">Aurora</span></div>
+      <div class="dt-val"><span class="dt-badge db-rose">SQL cloud-native</span></div>
+      <div class="dt-val">Alto tráfico SQL, 5x MySQL, HA nativa</div>
+      <div class="dt-val">Auto-escala storage</div>
+      <div class="dt-val">Totalmente gestionado</div>
+      <div class="dt-val"><span class="dt-badge db-rose">5x rápida · AWS</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-purple"></span><span class="dt-sname">DynamoDB</span></div>
+      <div class="dt-val"><span class="dt-badge db-purple">NoSQL key-value</span></div>
+      <div class="dt-val">Escala masiva, baja latencia, esquema flexible</div>
+      <div class="dt-val">Automático / Serverless</div>
+      <div class="dt-val">Totalmente gestionado</div>
+      <div class="dt-val"><span class="dt-badge db-purple">ms · Serverless</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-sky"></span><span class="dt-sname">Redshift</span></div>
+      <div class="dt-val"><span class="dt-badge db-teal">Data Warehouse</span></div>
+      <div class="dt-val">Analytics, OLAP, BI, queries históricas</div>
+      <div class="dt-val">Petabytes</div>
+      <div class="dt-val">Gestionado</div>
+      <div class="dt-val"><span class="dt-badge db-teal">OLAP · BI</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-green"></span><span class="dt-sname">ElastiCache</span></div>
+      <div class="dt-val"><span class="dt-badge db-green">In-memory caché</span></div>
+      <div class="dt-val">Acelerar lecturas, sesiones, resultados frecuentes</div>
+      <div class="dt-val">Clusters gestionados</div>
+      <div class="dt-val">Gestionado</div>
+      <div class="dt-val"><span class="dt-badge db-green">Redis · μs</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 6 — TIPS DE EXAMEN
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-amber">06</span>
+    <span class="section-title-text">Guía de decisión para el examen</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="decision-guide">
+    <div class="dg-title">Si en el examen lees estas palabras clave → elige este servicio</div>
+    <div class="dg-grid">
+      <div class="dg-item">
+        <div class="dg-keyword" style="color:#86EFAC">"Esquema flexible" · "Escalabilidad masiva" · "Milisegundos a cualquier escala"</div>
+        <div class="dg-arrow">↓</div>
+        <div class="dg-answer">Amazon DynamoDB</div>
+        <div class="dg-why">NoSQL serverless, escala horizontal infinita sin gestión.</div>
+      </div>
+      <div class="dg-item">
+        <div class="dg-keyword" style="color:#93C5FD">"Consultas complejas" · "Joins" · "ACID" · "Transacciones" · "Esquema fijo"</div>
+        <div class="dg-arrow">↓</div>
+        <div class="dg-answer">Amazon RDS / Aurora</div>
+        <div class="dg-why">RDS si es estándar. Aurora si necesitas mayor rendimiento y es MySQL/Postgres.</div>
+      </div>
+      <div class="dg-item">
+        <div class="dg-keyword" style="color:#5EEAD4">"Analytics" · "Business Intelligence" · "Data Warehouse" · "Historial" · "OLAP"</div>
+        <div class="dg-arrow">↓</div>
+        <div class="dg-answer">Amazon Redshift</div>
+        <div class="dg-why">No es para la app — es para el equipo de datos y reportes masivos.</div>
+      </div>
+      <div class="dg-item">
+        <div class="dg-keyword" style="color:#FCD34D">"Caché" · "Acelerar base de datos" · "In-memory" · "Redis" · "Memcached"</div>
+        <div class="dg-arrow">↓</div>
+        <div class="dg-answer">Amazon ElastiCache</div>
+        <div class="dg-why">Reduce la carga en RDS cacheando resultados frecuentes en RAM.</div>
+      </div>
+      <div class="dg-item">
+        <div class="dg-keyword" style="color:#FDA4AF">"Archivo a largo plazo" · "Bajo costo" · "Auditoría" · "Raramente accedido"</div>
+        <div class="dg-arrow">↓</div>
+        <div class="dg-answer">S3 Glacier</div>
+        <div class="dg-why">Máxima durabilidad al mínimo costo, para datos "fríos" que casi nunca se leen.</div>
+      </div>
+      <div class="dg-item">
+        <div class="dg-keyword" style="color:#D8B4FE">"Migrar BD sin downtime" · "On-premise a AWS" · "Replicación continua"</div>
+        <div class="dg-arrow">↓</div>
+        <div class="dg-answer">AWS DMS</div>
+        <div class="dg-why">La app sigue corriendo mientras la migración ocurre en segundo plano.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Callout confusión común S3 vs EBS -->
+  <div class="callout callout-amber" style="margin-top:10px">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-content">
+      <div class="callout-title ct-amber">Confusión más común del examen: S3 vs EBS</div>
+      <div class="callout-text"><strong style="color:#94A3B8">S3</strong> es para archivos que accedes vía URL (como una web pública, backups, fotos). No puedes instalarlo en una EC2 como disco. <strong style="color:#94A3B8">EBS</strong> es solo para ser el "disco duro" de un servidor EC2 — no es accesible desde fuera de esa instancia. Si la pregunta habla de "disco", "OS" o "base de datos en EC2" → EBS. Si habla de "archivos", "URL" o "backup" → S3.</div>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 03 DE 04 — BASES DE DATOS Y ALMACENAMIENTO</span>
+  <span class="footer-count">13 SERVICIOS · CLF-C02</span>
+</div>
+
+</body>
+</html>
