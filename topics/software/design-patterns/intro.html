@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patrones de Diseño — Introducción</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+<style>
+  body.dn-gof .week-badge { background: #B45309; color: #0A0E1A; }
+  body.dn-gof .header h1 span { color: #FBBF24; }
+  body.dn-gof .section-num { color: #FBBF24; }
+  body.dn-gof .footer-count { color: #FBBF24; }
+  body.dn-gof .aws-logo { color: #FCD34D; border-color: rgba(251,191,36,.35); background: rgba(180,83,9,.10); }
+  .gof-link { color: #FCD34D; text-decoration: none; border-bottom: 1px dotted rgba(252,211,77,.45); }
+  .gof-link:hover { color: #FDE68A; border-bottom-color: rgba(254,243,199,.75); }
+  .gof-category-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(252,211,77,.35);
+  }
+  .gof-category-link:hover { color: #FCD34D; border-bottom-color: rgba(252,211,77,.75); }
+</style>
+</head>
+<body class="dn-infographic dn-gof">
+<div class="page-shell">
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">GOF · INTRO</div>
+        <h1>Patrones de Diseño<br><span>Visión general</span></h1>
+        <p class="header-sub">Qué son, cuándo usarlos y cómo se clasifican en creacionales, estructurales y de comportamiento</p>
+      </div>
+    </div>
+    <div class="aws-logo">GAMMA · HELM · JOHNSON · VLISSIDES</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">Lenguaje compartido</span>
+    <span class="pill pill-b">Trade-offs</span>
+    <span class="pill pill-c">Diseño evolutivo</span>
+  </div>
+</div>
+<div class="body">
+  <div class="section-header"><span class="section-num">01</span><span class="section-title-text">Qué es un patrón</span><div class="section-line"></div></div>
+  <div class="split-card">
+    <div class="split-half">
+      <div class="card-title">Definición práctica</div>
+      <div class="card-desc">Un patrón describe una solución reusable para un problema recurrente en un contexto específico. No es una plantilla rígida, sino una guía con consecuencias conocidas.</div>
+    </div>
+    <div class="split-half">
+      <div class="card-title">Cuándo NO usarlo</div>
+      <div class="card-desc">Cuando agrega más complejidad que valor. Si un problema aún no existe en tu sistema, aplicar patrón por anticipación puede empeorar el diseño.</div>
+    </div>
+  </div>
+
+  <div class="section-header"><span class="section-num">02</span><span class="section-title-text">Clasificaciones GoF</span><div class="section-line"></div></div>
+  <div class="cards-grid g3">
+    <div class="card c-amber">
+      <div class="card-header"><div class="card-icon icon-amber">🏗</div><div><div class="card-num">A</div><div class="card-title"><a class="gof-category-link" href="creacionales.html">Creacionales</a></div></div></div>
+      <div class="card-desc">Controlan la forma de crear objetos para desacoplar al cliente de clases concretas y reglas de construcción.</div>
+      <div class="card-example"><strong>Patrones clave:</strong>
+        <a class="gof-link" href="creacionales.html#factory-method">Factory Method</a>,
+        <a class="gof-link" href="creacionales.html#abstract-factory">Abstract Factory</a>,
+        <a class="gof-link" href="creacionales.html#builder">Builder</a>,
+        <a class="gof-link" href="creacionales.html#singleton">Singleton</a>.
+      </div>
+    </div>
+    <div class="card c-indigo">
+      <div class="card-header"><div class="card-icon icon-indigo">🧩</div><div><div class="card-num">B</div><div class="card-title"><a class="gof-category-link" href="estructurales.html">Estructurales</a></div></div></div>
+      <div class="card-desc">Componen clases y objetos en estructuras más grandes, manteniendo flexibilidad y bajo acoplamiento.</div>
+      <div class="card-example"><strong>Patrones clave:</strong>
+        <a class="gof-link" href="estructurales.html#adapter">Adapter</a>,
+        <a class="gof-link" href="estructurales.html#facade">Facade</a>,
+        <a class="gof-link" href="estructurales.html#composite">Composite</a>,
+        <a class="gof-link" href="estructurales.html#decorator">Decorator</a>,
+        <a class="gof-link" href="estructurales.html#proxy">Proxy</a>.
+      </div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-header"><div class="card-icon icon-teal">🔄</div><div><div class="card-num">C</div><div class="card-title"><a class="gof-category-link" href="comportamiento.html">Comportamiento</a></div></div></div>
+      <div class="card-desc">Definen cómo colaboran objetos y cómo se distribuyen responsabilidades en tiempo de ejecución.</div>
+      <div class="card-example"><strong>Patrones clave:</strong>
+        <a class="gof-link" href="comportamiento.html#strategy">Strategy</a>,
+        <a class="gof-link" href="comportamiento.html#observer">Observer</a>,
+        <a class="gof-link" href="comportamiento.html#command">Command</a>,
+        <a class="gof-link" href="comportamiento.html#state">State</a>,
+        <a class="gof-link" href="comportamiento.html#template-method">Template Method</a>.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-header"><span class="section-num">03</span><span class="section-title-text">Cómo estudiar patrones sin memorizarlos</span><div class="section-line"></div></div>
+  <div class="cards-grid g2">
+    <div class="card c-green">
+      <div class="card-header"><div class="card-icon icon-green">1</div><div><div class="card-num">PASO</div><div class="card-title">Detecta el dolor</div></div></div>
+      <div class="card-desc">Parte desde el olor de diseño real (ifs crecientes, acoplamiento a proveedor, notificaciones rígidas).</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header"><div class="card-icon icon-green">2</div><div><div class="card-num">PASO</div><div class="card-title">Compara alternativas</div></div></div>
+      <div class="card-desc">Elige patrón por trade-off: extensibilidad, legibilidad, testabilidad y costo de mantenimiento.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header"><div class="card-icon icon-green">3</div><div><div class="card-num">PASO</div><div class="card-title">Aplica mínimo viable</div></div></div>
+      <div class="card-desc">Empieza simple y evoluciona. Un patrón bien aplicado reduce fricción, no crea ceremonia innecesaria.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header"><div class="card-icon icon-green">4</div><div><div class="card-num">PASO</div><div class="card-title">Valida con tests</div></div></div>
+      <div class="card-desc">Si el diseño nuevo no mejora cobertura y cambio seguro, probablemente el patrón no era el adecuado.</div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="footer">
+  <span class="footer-text">GOF · INTRODUCCIÓN Y CLASIFICACIÓN</span>
+  <div class="footer-meta-row">
+    <span class="footer-count">10 CONCEPTOS</span>
+    <a class="module-link is-next" href="creacionales.html"><span class="ml-text">Siguiente: Creacionales →</span></a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patrones de Comportamiento — GoF</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+<style>
+  body.dn-gof .week-badge { background: #B45309; color: #0A0E1A; }
+  body.dn-gof .header h1 span { color: #FBBF24; }
+  body.dn-gof .section-num { color: #FBBF24; }
+  body.dn-gof .footer-count { color: #FBBF24; }
+  body.dn-gof .aws-logo { color: #FCD34D; border-color: rgba(251,191,36,.35); background: rgba(180,83,9,.10); }
+  .gof-pattern-gap { margin-top: 32px; }
+</style>
+</head>
+<body class="dn-infographic dn-gof">
+<div class="page-shell">
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">GOF · COMPORTAMIENTO</div>
+        <h1>Patrones de<br><span>Comportamiento</span></h1>
+        <p class="header-sub">Cinco patrones clave, cada uno con problema típico y solución en Java</p>
+      </div>
+    </div>
+    <div class="aws-logo">FOCO · COLABORACIÓN</div>
+  </div>
+</div>
+<div class="body">
+
+  <!-- Strategy -->
+  <div class="section-header" id="strategy"><span class="section-num">01</span><span class="section-title-text">Strategy</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Define una familia de algoritmos, los encapsula y los hace intercambiables. El cliente trabaja contra la estrategia abstracta, no contra ramas por tipo.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Un método de precio o envío crece con <code>switch (customerTier)</code> o <code>if (region)</code> cada vez que negocio añade una regla.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — lógica de descuento centralizada con condicionales</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">SWITCH QUE CRECE SIN CONTROL</div>
+    <pre><code>public final class QuoteService {
+
+    public Money discount(Money subtotal, Customer customer) {
+        return switch (customer.tier()) {
+            case VIP -&gt; subtotal.multiply(0.85);
+            case EMPLOYEE -&gt; subtotal.multiply(0.90);
+            default -&gt; seasonalPercentOff(subtotal, customer.region());
+        };
+    }
+
+    private Money seasonalPercentOff(Money subtotal, Region region) {
+        if (region == Region.APAC &amp;&amp; isHolidaySeason()) return subtotal.multiply(0.93);
+        return subtotal;
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Strategy — una política por clase, selección en un solo sitio</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ESTRATEGIA INTERCAMBIABLE</div>
+    <pre><code>public interface PricingStrategy {
+    Money discounted(Money subtotal, Customer customer);
+}
+
+public final class VipPricing implements PricingStrategy {
+    public Money discounted(Money subtotal, Customer c) {
+        return subtotal.multiply(0.85);
+    }
+}
+
+public final class EmployeePricing implements PricingStrategy {
+    public Money discounted(Money subtotal, Customer c) {
+        return subtotal.multiply(0.90);
+    }
+}
+
+public final class SeasonalRegionalPricing implements PricingStrategy {
+    public Money discounted(Money subtotal, Customer c) {
+        if (c.region() == Region.APAC &amp;&amp; isHolidaySeason()) return subtotal.multiply(0.93);
+        return subtotal;
+    }
+    private boolean isHolidaySeason() { return true; }
+}
+
+public final class QuoteService {
+    private final PricingStrategy pricing;
+
+    public QuoteService(PricingStrategy pricing) {
+        this.pricing = pricing;
+    }
+
+    public Money discount(Money subtotal, Customer customer) {
+        return pricing.discounted(subtotal, customer);
+    }
+}</code></pre>
+  </div>
+
+  <!-- State -->
+  <div class="section-header gof-pattern-gap" id="state"><span class="section-num">02</span><span class="section-title-text">State</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Permite que un objeto altere su comportamiento cuando su estado interno cambia; parece cambiar de clase. Sustituye condicionales masivos sobre el estado por polimorfismo.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Métodos como <code>ship()</code> con <code>if (status == PAID)</code> y transiciones ilegales detectadas tarde o con excepciones genéricas.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — transiciones mezcladas en la entidad</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ORDEN CON ENUM Y MÉTODOS QUE MIRAN EL ESTADO</div>
+    <pre><code>public final class Order {
+
+    public enum Status { DRAFT, PAID, SHIPPED }
+    private Status status = Status.DRAFT;
+
+    public void pay() {
+        if (status != Status.DRAFT) throw new IllegalStateException();
+        status = Status.PAID;
+    }
+
+    public void ship() {
+        if (status != Status.PAID) throw new IllegalStateException();
+        status = Status.SHIPPED;
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con State — cada estado encapsula qué operaciones son válidas</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">OBJETO CONTEXTO + ESTADOS POLIMÓRFICOS</div>
+    <pre><code>public interface OrderState {
+    OrderState pay(OrderContext ctx);
+    OrderState ship(OrderContext ctx);
+}
+
+public final class DraftState implements OrderState {
+    public OrderState pay(OrderContext ctx) { return new PaidState(); }
+    public OrderState ship(OrderContext ctx) {
+        throw new IllegalStateException("No enviar en borrador");
+    }
+}
+
+public final class PaidState implements OrderState {
+    public OrderState pay(OrderContext ctx) {
+        throw new IllegalStateException("Ya pagada");
+    }
+    public OrderState ship(OrderContext ctx) { return new ShippedState(); }
+}
+
+public final class ShippedState implements OrderState {
+    public OrderState pay(OrderContext ctx) {
+        throw new IllegalStateException("Ya enviada");
+    }
+    public OrderState ship(OrderContext ctx) {
+        throw new IllegalStateException("Ya enviada");
+    }
+}
+
+public final class OrderContext {
+    private OrderState state = new DraftState();
+
+    public void pay() { state = state.pay(this); }
+    public void ship() { state = state.ship(this); }
+    public OrderState state() { return state; }
+}</code></pre>
+  </div>
+
+  <!-- Observer -->
+  <div class="section-header gof-pattern-gap" id="observer"><span class="section-num">03</span><span class="section-title-text">Observer</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Define una dependencia uno-a-muchos entre objetos: cuando el sujeto cambia, notifica a todos los observadores registrados sin acoplarlos al emisor del evento.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Tras crear un pedido, el servicio llama en línea a correo, analytics, antifraude y Slack; cada nuevo canal modifica la misma clase.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — orquestación rígida en el agregado</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">DOMINIO CONOCE TODOS LOS EFECTOS SECUNDARIOS</div>
+    <pre><code>public final class OrderService {
+
+    public void place(Order order) {
+        orders.save(order);
+        emailClient.sendOrderConfirmation(order.customerEmail());
+        analytics.track("order_placed", order.id());
+        fraudScoring.review(order);
+        slack.notifyWarehouse(order.id());
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Observer — publicar evento; reacciones desacopladas</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">SUJETO + LISTENERS</div>
+    <pre><code>public interface OrderListener {
+    void onOrderPlaced(Order order);
+}
+
+public final class OrderEventPublisher {
+    private final List&lt;OrderListener&gt; listeners = new CopyOnWriteArrayList&lt;&gt;();
+
+    public void subscribe(OrderListener l) { listeners.add(l); }
+
+    public void publishPlaced(Order order) {
+        for (OrderListener l : listeners) l.onOrderPlaced(order);
+    }
+}
+
+public final class OrderService {
+
+    private final OrderRepository orders;
+    private final OrderEventPublisher events;
+
+    public OrderService(OrderRepository orders, OrderEventPublisher events) {
+        this.orders = orders;
+        this.events = events;
+    }
+
+    public void place(Order order) {
+        orders.save(order);
+        events.publishPlaced(order);
+    }
+}
+
+// Registro al arranque: publisher.subscribe(o -&gt; emailClient.send...); etc.</code></pre>
+  </div>
+
+  <!-- Command -->
+  <div class="section-header gof-pattern-gap" id="command"><span class="section-num">04</span><span class="section-title-text">Command</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Encapsula una solicitud como objeto, permitiendo parametrizar clientes con colas, registros, operaciones reversibles o ejecución diferida.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Un worker procesa “mensajes” genéricos con un <code>switch (type)</code> enorme; no hay trazabilidad ni reutilización de la acción como objeto.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — dispatcher con switch por tipo de trabajo</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">PROCESADOR PROCEDIMENTAL</div>
+    <pre><code>public final class JobWorker {
+
+    public void handle(InboxMessage msg) {
+        switch (msg.type()) {
+            case "CREATE_INVOICE" -&gt; invoiceService.create(msg.payload());
+            case "REFUND" -&gt; payments.refund(msg.payload());
+            default -&gt; throw new IllegalArgumentException(msg.type());
+        }
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Command — cada trabajo es un objeto ejecutable</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">COMANDO + COLA / INVOKER</div>
+    <pre><code>public interface JobCommand {
+    void run();
+}
+
+public final class CreateInvoiceCommand implements JobCommand {
+    private final InvoiceService invoices;
+    private final String payload;
+
+    public CreateInvoiceCommand(InvoiceService invoices, String payload) {
+        this.invoices = invoices;
+        this.payload = payload;
+    }
+    public void run() { invoices.create(payload); }
+}
+
+public final class RefundCommand implements JobCommand {
+    private final PaymentService payments;
+    private final String payload;
+
+    public RefundCommand(PaymentService payments, String payload) {
+        this.payments = payments;
+        this.payload = payload;
+    }
+    public void run() { payments.refund(payload); }
+}
+
+public final class JobWorker {
+
+    public void handle(JobCommand command) {
+        command.run(); // aquí podrías envolver retry, métricas, auditoría...
+    }
+}</code></pre>
+  </div>
+
+  <!-- Template Method -->
+  <div class="section-header gof-pattern-gap" id="template-method"><span class="section-num">05</span><span class="section-title-text">Template Method</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Define el esqueleto de un algoritmo en una operación, delegando algunos pasos a subclases. Las subclases redefinen pasos sin cambiar la estructura del flujo.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Varios jobs de importación copian el mismo flujo (abrir, parsear, validar, guardar) con pequeñas variaciones en cada copia.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — copiar-pegar el pipeline con diferencias mínimas</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">DUPLICACIÓN DEL FLUJO</div>
+    <pre><code>public final class CsvUserImportJob {
+    public void run(Path file) {
+        var lines = Files.readAllLines(file);
+        for (String line : lines) {
+            var row = line.split(",");
+            if (row.length &lt; 3) throw new IllegalArgumentException();
+            users.save(new User(row[0], row[1], row[2]));
+        }
+    }
+}
+
+public final class JsonUserImportJob {
+    public void run(Path file) {
+        String json = Files.readString(file);
+        // parse JSON array...
+        for (/* each object */) {
+            // validar campos...
+            users.save(/* ... */);
+        }
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Template Method — estructura fija, ganchos variables</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">CLASE ABSTRACTA CON PASOS FINALES Y HOOKS</div>
+    <pre><code>public abstract class UserImportJob {
+
+    private final UserRepository users;
+
+    protected UserImportJob(UserRepository users) { this.users = users; }
+
+    public final void run(Path file) throws IOException {
+        List&lt;String&gt; rawRows = readRaw(file);
+        for (String raw : rawRows) {
+            UserRow row = parseRow(raw);
+            validate(row);
+            users.save(toUser(row));
+        }
+        onComplete();
+    }
+
+    protected abstract List&lt;String&gt; readRaw(Path file) throws IOException;
+    protected abstract UserRow parseRow(String raw);
+    protected void validate(UserRow row) { /* por defecto no-op */ }
+    protected abstract User toUser(UserRow row);
+    protected void onComplete() { }
+
+    protected record UserRow(String id, String email, String name) {}
+}
+
+public final class CsvUserImportJob extends UserImportJob {
+    public CsvUserImportJob(UserRepository users) { super(users); }
+
+    protected List&lt;String&gt; readRaw(Path file) throws IOException {
+        return Files.readAllLines(file);
+    }
+    protected UserRow parseRow(String line) {
+        var p = line.split(",");
+        if (p.length &lt; 3) throw new IllegalArgumentException(line);
+        return new UserRow(p[0], p[1], p[2]);
+    }
+    protected User toUser(UserRow r) { return new User(r.id(), r.email(), r.name()); }
+}</code></pre>
+  </div>
+
+  <aside class="gof-callout gof-pattern-gap" aria-label="Relación entre Strategy, State y Template Method">
+    <div class="gof-callout__kicker">Comparar patrones</div>
+    <p class="gof-callout__body"><em>Strategy</em> inyecta algoritmos desde fuera: el contexto no conoce la jerarquía de variantes. <em>State</em> reparte el comportamiento según el estado <strong>de la misma entidad</strong> y sus transiciones.</p>
+    <p class="gof-callout__body"><em>Template Method</em> fija el <strong>orden de los pasos</strong> en una clase base; las subclases rellenan ganchos. Si ese orden también debe cambiar en runtime, suele encajar mejor <strong>Strategy</strong> (o composición) que un método plantilla rígido.</p>
+  </aside>
+
+</div>
+</div>
+<div class="footer">
+  <span class="footer-text">GOF · COMPORTAMIENTO</span>
+  <div class="footer-meta-row">
+    <a class="module-link is-prev" href="estructurales.html"><span class="ml-text">← Estructurales</span></a>
+    <span class="footer-count">5 PATRONES</span>
+  </div>
+</div>
+</body>
+</html>

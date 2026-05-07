@@ -11,6 +11,25 @@
   body.dn-testing .section-num { color: #F472B6; }
   body.dn-testing .footer-count { color: #F472B6; }
   body.dn-testing .aws-logo { color: #F9A8D4; border-color: rgba(244,114,182,.35); background: rgba(244,114,182,.08); }
+  .ts-callout {
+    border: 1px solid rgba(244,114,182,.3);
+    background: rgba(244,114,182,.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: #FBCFE8;
+    margin-top: 12px;
+  }
+  .ts-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #8899B8;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .ts-list li { margin-bottom: 6px; }
+  .ts-list li:last-child { margin-bottom: 0; }
 </style>
 </head>
 <body class="dn-infographic dn-testing">
@@ -29,17 +48,62 @@
   </div>
 </div>
 <div class="body">
+  <div class="section-header"><span class="section-num">00</span><span class="section-title-text">Marco de calidad</span><div class="section-line"></div></div>
+  <div class="split-card">
+    <div class="split-half">
+      <div class="card-title">Objetivo real del testing</div>
+      <ul class="ts-list">
+        <li>Detectar riesgos temprano, no “subir porcentaje”.</li>
+        <li>Habilitar cambios seguros y frecuentes.</li>
+        <li>Documentar comportamiento esperado del sistema.</li>
+      </ul>
+    </div>
+    <div class="split-half">
+      <div class="card-title">Errores de enfoque comunes</div>
+      <ul class="ts-list">
+        <li>Medir éxito solo por cobertura de líneas.</li>
+        <li>Depender de e2e para validar lógica de negocio.</li>
+        <li>No tratar tests flaky como incidentes de calidad.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="ts-callout"><strong>Regla práctica:</strong> cada bug en producción debería terminar en al menos una prueba nueva que impida su reaparición.</div>
+
   <div class="section-header"><span class="section-num">01</span><span class="section-title-text">Pirámide y tipos de prueba</span><div class="section-line"></div></div>
   <div class="cards-grid g3">
     <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">🔺</div><div><div class="card-num">01</div><div class="card-title">Pirámide de testing</div></div></div><div class="card-desc">Más pruebas unitarias, menos e2e. Optimiza costo, velocidad y estabilidad del pipeline.</div></div>
     <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">🧪</div><div><div class="card-num">02</div><div class="card-title">Unit tests</div></div></div><div class="card-desc">Validan reglas de negocio en aislamiento. Son la red más rápida para detectar regresiones.</div></div>
     <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">🧩</div><div><div class="card-num">03</div><div class="card-title">Integration tests</div></div></div><div class="card-desc">Validan contratos entre módulos y adaptadores (BD, colas, HTTP), donde fallan muchas suposiciones.</div></div>
   </div>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">EJEMPLO — TEST DE INTEGRACIÓN QUE SÍ APORTA (JAVA)</div>
+    <pre><code>@Test
+void shouldPersistOrderAndRecoverIt() {
+    OrderRepository repository = new JpaOrderRepository(entityManager);
+    Order order = Order.create(customerId, List.of(item("SKU-1", 2)));
+
+    repository.save(order);
+    Optional&lt;Order&gt; loaded = repository.findById(order.id());
+
+    assertTrue(loaded.isPresent());
+    assertEquals(order.total(), loaded.get().total());
+}</code></pre>
+  </div>
 
   <div class="section-header"><span class="section-num">02</span><span class="section-title-text">Diseño de pruebas efectivas</span><div class="section-line"></div></div>
   <div class="cards-grid g2">
     <div class="card c-amber"><div class="card-header"><div class="card-icon icon-amber">🎯</div><div><div class="card-num">04</div><div class="card-title">Una intención por test</div></div></div><div class="card-desc">Cada prueba debe fallar por una sola razón. Nombres explícitos ayudan a diagnosticar rápido.</div></div>
     <div class="card c-amber"><div class="card-header"><div class="card-icon icon-amber">📐</div><div><div class="card-num">05</div><div class="card-title">Arrange-Act-Assert</div></div></div><div class="card-desc">Estructura predecible: prepara, ejecuta y verifica. Mejora legibilidad y mantenimiento del suite.</div></div>
+  </div>
+  <div class="split-card mt-10">
+    <div class="split-half">
+      <div class="card-title">MAL</div>
+      <div class="card-desc">Test largo con múltiples asserts sobre cosas no relacionadas; cuando falla, no sabes qué rompió.</div>
+    </div>
+    <div class="split-half">
+      <div class="card-title">BIEN</div>
+      <div class="card-desc">Un comportamiento por test, nombre expresivo y datos mínimos para explicar el caso.</div>
+    </div>
   </div>
 
   <div class="section-header"><span class="section-num">03</span><span class="section-title-text">Métricas y cobertura</span><div class="section-line"></div></div>
@@ -48,13 +112,20 @@
     <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">⏱</div><div><div class="card-num">07</div><div class="card-title">Feedback rápido</div></div></div><div class="card-desc">Prioriza tests que corren en segundos para mantener ritmo de desarrollo y evitar bypass de CI.</div></div>
     <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">🧨</div><div><div class="card-num">08</div><div class="card-title">Flaky tests</div></div></div><div class="card-desc">Un test inestable cuesta confianza. Aísla dependencias de tiempo, red y orden de ejecución.</div></div>
   </div>
+  <div class="section-header"><span class="section-num">04</span><span class="section-title-text">Checklist de suite sana</span><div class="section-line"></div></div>
+  <div class="cards-grid g2">
+    <div class="card c-blue"><div class="card-header"><div class="card-icon icon-blue">✅</div><div><div class="card-num">PIPELINE</div><div class="card-title">Feedback en minutos</div></div></div><div class="card-desc">La suite principal debe correr rápido para no desincentivar commits pequeños.</div></div>
+    <div class="card c-blue"><div class="card-header"><div class="card-icon icon-blue">✅</div><div><div class="card-num">CONFIANZA</div><div class="card-title">Cero flaky sin tratar</div></div></div><div class="card-desc">Un test inestable es deuda de calidad; se corrige o se desactiva temporalmente con ticket.</div></div>
+    <div class="card c-blue"><div class="card-header"><div class="card-icon icon-blue">✅</div><div><div class="card-num">RELEVANCIA</div><div class="card-title">Casos de riesgo cubiertos</div></div></div><div class="card-desc">Prioriza reglas críticas de negocio, límites y contratos con sistemas externos.</div></div>
+    <div class="card c-blue"><div class="card-header"><div class="card-icon icon-blue">✅</div><div><div class="card-num">MANTENIBILIDAD</div><div class="card-title">Tests legibles</div></div></div><div class="card-desc">Si cuesta entender una prueba, también costará mantenerla cuando cambie el sistema.</div></div>
+  </div>
 </div>
 </div>
 <div class="footer">
   <span class="footer-text">TESTING · PARTE 1 DE 2 · FUNDAMENTOS</span>
   <div class="footer-meta-row">
-    <span class="footer-count">8 CONCEPTOS</span>
-    <a class="module-link" href="tdd.html"><span class="ml-text">Parte 2 →</span></a>
+    <span class="footer-count">12 CONCEPTOS</span>
+    <a class="module-link is-next" href="tdd.html"><span class="ml-text">Siguiente: Parte 2 — TDD en práctica →</span></a>
   </div>
 </div>
 </body>

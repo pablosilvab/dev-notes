@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patrones Creacionales — GoF</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+<style>
+  body.dn-gof .week-badge { background: #B45309; color: #0A0E1A; }
+  body.dn-gof .header h1 span { color: #FBBF24; }
+  body.dn-gof .section-num { color: #FBBF24; }
+  body.dn-gof .footer-count { color: #FBBF24; }
+  body.dn-gof .aws-logo { color: #FCD34D; border-color: rgba(251,191,36,.35); background: rgba(180,83,9,.10); }
+  .gof-pattern-gap { margin-top: 32px; }
+</style>
+</head>
+<body class="dn-infographic dn-gof">
+<div class="page-shell">
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">GOF · CREACIONALES</div>
+        <h1>Patrones<br><span>Creacionales</span></h1>
+        <p class="header-sub">Cada patrón en su propia sección: idea, cuándo se nota el problema y refactor en Java</p>
+      </div>
+    </div>
+    <div class="aws-logo">FOCO · CREACIÓN</div>
+  </div>
+</div>
+<div class="body">
+
+  <!-- Factory Method -->
+  <div class="section-header" id="factory-method"><span class="section-num">01</span><span class="section-title-text">Factory Method</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Define una operación de creación (<em>factory method</em>) y delega en subclases la decisión de qué clase concreta instanciar. El cliente depende del producto abstracto, no del <code>new</code> concreto.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Cada vez que añades un tipo exportable (CSV, XLSX, Parquet…), el caso de uso o el menú de UI acumula <code>switch</code> o <code>if</code> sobre strings y conoce nombres de clases concretas.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — el servicio elige la implementación con condicionales</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ACOPLAMIENTO A CLASES CONCRETAS</div>
+    <pre><code>public final class ReportExportService {
+
+    public byte[] export(String format, ReportData data) {
+        if ("csv".equalsIgnoreCase(format)) {
+            return new CsvReportExporter().export(data);
+        }
+        if ("pdf".equalsIgnoreCase(format)) {
+            return new PdfReportExporter().export(data);
+        }
+        throw new IllegalArgumentException("Formato no soportado: " + format);
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Factory Method — la familia de creadores encapsula el <code>new</code></p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">CREADOR ABSTRACTO + SUBCLASES</div>
+    <pre><code>public interface ReportExporter {
+    byte[] export(ReportData data);
+}
+
+public abstract class ReportExporterFactory {
+    public final byte[] exportReport(ReportData data) {
+        ReportExporter exporter = createExporter();
+        return exporter.export(data);
+    }
+    protected abstract ReportExporter createExporter();
+}
+
+public final class CsvExporterFactory extends ReportExporterFactory {
+    @Override protected ReportExporter createExporter() {
+        return new CsvReportExporter();
+    }
+}
+
+public final class PdfExporterFactory extends ReportExporterFactory {
+    @Override protected ReportExporter createExporter() {
+        return new PdfReportExporter();
+    }
+}</code></pre>
+  </div>
+
+  <!-- Abstract Factory -->
+  <div class="section-header gof-pattern-gap" id="abstract-factory"><span class="section-num">02</span><span class="section-title-text">Abstract Factory</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Proporciona una interfaz para crear <strong>familias</strong> de objetos relacionados (p. ej. almacenamiento + cola + identidad) sin fijar clases concretas, para que un entorno (AWS, GCP, local) sea sustituible de una vez.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Mezclas en el mismo flujo <code>S3Client</code>, <code>SqsClient</code> y credenciales de AWS con ramas que a veces llaman a emuladores locales: combinaciones inválidas y tests frágiles.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — el caso de uso ensambla piezas de distintos proveedores a mano</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">FAMILIA INCONSISTENTE / DIFÍCIL DE CAMBIAR</div>
+    <pre><code>public final class IngestionPipeline {
+
+    public void run(MessagePayload payload) {
+        var storage = new AwsS3BlobStore();      // AWS
+        var queue = new GcpPubSubQueue();        // GCP mezclado
+        var idp = new AwsCognitoIdp();           // otra vez AWS
+        byte[] body = storage.read(payload.blobKey());
+        queue.publish("processed", body);
+        idp.assertUserActive(payload.userId());
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Abstract Factory — una fábrica entrega toda la familia coherente</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">INTERFAZ DE FAMILIA + IMPLEMENTACIÓN POR ENTORNO</div>
+    <pre><code>public interface CloudToolkitFactory {
+    BlobStore blobStore();
+    MessageQueue messageQueue();
+    IdentityProvider identityProvider();
+}
+
+public final class AwsToolkitFactory implements CloudToolkitFactory {
+    public BlobStore blobStore() { return new AwsS3BlobStore(); }
+    public MessageQueue messageQueue() { return new AwsSqsQueue(); }
+    public IdentityProvider identityProvider() { return new AwsCognitoIdp(); }
+}
+
+public final class IngestionPipeline {
+
+    private final CloudToolkitFactory cloud;
+
+    public IngestionPipeline(CloudToolkitFactory cloud) {
+        this.cloud = cloud;
+    }
+
+    public void run(MessagePayload payload) {
+        BlobStore storage = cloud.blobStore();
+        MessageQueue queue = cloud.messageQueue();
+        IdentityProvider idp = cloud.identityProvider();
+        byte[] body = storage.read(payload.blobKey());
+        queue.publish("processed", body);
+        idp.assertUserActive(payload.userId());
+    }
+}</code></pre>
+  </div>
+
+  <!-- Builder -->
+  <div class="section-header gof-pattern-gap" id="builder"><span class="section-num">03</span><span class="section-title-text">Builder</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Separa la <strong>construcción</strong> de un objeto complejo de su representación, permitiendo pasos opcionales, validación al final y lectura fluida frente a constructores enormes.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Objetos con muchos parámetros opcionales (<code>null</code>, <code>false</code>, <code>0</code> como sentinela) o constructores de 12 argumentos que nadie recuerda en qué orden van.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — constructor o “mega-setter” ilegible</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">PARÁMETROS OPCIONALES COMO CAOS</div>
+    <pre><code>public final class SearchRequest {
+
+    public SearchRequest(String query, int page, int size,
+                         String sort, boolean fuzzy, String tenant,
+                         Duration timeout, Map&lt;String, String&gt; filters) {
+        // ¿qué pasa si page &lt; 0? ¿sort puede ser null?
+    }
+}
+
+// Uso:
+var req = new SearchRequest("invoice", 0, 20, "date", true, "acme",
+        Duration.ofSeconds(5), Map.of());</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Builder — pasos nombrados y validación centralizada</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">BUILDER FLUIDO</div>
+    <pre><code>public final class SearchRequest {
+    private final String query;
+    private final int page;
+    private final int size;
+    private final String sort;
+    private final boolean fuzzy;
+    private final String tenant;
+    private final Duration timeout;
+    private final Map&lt;String, String&gt; filters;
+
+    private SearchRequest(Builder b) {
+        if (b.query == null || b.query.isBlank())
+            throw new IllegalArgumentException("query requerido");
+        if (b.page &lt; 0 || b.size &lt;= 0)
+            throw new IllegalArgumentException("paginación inválida");
+        this.query = b.query;
+        this.page = b.page;
+        this.size = b.size;
+        this.sort = b.sort != null ? b.sort : "relevance";
+        this.fuzzy = b.fuzzy;
+        this.tenant = Objects.requireNonNull(b.tenant, "tenant");
+        this.timeout = b.timeout != null ? b.timeout : Duration.ofSeconds(3);
+        this.filters = Map.copyOf(b.filters);
+    }
+
+    public static Builder builder() { return new Builder(); }
+
+    public static final class Builder {
+        private String query;
+        private int page;
+        private int size = 20;
+        private String sort;
+        private boolean fuzzy;
+        private String tenant;
+        private Duration timeout;
+        private final Map&lt;String, String&gt; filters = new LinkedHashMap&lt;&gt;();
+
+        public Builder query(String q) { this.query = q; return this; }
+        public Builder page(int p) { this.page = p; return this; }
+        public Builder fuzzy(boolean f) { this.fuzzy = f; return this; }
+        public Builder tenant(String t) { this.tenant = t; return this; }
+        public Builder filter(String k, String v) { filters.put(k, v); return this; }
+
+        public SearchRequest build() { return new SearchRequest(this); }
+    }
+}</code></pre>
+  </div>
+
+  <!-- Singleton -->
+  <div class="section-header gof-pattern-gap" id="singleton"><span class="section-num">04</span><span class="section-title-text">Singleton</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Garantiza una única instancia de una clase y un punto de acceso global a ella. En aplicaciones modernas suele sustituirse por <strong>inyección de dependencias</strong>; el patrón sigue siendo útil para recursos verdaderamente únicos (p. ej. configuración inmutable).</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Estado mutable global, tests que dependen del orden de ejecución, o <code>getInstance()</code> oculto dentro de capas de dominio que deberían ser puros.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — mutable estático accesible desde cualquier sitio</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ESTADO GLOBAL Y DIFÍCIL DE RESETEAR EN TESTS</div>
+    <pre><code>public final class FeatureFlags {
+
+    private static FeatureFlags instance;
+    private final Map&lt;String, Boolean&gt; flags = new ConcurrentHashMap&lt;&gt;();
+
+    public static synchronized FeatureFlags getInstance() {
+        if (instance == null) instance = new FeatureFlags();
+        return instance;
+    }
+
+    public void set(String key, boolean on) { flags.put(key, on); }
+    public boolean isOn(String key) { return flags.getOrDefault(key, false); }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Singleton disciplinado — enum o instancia única inyectada</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ENUM (THREAD-SAFE) O BEAN ÚNICO EN EL CONTENEDOR</div>
+    <pre><code>/** Preferido cuando el singleton es realmente inmutable de aplicación */
+public enum AppMetadata {
+    INSTANCE;
+
+    private final String buildId = readBuildId();
+
+    public String buildId() { return buildId; }
+
+    private static String readBuildId() {
+        return System.getenv().getOrDefault("BUILD_ID", "dev");
+    }
+}
+
+/** Alternativa: una sola instancia creada al arranque y pasada por constructor */
+public final class FeatureFlags {
+    private final Map&lt;String, Boolean&gt; flags;
+
+    public FeatureFlags(Map&lt;String, Boolean&gt; initial) {
+        this.flags = new ConcurrentHashMap&lt;&gt;(initial);
+    }
+
+    public boolean isOn(String key) { return flags.getOrDefault(key, false); }
+}</code></pre>
+  </div>
+  <aside class="gof-callout gof-callout--after-code" aria-label="Nota sobre singleton en aplicaciones reales">
+    <div class="gof-callout__kicker">Nota práctica</div>
+    <p class="gof-callout__body">Para <strong>banderas en runtime</strong>, muchos equipos prefieren un bean <code>@ConfigurationProperties</code> de Spring o un <strong>cliente remoto</strong> (feature store) en lugar de montar un singleton manual en dominio.</p>
+  </aside>
+
+</div>
+</div>
+<div class="footer">
+  <span class="footer-text">GOF · CREACIONALES</span>
+  <div class="footer-meta-row">
+    <a class="module-link is-prev" href="intro.html"><span class="ml-text">← Intro</span></a>
+    <span class="footer-count">4 PATRONES</span>
+    <a class="module-link is-next" href="estructurales.html"><span class="ml-text">Siguiente: Estructurales →</span></a>
+  </div>
+</div>
+</body>
+</html>

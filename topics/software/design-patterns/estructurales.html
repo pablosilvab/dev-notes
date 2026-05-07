@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patrones Estructurales — GoF</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+<style>
+  body.dn-gof .week-badge { background: #B45309; color: #0A0E1A; }
+  body.dn-gof .header h1 span { color: #FBBF24; }
+  body.dn-gof .section-num { color: #FBBF24; }
+  body.dn-gof .footer-count { color: #FBBF24; }
+  body.dn-gof .aws-logo { color: #FCD34D; border-color: rgba(251,191,36,.35); background: rgba(180,83,9,.10); }
+  .gof-pattern-gap { margin-top: 32px; }
+</style>
+</head>
+<body class="dn-infographic dn-gof">
+<div class="page-shell">
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">GOF · ESTRUCTURALES</div>
+        <h1>Patrones<br><span>Estructurales</span></h1>
+        <p class="header-sub">Una sección por patrón: definición, olores y refactor en Java</p>
+      </div>
+    </div>
+    <div class="aws-logo">FOCO · COMPOSICIÓN</div>
+  </div>
+</div>
+<div class="body">
+
+  <!-- Adapter -->
+  <div class="section-header" id="adapter"><span class="section-num">01</span><span class="section-title-text">Adapter</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Convierte la interfaz de una clase en otra que el cliente espera. Actúa como traductor entre tu dominio y una API legada o de terceros sin contaminar el núcleo con sus tipos.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Servicios de dominio importan paquetes del SDK del proveedor y llaman métodos con nombres y unidades que no encajan con tu lenguaje ubicuo.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — el dominio habla el dialecto del proveedor</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ACOPLAMIENTO DIRECTO AL SDK LEGADO</div>
+    <pre><code>/** Nuestro dominio */
+public final class BillingService {
+    public void chargeCustomer(Money amount, CustomerId id) {
+        // LegacyChargeApi usa centavos long y strings raros
+        var api = new com.legacy.LegacyChargeApi();
+        api.perform_charge(id.value().replace("-", ""), amount.cents());
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Adapter — el dominio solo ve tu puerto</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ADAPTADOR AISLADO</div>
+    <pre><code>public interface PaymentGateway {
+    void charge(CustomerId id, Money amount);
+}
+
+public final class LegacyPaymentAdapter implements PaymentGateway {
+    private final com.legacy.LegacyChargeApi legacy = new com.legacy.LegacyChargeApi();
+
+    @Override
+    public void charge(CustomerId id, Money amount) {
+        String legacyId = id.value().replace("-", "");
+        legacy.perform_charge(legacyId, amount.cents());
+    }
+}
+
+public final class BillingService {
+    private final PaymentGateway payments;
+
+    public BillingService(PaymentGateway payments) {
+        this.payments = payments;
+    }
+
+    public void chargeCustomer(Money amount, CustomerId id) {
+        payments.charge(id, amount);
+    }
+}</code></pre>
+  </div>
+
+  <!-- Facade -->
+  <div class="section-header gof-pattern-gap" id="facade"><span class="section-num">02</span><span class="section-title-text">Facade</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Ofrece una interfaz unificada y de alto nivel a un subsistema complejo (varias clases, reglas de orden, transacciones). No oculta el subsistema para quien lo necesita detallado; simplifica el caso de uso frecuente.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Cada controlador HTTP repite la misma secuencia de cinco servicios, mismas validaciones y mismo manejo de errores.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — orquestación duplicada en cada entrada</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">CONTROLLER CONOCE DEMASIADOS PASOS</div>
+    <pre><code>public final class CheckoutController {
+
+    public void post(CheckoutRequest req) {
+        inventory.reserve(req.sku(), req.qty());
+        pricing.applyCoupons(req.userId(), req.couponCodes());
+        var payment = payments.authorize(req.cardToken(), req.total());
+        shipments.schedule(req.address(), req.sku(), req.qty());
+        notifications.sendOrderConfirmation(req.email(), req.orderId());
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Facade — un solo punto de entrada de aplicación</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">FACHADA DE CASO DE USO</div>
+    <pre><code>public final class CheckoutFacade {
+
+    private final InventoryService inventory;
+    private final PricingService pricing;
+    private final PaymentService payments;
+    private final ShipmentService shipments;
+    private final NotificationService notifications;
+
+    public CheckoutFacade(/* ... */) { /* inyectar */ }
+
+    public CheckoutResult checkout(CheckoutRequest req) {
+        inventory.reserve(req.sku(), req.qty());
+        pricing.applyCoupons(req.userId(), req.couponCodes());
+        var payment = payments.authorize(req.cardToken(), req.total());
+        shipments.schedule(req.address(), req.sku(), req.qty());
+        notifications.sendOrderConfirmation(req.email(), req.orderId());
+        return new CheckoutResult(payment.authorizationId());
+    }
+}
+
+public final class CheckoutController {
+    private final CheckoutFacade checkout;
+
+    public void post(CheckoutRequest req) {
+        checkout.checkout(req);
+    }
+}</code></pre>
+  </div>
+
+  <!-- Decorator -->
+  <div class="section-header gof-pattern-gap" id="decorator"><span class="section-num">03</span><span class="section-title-text">Decorator</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Adjunta responsabilidades adicionales a un objeto de forma dinámica y transparente. Alternativa flexible a subclases por cada combinación (logging + métricas + caché).</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Explosión de subclases <code>CachedLoggedMetricsUserRepository</code> o copiar-pegar el mismo <code>if (cache)</code> en cada método.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — herencia para cada “capa” transversal</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">COMBINATORIA DE SUBCLASES</div>
+    <pre><code>public interface UserRepository { Optional&lt;User&gt; findById(long id); }
+
+public class LoggingUserRepository implements UserRepository { /* ... */ }
+public class CachedLoggingUserRepository extends LoggingUserRepository { /* ... */ }
+// ¿Y si solo quieres caché sin logging? La herencia no combina bien.</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Decorator — composición en cadena sobre la misma interfaz</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">DECORADORES APILABLES</div>
+    <pre><code>public interface UserReader {
+    Optional&lt;User&gt; findById(long id);
+}
+
+public final class DbUserReader implements UserReader {
+    public Optional&lt;User&gt; findById(long id) { /* JDBC */ return Optional.empty(); }
+}
+
+public final class LoggingUserReader implements UserReader {
+    private final UserReader delegate;
+    public LoggingUserReader(UserReader delegate) { this.delegate = delegate; }
+
+    public Optional&lt;User&gt; findById(long id) {
+        System.out.println("findById " + id);
+        return delegate.findById(id);
+    }
+}
+
+public final class CachingUserReader implements UserReader {
+    private final UserReader delegate;
+    private final Map&lt;Long, User&gt; cache = new ConcurrentHashMap&lt;&gt;();
+
+    public CachingUserReader(UserReader delegate) { this.delegate = delegate; }
+
+    public Optional&lt;User&gt; findById(long id) {
+        return Optional.ofNullable(cache.computeIfAbsent(id,
+            k -&gt; delegate.findById(k).orElse(null)));
+    }
+}
+
+// Montaje: new CachingUserReader(new LoggingUserReader(new DbUserReader()))</code></pre>
+  </div>
+
+  <!-- Proxy -->
+  <div class="section-header gof-pattern-gap" id="proxy"><span class="section-num">04</span><span class="section-title-text">Proxy</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Proporciona un sustituto que controla el acceso al objeto real: carga perezosa, permisos, contención de coste, reintentos, etc. La interfaz vista por el cliente es la misma que la del sujeto real.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Cada llamante repite comprobaciones de permiso o lógica de “solo cargar si hace falta” antes de usar el servicio caro.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — control disperso antes de cada uso</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">VALIDACIÓN Y LAZY EN CADA CLIENTE</div>
+    <pre><code>public final class ReportController {
+
+    public byte[] monthly(long userId, YearMonth month) {
+        if (!access.canReadReports(userId))
+            throw new ForbiddenException();
+        // generar PDF es caro — algunos callers olvidan el guard
+        return heavyReportService.buildMonthlyPdf(userId, month);
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Proxy — un único lugar intercepta el acceso</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">PROXY DE CONTROL DE ACCESO (Y LAZY SI HACE FALTA)</div>
+    <pre><code>public interface MonthlyReportService {
+    byte[] buildMonthlyPdf(long userId, YearMonth month);
+}
+
+public final class HeavyMonthlyReportService implements MonthlyReportService {
+    public byte[] buildMonthlyPdf(long userId, YearMonth month) {
+        return /* render costoso */;
+    }
+}
+
+public final class SecuredMonthlyReportProxy implements MonthlyReportService {
+
+    private final AccessControl access;
+    private final MonthlyReportService delegate;
+
+    public SecuredMonthlyReportProxy(AccessControl access, MonthlyReportService delegate) {
+        this.access = access;
+        this.delegate = delegate;
+    }
+
+    public byte[] buildMonthlyPdf(long userId, YearMonth month) {
+        if (!access.canReadReports(userId))
+            throw new ForbiddenException();
+        return delegate.buildMonthlyPdf(userId, month);
+    }
+}</code></pre>
+  </div>
+
+  <!-- Composite -->
+  <div class="section-header gof-pattern-gap" id="composite"><span class="section-num">05</span><span class="section-title-text">Composite</span><div class="section-line"></div></div>
+  <div class="solid-def">
+    <div class="solid-def__label">DEFINICIÓN</div>
+    <p>Compone objetos en estructuras de árbol para representar jerarquías parte-todo. Los clientes tratan hojas y compuestos de forma uniforme mediante una interfaz común.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><strong>Cuándo se rompe.</strong> Listas mezcladas de “carpetas” e “ítems” con <code>instanceof</code> y bucles que duplican lógica en cada nivel.</p>
+  </div>
+  <p class="solid-compare-title">Sin patrón — ramas con instanceof y duplicación</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">TRATAMIENTO DESIGUAL DE NODOS</div>
+    <pre><code>public void renderSidebar(List&lt;Object&gt; nodes) {
+    for (Object n : nodes) {
+        if (n instanceof MenuSection section) {
+            System.out.println("&gt; " + section.title());
+            for (MenuItem item : section.items()) {
+                System.out.println("  - " + item.label());
+            }
+        } else if (n instanceof MenuItem item) {
+            System.out.println("- " + item.label());
+        }
+    }
+}</code></pre>
+  </div>
+  <p class="solid-compare-title">Con Composite — un solo contrato recursivo</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">NODO COMÚN + HOJA Y COMPUESTO</div>
+    <pre><code>public interface MenuNode {
+    void render(String indent);
+}
+
+public final class MenuItem implements MenuNode {
+    private final String label;
+    public MenuItem(String label) { this.label = label; }
+    public void render(String indent) {
+        System.out.println(indent + "- " + label);
+    }
+}
+
+public final class MenuSection implements MenuNode {
+    private final String title;
+    private final List&lt;MenuNode&gt; children = new ArrayList&lt;&gt;();
+
+    public MenuSection(String title) { this.title = title; }
+    public void add(MenuNode n) { children.add(n); }
+
+    public void render(String indent) {
+        System.out.println(indent + "&gt; " + title);
+        for (MenuNode c : children) c.render(indent + "  ");
+    }
+}</code></pre>
+  </div>
+
+  <aside class="gof-callout gof-pattern-gap" aria-label="Cómo distinguir patrones estructurales afines">
+    <div class="gof-callout__kicker">Heurística · patrones afines</div>
+    <p class="gof-callout__body"><strong>Adapter</strong> traduce una interfaz ajena a la tuya. <strong>Facade</strong> simplifica un subsistema completo. <strong>Decorator</strong> añade responsabilidades en cadena sobre el mismo contrato. <strong>Proxy</strong> controla el acceso al objeto real (lazy, permisos, coste).</p>
+    <p class="gof-callout__body">Si no hay <em>dolor claro</em> — cambio de proveedor, duplicación, políticas transversales — evita añadir capas solo por simetría.</p>
+  </aside>
+
+</div>
+</div>
+<div class="footer">
+  <span class="footer-text">GOF · ESTRUCTURALES</span>
+  <div class="footer-meta-row">
+    <a class="module-link is-prev" href="creacionales.html"><span class="ml-text">← Creacionales</span></a>
+    <span class="footer-count">5 PATRONES</span>
+    <a class="module-link is-next" href="comportamiento.html"><span class="ml-text">Siguiente: Comportamiento →</span></a>
+  </div>
+</div>
+</body>
+</html>
