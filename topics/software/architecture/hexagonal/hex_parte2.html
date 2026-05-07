@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../../../assets/css/dev-notes.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0A0E1A;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ───── HEADER ───── */
+  .header {
+    padding: 48px 56px 32px;
+    border-bottom: 1px solid #1E2A40;
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: ''; position: absolute;
+    top: -80px; right: -80px; width: 440px; height: 440px;
+    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header::after {
+    content: ''; position: absolute;
+    bottom: -60px; left: 80px; width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge {
+    background: #6366F1; color: #fff;
+    font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em;
+    margin-bottom: 12px; display: inline-block;
+  }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #6366F1; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; font-weight: 400; }
+  .part-badge {
+    font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+    color: #6366F1; background: rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.3); padding: 8px 16px;
+    border-radius: 4px; letter-spacing: 0.12em;
+  }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill {
+    font-size: 11px; font-weight: 500; padding: 5px 12px;
+    border-radius: 20px; border: 1px solid;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
+  }
+  .pill-a { color: #A5B4FC; border-color: rgba(165,180,252,0.3); background: rgba(165,180,252,0.07); }
+  .pill-b { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-c { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+  .pill-d { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+
+  /* ───── BODY ───── */
+  .body { padding: 0 56px 56px; }
+
+  /* ───── SECTION LABEL ───── */
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-indigo { color: #6366F1; }
+  .sn-teal   { color: #14B8A6; }
+  .sn-amber  { color: #FF9900; }
+  .sn-green  { color: #22C55E; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-purple { color: #A855F7; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  /* ───── CARDS ───── */
+  .cards-grid { display: grid; gap: 10px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+
+  .card {
+    background: #0F1625; border: 1px solid #1E2A40;
+    border-radius: 12px; padding: 20px 22px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; width: 3px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+  .card.c-indigo::before { background: #6366F1; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-amber::before  { background: #FF9900; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-blue::before   { background: #3B82F6; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .icon-indigo { background: rgba(99,102,241,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-amber  { background: rgba(255,153,0,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-indigo { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.18); color: #A5B4FC; }
+  .tip-green  { background: rgba(34,197,94,0.06);  border: 1px solid rgba(34,197,94,0.18);  color: #86EFAC; }
+  .tip-amber  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.18);  color: #FCD34D; }
+  .tip-rose   { background: rgba(244,63,94,0.06);  border: 1px solid rgba(244,63,94,0.18);  color: #FDA4AF; }
+
+  /* ───── CODE BLOCK ───── */
+  .code-panel {
+    background: #080C17; border: 1px solid #1E2A40;
+    border-radius: 10px; overflow: hidden;
+  }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; border-bottom: 1px solid #1A2236;
+    background: #0A0E1A;
+  }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; letter-spacing: 0.05em; }
+  .code-lang {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    color: #3B4C68; background: #0F1625; border: 1px solid #1A2236;
+    padding: 2px 8px; border-radius: 3px; letter-spacing: 0.06em;
+  }
+  pre {
+    padding: 16px 20px; overflow-x: auto;
+    font-family: 'DM Mono', monospace; font-size: 11.5px;
+    line-height: 1.7; color: #64748B; margin: 0;
+  }
+  .c-keyword  { color: #A5B4FC; }
+  .c-type     { color: #5EEAD4; }
+  .c-string   { color: #86EFAC; }
+  .c-comment  { color: #2D3E5A; font-style: italic; }
+  .c-method   { color: #FCD34D; }
+  .c-number   { color: #FDA4AF; }
+  .c-deco     { color: #D8B4FE; }
+
+  /* ───── LAYERS STRUCTURE ───── */
+  .layers-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  .layer-block {
+    background: #0F1625; border: 1px solid #1E2A40;
+    border-radius: 12px; overflow: hidden;
+  }
+  .layer-top {
+    padding: 12px 16px; border-bottom: 1px solid #1A2236;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .layer-icon { font-size: 18px; }
+  .layer-label {
+    font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .ll-amber  { color: #FF9900; }
+  .ll-teal   { color: #14B8A6; }
+  .ll-indigo { color: #6366F1; }
+  .layer-name { font-size: 13px; font-weight: 600; color: #E2E8F0; margin-top: 2px; }
+  .layer-body { padding: 14px 16px; }
+  .layer-file {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; margin-bottom: 5px;
+    background: #0A0E1A; border: 1px solid #1A2236; border-radius: 6px;
+  }
+  .lf-icon { font-size: 12px; }
+  .lf-name { font-family: 'DM Mono', monospace; font-size: 10px; }
+  .lf-indigo { color: #A5B4FC; }
+  .lf-teal   { color: #5EEAD4; }
+  .lf-amber  { color: #FCD34D; }
+  .lf-desc   { font-size: 10px; color: #3B4C68; margin-left: auto; }
+  .layer-note { font-size: 11px; color: #3B4C68; margin-top: 10px; line-height: 1.5; font-family: 'DM Mono', monospace; }
+
+  /* ───── ARCH COMPARISON ───── */
+  .arch-compare {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden;
+  }
+  .ac-header {
+    display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr;
+    background: #080C17; border-bottom: 1px solid #1E2A40;
+  }
+  .ac-cell {
+    padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace;
+    color: #3B4C68; border-right: 1px solid #1A2236; letter-spacing: 0.04em;
+  }
+  .ac-cell:last-child { border-right: none; }
+  .ac-cell.ac-head { color: #6B7FA3; font-weight: 500; }
+  .ac-row {
+    display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr;
+    border-bottom: 1px solid #1A2236;
+  }
+  .ac-row:last-child { border-bottom: none; }
+  .ac-row:hover { background: rgba(255,255,255,0.012); }
+  .ac-criterion {
+    padding: 12px 14px; font-size: 12px; font-weight: 600;
+    color: #94A3B8; border-right: 1px solid #1A2236;
+    display: flex; align-items: center;
+  }
+  .ac-val {
+    padding: 12px 14px; font-size: 11px; color: #64748B;
+    border-right: 1px solid #1A2236; line-height: 1.4;
+  }
+  .ac-val:last-child { border-right: none; }
+  .av-good { color: #86EFAC; }
+  .av-med  { color: #FCD34D; }
+  .av-bad  { color: #FDA4AF; }
+
+  /* ───── TESTING PYRAMID ───── */
+  .testing-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .test-block {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden;
+  }
+  .test-top {
+    padding: 3px 0; text-align: center;
+  }
+  .tb-indigo { background: rgba(99,102,241,0.15); }
+  .tb-teal   { background: rgba(20,184,166,0.15); }
+  .tb-amber  { background: rgba(255,153,0,0.15); }
+  .tb-green  { background: rgba(34,197,94,0.15); }
+  .test-body { padding: 16px; }
+  .test-type {
+    font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em; margin-bottom: 5px;
+  }
+  .tt-indigo { color: #6366F1; }
+  .tt-teal   { color: #14B8A6; }
+  .tt-amber  { color: #FF9900; }
+  .tt-green  { color: #22C55E; }
+  .test-name { font-size: 13px; font-weight: 600; color: #E2E8F0; margin-bottom: 8px; }
+  .test-desc { font-size: 11.5px; color: #6B7FA3; line-height: 1.55; margin-bottom: 10px; }
+  .test-example {
+    font-size: 11px; color: #64748B; border-top: 1px solid #1A2236;
+    padding-top: 8px; line-height: 1.5;
+  }
+  .test-example strong { color: #94A3B8; }
+
+  /* ───── ERROR TABLE ───── */
+  .error-table {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden;
+  }
+  .et-header {
+    display: grid; grid-template-columns: 1.2fr 1.5fr 1.5fr;
+    background: #080C17; border-bottom: 1px solid #1E2A40;
+  }
+  .et-cell {
+    padding: 10px 16px; font-size: 10px; font-family: 'DM Mono', monospace;
+    color: #3B4C68; border-right: 1px solid #1A2236; letter-spacing: 0.04em;
+  }
+  .et-cell:last-child { border-right: none; }
+  .et-cell.et-head { color: #6B7FA3; font-weight: 500; }
+  .et-row {
+    display: grid; grid-template-columns: 1.2fr 1.5fr 1.5fr;
+    border-bottom: 1px solid #1A2236;
+  }
+  .et-row:last-child { border-bottom: none; }
+  .et-row:hover { background: rgba(255,255,255,0.012); }
+  .et-error {
+    padding: 12px 16px; display: flex; align-items: flex-start; gap: 8px;
+    border-right: 1px solid #1A2236;
+  }
+  .et-icon { font-size: 14px; flex-shrink: 0; }
+  .et-name { font-size: 12px; font-weight: 600; color: #FDA4AF; }
+  .et-val {
+    padding: 12px 16px; font-size: 11.5px; color: #64748B;
+    border-right: 1px solid #1A2236; line-height: 1.5;
+  }
+  .et-val:last-child { border-right: none; }
+  .et-val strong { color: #94A3B8; }
+
+  /* ───── CHECKLIST ───── */
+  .checklist {
+    background: #0F1625; border: 1px solid #1E2A40;
+    border-radius: 12px; padding: 22px 24px;
+  }
+  .cl-title {
+    font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+    color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px;
+  }
+  .cl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cl-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px; background: #0A0E1A; border: 1px solid #1A2236;
+    border-radius: 8px;
+  }
+  .cl-check { font-size: 14px; flex-shrink: 0; }
+  .cl-text { font-size: 12px; color: #6B7FA3; line-height: 1.5; }
+  .cl-text strong { color: #E2E8F0; }
+
+  /* ───── BACK LINK ───── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: #3B4C68; text-decoration: none; transition: color 0.15s;
+  }
+  .back-link:hover { color: #6B7FA3; }
+
+  /* ───── FOOTER ───── */
+  .footer {
+    background: #080C17; border-top: 1px solid #1E2A40;
+    padding: 20px 56px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #6366F1; letter-spacing: 0.06em; }
+  .footer-prev {
+    font-family: 'Space Mono', monospace; font-size: 10px; color: #6366F1;
+    background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2);
+    padding: 4px 12px; border-radius: 3px; text-decoration: none;
+    letter-spacing: 0.06em; transition: background 0.15s;
+  }
+  .footer-prev:hover { background: rgba(99,102,241,0.14); }
+</style>
+</head>
+<body class="dn-infographic dn-hex">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">ARQUITECTURA · PARTE 2 DE 2</div>
+        <h1>Arquitectura Hexagonal<br><span>en la práctica</span></h1>
+        <p class="header-sub">Estructura de carpetas, patrones de código, testing, comparación con otras arquitecturas y errores frecuentes</p>
+      </div>
+    </div>
+    <div class="part-badge">HEX-ARCH · P2</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">📁 Estructura de proyecto</span>
+    <span class="pill pill-b">🧪 Testing por capa</span>
+    <span class="pill pill-c">⚖️ Comparación de arquitecturas</span>
+    <span class="pill pill-d">🚫 Errores frecuentes</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 1 — ESTRUCTURA DE PROYECTO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-indigo">01</span>
+    <span class="section-title-text">Estructura de proyecto — cómo organizar las carpetas</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="layers-grid">
+    <!-- Domain -->
+    <div class="layer-block">
+      <div class="layer-top">
+        <span class="layer-icon">⬡</span>
+        <div>
+          <div class="layer-label ll-indigo">Capa de Dominio</div>
+          <div class="layer-name">domain/</div>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-file">
+          <span class="lf-icon">📄</span>
+          <span class="lf-name lf-indigo">model/Order.java</span>
+          <span class="lf-desc">Entity</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">📄</span>
+          <span class="lf-name lf-indigo">model/Money.java</span>
+          <span class="lf-desc">Value Object</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">📄</span>
+          <span class="lf-name lf-indigo">event/OrderPlaced.java</span>
+          <span class="lf-desc">Domain Event</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">🔌</span>
+          <span class="lf-name lf-indigo">port/out/OrderRepository.java</span>
+          <span class="lf-desc">Output Port</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">🔌</span>
+          <span class="lf-name lf-indigo">port/out/EmailNotifier.java</span>
+          <span class="lf-desc">Output Port</span>
+        </div>
+        <div class="layer-note">⚠ Sin imports de Spring, JPA, ni ningún framework. Solo Java/Kotlin puro.</div>
+      </div>
+    </div>
+    <!-- Application -->
+    <div class="layer-block">
+      <div class="layer-top">
+        <span class="layer-icon">🎯</span>
+        <div>
+          <div class="layer-label ll-teal">Capa de Aplicación</div>
+          <div class="layer-name">application/</div>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-file">
+          <span class="lf-icon">🔌</span>
+          <span class="lf-name lf-teal">port/in/CreateOrderUseCase.java</span>
+          <span class="lf-desc">Input Port</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">🔌</span>
+          <span class="lf-name lf-teal">port/in/GetOrderQuery.java</span>
+          <span class="lf-desc">Input Port</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">⚙️</span>
+          <span class="lf-name lf-teal">service/CreateOrderService.java</span>
+          <span class="lf-desc">Use Case impl</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">📦</span>
+          <span class="lf-name lf-teal">dto/CreateOrderCommand.java</span>
+          <span class="lf-desc">Input DTO</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">📦</span>
+          <span class="lf-name lf-teal">dto/OrderResponse.java</span>
+          <span class="lf-desc">Output DTO</span>
+        </div>
+        <div class="layer-note">Solo orquestación. Importa puertos del dominio, no implementaciones concretas.</div>
+      </div>
+    </div>
+    <!-- Infrastructure -->
+    <div class="layer-block">
+      <div class="layer-top">
+        <span class="layer-icon">🔧</span>
+        <div>
+          <div class="layer-label ll-amber">Capa de Infraestructura</div>
+          <div class="layer-name">infrastructure/</div>
+        </div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-file">
+          <span class="lf-icon">🌐</span>
+          <span class="lf-name lf-amber">adapter/in/RestOrderController.java</span>
+          <span class="lf-desc">Driving</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">📨</span>
+          <span class="lf-name lf-amber">adapter/in/KafkaOrderConsumer.java</span>
+          <span class="lf-desc">Driving</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">🗄</span>
+          <span class="lf-name lf-amber">adapter/out/JpaOrderRepository.java</span>
+          <span class="lf-desc">Driven</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">📧</span>
+          <span class="lf-name lf-amber">adapter/out/SmtpEmailNotifier.java</span>
+          <span class="lf-desc">Driven</span>
+        </div>
+        <div class="layer-file">
+          <span class="lf-icon">⚙️</span>
+          <span class="lf-name lf-amber">config/BeanConfiguration.java</span>
+          <span class="lf-desc">DI wiring</span>
+        </div>
+        <div class="layer-note">Aquí viven Spring, JPA, Kafka, SMTP. El único lugar con dependencias externas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 2 — CÓDIGO EJEMPLO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-teal">02</span>
+    <span class="section-title-text">Patrones de código — de afuera hacia adentro</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <!-- Output Port -->
+    <div class="code-panel">
+      <div class="code-header">
+        <span class="code-title">domain/port/out/OrderRepository.java — Output Port (el dominio define la interfaz)</span>
+        <span class="code-lang">JAVA</span>
+      </div>
+      <pre><span class="c-comment">// El dominio define QUÉ necesita, no CÓMO se implementa</span>
+<span class="c-keyword">package</span> <span class="c-type">com.myapp.domain.port.out</span>;
+
+<span class="c-keyword">public interface</span> <span class="c-type">OrderRepository</span> {
+    <span class="c-type">Order</span> <span class="c-method">save</span>(<span class="c-type">Order</span> order);
+    <span class="c-type">Optional</span>&lt;<span class="c-type">Order</span>&gt; <span class="c-method">findById</span>(<span class="c-type">OrderId</span> id);
+    <span class="c-type">List</span>&lt;<span class="c-type">Order</span>&gt; <span class="c-method">findByCustomer</span>(<span class="c-type">CustomerId</span> customerId);
+}
+
+<span class="c-comment">// Nótese: sin @Repository, sin JPA, sin SQL.
+// Solo un contrato en Java puro.</span></pre>
+    </div>
+    <!-- Driven Adapter -->
+    <div class="code-panel">
+      <div class="code-header">
+        <span class="code-title">infrastructure/adapter/out/JpaOrderRepository.java — Driven Adapter</span>
+        <span class="code-lang">JAVA</span>
+      </div>
+      <pre><span class="c-comment">// La infraestructura IMPLEMENTA el contrato del dominio</span>
+<span class="c-keyword">package</span> <span class="c-type">com.myapp.infrastructure.adapter.out</span>;
+
+<span class="c-deco">@Repository</span>
+<span class="c-keyword">public class</span> <span class="c-type">JpaOrderRepository</span>
+    <span class="c-keyword">implements</span> <span class="c-type">OrderRepository</span> {   <span class="c-comment">// ← implementa el port</span>
+
+    <span class="c-keyword">private final</span> <span class="c-type">OrderJpaRepository</span> jpaRepo;
+    <span class="c-keyword">private final</span> <span class="c-type">OrderMapper</span> mapper;
+
+    <span class="c-deco">@Override</span>
+    <span class="c-keyword">public</span> <span class="c-type">Order</span> <span class="c-method">save</span>(<span class="c-type">Order</span> order) {
+        <span class="c-type">OrderEntity</span> entity = mapper.<span class="c-method">toEntity</span>(order);
+        <span class="c-keyword">return</span> mapper.<span class="c-method">toDomain</span>(jpaRepo.<span class="c-method">save</span>(entity));
+    }
+}</pre>
+    </div>
+    <!-- Use Case -->
+    <div class="code-panel">
+      <div class="code-header">
+        <span class="code-title">application/service/CreateOrderService.java — Use Case (orquestador)</span>
+        <span class="code-lang">JAVA</span>
+      </div>
+      <pre><span class="c-deco">@UseCase</span>  <span class="c-comment">// annotation propia, no de Spring</span>
+<span class="c-keyword">public class</span> <span class="c-type">CreateOrderService</span>
+    <span class="c-keyword">implements</span> <span class="c-type">CreateOrderUseCase</span> {
+
+    <span class="c-comment">// Inyecta INTERFACES (ports), nunca implementaciones</span>
+    <span class="c-keyword">private final</span> <span class="c-type">OrderRepository</span> orderRepository;
+    <span class="c-keyword">private final</span> <span class="c-type">PaymentGateway</span> paymentGateway;
+    <span class="c-keyword">private final</span> <span class="c-type">EmailNotifier</span> emailNotifier;
+
+    <span class="c-deco">@Override</span>
+    <span class="c-keyword">public</span> <span class="c-type">OrderId</span> <span class="c-method">execute</span>(<span class="c-type">CreateOrderCommand</span> cmd) {
+        <span class="c-type">Order</span> order = <span class="c-type">Order</span>.<span class="c-method">create</span>(cmd.customerId(), cmd.items());
+        paymentGateway.<span class="c-method">charge</span>(order.total());
+        orderRepository.<span class="c-method">save</span>(order);
+        emailNotifier.<span class="c-method">sendConfirmation</span>(order);
+        <span class="c-keyword">return</span> order.id();
+    }
+}</pre>
+    </div>
+    <!-- Driving Adapter -->
+    <div class="code-panel">
+      <div class="code-header">
+        <span class="code-title">infrastructure/adapter/in/RestOrderController.java — Driving Adapter</span>
+        <span class="code-lang">JAVA</span>
+      </div>
+      <pre><span class="c-deco">@RestController</span>
+<span class="c-deco">@RequestMapping</span>(<span class="c-string">"/api/orders"</span>)
+<span class="c-keyword">public class</span> <span class="c-type">RestOrderController</span> {
+
+    <span class="c-comment">// Inyecta el USE CASE (input port), no el servicio directo</span>
+    <span class="c-keyword">private final</span> <span class="c-type">CreateOrderUseCase</span> createOrder;
+
+    <span class="c-deco">@PostMapping</span>
+    <span class="c-keyword">public</span> <span class="c-type">ResponseEntity</span>&lt;<span class="c-type">OrderIdResponse</span>&gt;
+    <span class="c-method">create</span>(<span class="c-deco">@RequestBody</span> <span class="c-type">CreateOrderRequest</span> req) {
+
+        <span class="c-type">CreateOrderCommand</span> cmd = mapper.<span class="c-method">toCommand</span>(req);
+        <span class="c-type">OrderId</span> id = createOrder.<span class="c-method">execute</span>(cmd);
+        <span class="c-keyword">return</span> <span class="c-type">ResponseEntity</span>.<span class="c-method">ok</span>(<span class="c-keyword">new</span> <span class="c-type">OrderIdResponse</span>(id));
+    }
+}</pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 3 — TESTING POR CAPA
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-green">03</span>
+    <span class="section-title-text">Testing — la ventaja principal de la arquitectura hexagonal</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="testing-grid">
+    <div class="test-block">
+      <div class="test-top tb-indigo"></div>
+      <div class="test-body">
+        <div class="test-type tt-indigo">TEST DE DOMINIO</div>
+        <div class="test-name">Unit Test — sin mocks externos</div>
+        <div class="test-desc">El dominio no tiene dependencias externas → tests rapidísimos, sin Spring context, sin BD, sin network. Son los más baratos y los que más deberías tener.</div>
+        <div class="test-example">
+          <strong>Prueba:</strong> Lógica de negocio pura. Que <span style="font-family:'DM Mono',monospace;color:#A5B4FC;font-size:10px">Order.addItem()</span> incremente el total correctamente, que un <span style="font-family:'DM Mono',monospace;color:#A5B4FC;font-size:10px">Money</span> negativo lance una excepción de dominio.
+        </div>
+      </div>
+    </div>
+    <div class="test-block">
+      <div class="test-top tb-teal"></div>
+      <div class="test-body">
+        <div class="test-type tt-teal">TEST DE APLICACIÓN</div>
+        <div class="test-name">Unit Test — con fakes en memoria</div>
+        <div class="test-desc">El Use Case se prueba inyectando implementaciones en memoria de los ports (Fakes). Verifica la orquestación sin BD real ni servicios externos. Aún muy rápido.</div>
+        <div class="test-example">
+          <strong>Prueba:</strong> <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10px">CreateOrderService</span> con <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10px">InMemoryOrderRepository</span> y <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10px">FakeEmailNotifier</span>. Verifica que guarda la orden y notifica al cliente.
+        </div>
+      </div>
+    </div>
+    <div class="test-block">
+      <div class="test-top tb-amber"></div>
+      <div class="test-body">
+        <div class="test-type tt-amber">TEST DE ADAPTER DE SALIDA</div>
+        <div class="test-name">Integration Test — con infraestructura real</div>
+        <div class="test-desc">Prueba que el Adapter persiste y recupera correctamente usando una BD real (Testcontainers). Aislado: solo prueba el Adapter, no la lógica de negocio.</div>
+        <div class="test-example">
+          <strong>Prueba:</strong> <span style="font-family:'DM Mono',monospace;color:#FCD34D;font-size:10px">JpaOrderRepository</span> con Testcontainers (Postgres real). Verifica que el mapper traduce correctamente entre domain model y JPA entity.
+        </div>
+      </div>
+    </div>
+    <div class="test-block">
+      <div class="test-top tb-green"></div>
+      <div class="test-body">
+        <div class="test-type tt-green">TEST DE ADAPTER DE ENTRADA</div>
+        <div class="test-name">Integration Test — con framework real</div>
+        <div class="test-desc">Prueba que el controller HTTP traduce correctamente el request al Command del Use Case. Se mockea el Use Case para no depender de la lógica de negocio.</div>
+        <div class="test-example">
+          <strong>Prueba:</strong> <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">RestOrderController</span> con MockMvc. Mockea <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">CreateOrderUseCase</span>. Verifica status 201, headers y serialización del response.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 4 — COMPARACIÓN CON OTRAS ARQUITECTURAS
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-amber">04</span>
+    <span class="section-title-text">Comparación con otras arquitecturas</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="arch-compare">
+    <div class="ac-header">
+      <div class="ac-cell ac-head">Criterio</div>
+      <div class="ac-cell ac-head">Layered (MVC clásico)</div>
+      <div class="ac-cell ac-head">Clean Architecture</div>
+      <div class="ac-cell ac-head">Hexagonal (Ports & Adapters)</div>
+    </div>
+    <div class="ac-row">
+      <div class="ac-criterion">Origen</div>
+      <div class="ac-val">~1970s. Presentación → Negocio → Datos.</div>
+      <div class="ac-val">Robert C. Martin (Uncle Bob), 2012.</div>
+      <div class="ac-val">Alistair Cockburn, 2005. Alias: P&A.</div>
+    </div>
+    <div class="ac-row">
+      <div class="ac-criterion">Acoplamiento al framework</div>
+      <div class="ac-val"><span class="av-bad">Alto</span> — el negocio suele depender de Spring annotations, JPA entities.</div>
+      <div class="ac-val"><span class="av-good">Bajo</span> — el dominio es framework-agnostic por diseño.</div>
+      <div class="ac-val"><span class="av-good">Bajo</span> — igual a Clean. El framework vive solo en adapters.</div>
+    </div>
+    <div class="ac-row">
+      <div class="ac-criterion">Testabilidad del dominio</div>
+      <div class="ac-val"><span class="av-bad">Difícil</span> — necesitas Spring context o mocks complejos.</div>
+      <div class="ac-val"><span class="av-good">Excelente</span> — el core es POJO puro.</div>
+      <div class="ac-val"><span class="av-good">Excelente</span> — misma garantía. Fakes en lugar de mocks.</div>
+    </div>
+    <div class="ac-row">
+      <div class="ac-criterion">Curva de aprendizaje</div>
+      <div class="ac-val"><span class="av-good">Baja</span> — todo el mundo conoce MVC.</div>
+      <div class="ac-val"><span class="av-bad">Alta</span> — más capas y conceptos (Entities, Interactors, Presenters).</div>
+      <div class="ac-val"><span class="av-med">Media</span> — menos capas que Clean, más estructura que Layered.</div>
+    </div>
+    <div class="ac-row">
+      <div class="ac-criterion">Boilerplate</div>
+      <div class="ac-val"><span class="av-good">Bajo</span> — menos archivos por feature.</div>
+      <div class="ac-val"><span class="av-bad">Alto</span> — muchas interfaces y mappers por capa.</div>
+      <div class="ac-val"><span class="av-med">Moderado</span> — más que MVC pero menos que Clean Architecture.</div>
+    </div>
+    <div class="ac-row">
+      <div class="ac-criterion">Intercambiabilidad</div>
+      <div class="ac-val"><span class="av-bad">Difícil</span> — cambiar BD o framework implica tocar el negocio.</div>
+      <div class="ac-val"><span class="av-good">Fácil</span> — misma idea que hexagonal.</div>
+      <div class="ac-val"><span class="av-good">Fácil</span> — cambias el Adapter sin tocar una línea del dominio.</div>
+    </div>
+    <div class="ac-row">
+      <div class="ac-criterion">Alineación con DDD</div>
+      <div class="ac-val"><span class="av-med">Parcial</span> — se puede aplicar DDD pero el acoplamiento lo dificulta.</div>
+      <div class="ac-val"><span class="av-good">Alta</span> — comparte los mismos principios de aislamiento del dominio.</div>
+      <div class="ac-val"><span class="av-good">Alta</span> — combinación canónica: Hexagonal + DDD en el dominio.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 5 — ERRORES FRECUENTES
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-rose">05</span>
+    <span class="section-title-text">Errores frecuentes — anti-patterns a evitar</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="error-table">
+    <div class="et-header">
+      <div class="et-cell et-head">Error</div>
+      <div class="et-cell et-head">Qué pasa</div>
+      <div class="et-cell et-head">Cómo evitarlo</div>
+    </div>
+    <div class="et-row">
+      <div class="et-error"><span class="et-icon">🔴</span><span class="et-name">JPA Entity = Domain Entity</span></div>
+      <div class="et-val">Usas la misma clase como entidad JPA (<span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">@Entity</span>) y como objeto de dominio. El dominio queda atado a JPA y no puedes testearlo sin BD.</div>
+      <div class="et-val"><strong>Separa los modelos.</strong> Crea un Mapper en el Adapter. La entity JPA vive en infraestructura, el domain object vive en domain. Más código, pero el dominio queda limpio.</div>
+    </div>
+    <div class="et-row">
+      <div class="et-error"><span class="et-icon">🔴</span><span class="et-name">Importar Spring en el dominio</span></div>
+      <div class="et-val">El dominio tiene <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">@Service</span>, <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">@Transactional</span> o <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">@Autowired</span>. Ahora no puedes usar ese dominio sin Spring — la testabilidad y portabilidad se pierden.</div>
+      <div class="et-val"><strong>Usa annotations propias</strong> (<span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">@UseCase</span>, <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">@DomainService</span>) sin dependencia de Spring, o ninguna annotation. Mueve <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">@Transactional</span> al application service.</div>
+    </div>
+    <div class="et-row">
+      <div class="et-error"><span class="et-icon">🟡</span><span class="et-name">Anemic Domain Model</span></div>
+      <div class="et-val">Las entidades son solo getters/setters (DTOs disfrazados). Toda la lógica de negocio vive en el Use Case o en un "servicio de dominio" gigante. El dominio no hace nada.</div>
+      <div class="et-val"><strong>Pon la lógica donde pertenece:</strong> <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">order.addItem()</span>, <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">order.cancel()</span>, <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">money.add(other)</span>. Si la entidad es solo datos, no estás haciendo DDD.</div>
+    </div>
+    <div class="et-row">
+      <div class="et-error"><span class="et-icon">🟡</span><span class="et-name">Demasiados Ports</span></div>
+      <div class="et-val">Un Port por cada método. El dominio tiene 40 interfaces con 1 método cada una. Overengineering puro — el código es innavegable y no aporta valor real.</div>
+      <div class="et-val"><strong>Agrupa por cohesión.</strong> <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">OrderRepository</span> con save/find/delete es un buen Port. Solo extrae a Port lo que realmente tiene más de una implementación posible.</div>
+    </div>
+    <div class="et-row">
+      <div class="et-error"><span class="et-icon">🟡</span><span class="et-name">Exponer domain objects al exterior</span></div>
+      <div class="et-val">El controller retorna directamente la Entity de dominio. El cliente HTTP ve la estructura interna — cualquier refactor del dominio rompe la API pública.</div>
+      <div class="et-val"><strong>Usa DTOs/Response objects</strong> en los Adapters. El Mapper convierte entre domain object y DTO. El dominio puede evolucionar sin cambiar los contratos externos.</div>
+    </div>
+    <div class="et-row">
+      <div class="et-error"><span class="et-icon">🟡</span><span class="et-name">Saltar capas</span></div>
+      <div class="et-val">El controller llama directo al Repository sin pasar por el Use Case. Se pierde la orquestación y la lógica de negocio se dispersa por los Adapters.</div>
+      <div class="et-val"><strong>El controller siempre habla con el Use Case (Input Port).</strong> El Use Case habla con el Output Port. Nunca saltes capas, aunque la operación parezca "simple".</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 6 — CHECKLIST DE DISEÑO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-purple">06</span>
+    <span class="section-title-text">Checklist — ¿tu arquitectura hexagonal está bien implementada?</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="checklist">
+    <div class="cl-title">Valida estos puntos antes de hacer merge</div>
+    <div class="cl-grid">
+      <div class="cl-item">
+        <span class="cl-check">✅</span>
+        <div class="cl-text"><strong>El dominio no importa nada de Spring, JPA ni librerías externas.</strong> Solo clases Java/Kotlin puras y tus propias interfaces.</div>
+      </div>
+      <div class="cl-item">
+        <span class="cl-check">✅</span>
+        <div class="cl-text"><strong>Los puertos de salida son interfaces definidas en el dominio.</strong> No hay ninguna referencia a tecnología concreta (JDBC, Redis, SMTP) en la capa de dominio.</div>
+      </div>
+      <div class="cl-item">
+        <span class="cl-check">✅</span>
+        <div class="cl-text"><strong>El Use Case inyecta interfaces, no implementaciones.</strong> El constructor recibe <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">OrderRepository</span>, no <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">JpaOrderRepository</span>.</div>
+      </div>
+      <div class="cl-item">
+        <span class="cl-check">✅</span>
+        <div class="cl-text"><strong>Puedes ejecutar los tests del dominio sin levantar Spring.</strong> Si necesitas <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">@SpringBootTest</span> para lógica de negocio, hay un problema.</div>
+      </div>
+      <div class="cl-item">
+        <span class="cl-check">✅</span>
+        <div class="cl-text"><strong>Los Adapters tienen un Mapper explícito.</strong> La entity JPA y el domain object son clases distintas, conectadas por un mapper en la capa de infraestructura.</div>
+      </div>
+      <div class="cl-item">
+        <span class="cl-check">✅</span>
+        <div class="cl-text"><strong>Los controllers no conocen las entidades de dominio.</strong> El response del controller es un DTO/record, nunca una <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">Order</span> del dominio.</div>
+      </div>
+      <div class="cl-item">
+        <span class="cl-check">✅</span>
+        <div class="cl-text"><strong>Puedes intercambiar un Adapter sin tocar el dominio.</strong> ¿Puedes cambiar de PostgreSQL a MongoDB modificando solo el Adapter? Si no, la dependencia está al revés.</div>
+      </div>
+      <div class="cl-item">
+        <span class="cl-check">✅</span>
+        <div class="cl-text"><strong>Las reglas de negocio están en el dominio, no en el servicio.</strong> <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">order.confirm()</span> lanza excepción si el estado no corresponde — esa validación no vive en el Use Case.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-text">ARQUITECTURA HEXAGONAL · PARTE 2 DE 2 · IMPLEMENTACIÓN Y BUENAS PRÁCTICAS</span>
+  <div class="footer-nav">
+    <a class="footer-prev" href="hex_parte1.html">← Parte 1: Fundamentos</a>
+    <span class="footer-count">dev-notes</span>
+  </div>
+</div>
+
+</body>
+</html>

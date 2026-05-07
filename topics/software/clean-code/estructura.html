@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean Code — Estructura y diseño emergente</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+<style>
+  body.dn-clean .week-badge { background: #059669; color: #0A0E1A; }
+  body.dn-clean .header h1 span { color: #34D399; }
+  body.dn-clean .section-num { color: #34D399; }
+  body.dn-clean .footer-count { color: #34D399; }
+  body.dn-clean .aws-logo { color: #86EFAC; border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.08); }
+  .cc-callout {
+    border: 1px solid rgba(52,211,153,.25);
+    background: rgba(16,185,129,.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #A7F3D0;
+    font-size: 12px;
+    line-height: 1.55;
+    margin-top: 12px;
+  }
+  .cc-check {
+    margin: 0;
+    padding-left: 18px;
+    color: #8899B8;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .cc-check li { margin-bottom: 6px; }
+  .cc-check li:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body class="dn-infographic dn-clean">
+<div class="page-shell">
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">CLEAN CODE · PARTE 2 DE 2</div>
+        <h1>Clean Code<br><span>Estructura y diseño emergente</span></h1>
+        <p class="header-sub">Clases, errores, límites y refactor continuo para sostener la calidad</p>
+      </div>
+    </div>
+    <div class="aws-logo">MANTENIBILIDAD</div>
+  </div>
+</div>
+<div class="body">
+  <div class="section-header">
+    <span class="section-num">00</span>
+    <span class="section-title-text">Objetivo de esta parte</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cc-callout"><strong>Meta:</strong> pasar de “código que funciona hoy” a “código que sigue funcionando y evolucionando en 6 meses”. Aquí el foco está en estructura, límites y refactor disciplinado.</div>
+
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title-text">Clases cohesionadas</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-grid g3">
+    <div class="card c-green"><div class="card-header"><div class="card-icon icon-green">🧱</div><div><div class="card-num">01</div><div class="card-title">Tamaño y foco</div></div></div><div class="card-desc">Una clase grande suele ocultar más de una responsabilidad. Divide por razón de cambio para reducir impacto en mantenimiento.</div></div>
+    <div class="card c-green"><div class="card-header"><div class="card-icon icon-green">🔌</div><div><div class="card-num">02</div><div class="card-title">Bajo acoplamiento</div></div></div><div class="card-desc">Prefiere depender de abstracciones y contratos claros, no de detalles concretos de infraestructura.</div></div>
+    <div class="card c-green"><div class="card-header"><div class="card-icon icon-green">🧩</div><div><div class="card-num">03</div><div class="card-title">API mínima</div></div></div><div class="card-desc">Exponer menos reduce mal uso y hace más fácil refactorizar internals sin romper consumidores.</div></div>
+  </div>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">MAL VS BIEN — CLASE CON RESPONSABILIDADES MEZCLADAS</div>
+    <pre><code>// Mal: dominio + persistencia + notificación en una sola clase
+public class InvoiceService {
+    public void closeInvoice(Invoice invoice) {
+        invoice.markAsClosed();
+        jdbcTemplate.update("update invoices set status='CLOSED' where id=?", invoice.id());
+        smtpClient.send(invoice.customerEmail(), "Factura cerrada");
+    }
+}
+
+// Bien: caso de uso orquesta contratos, cada detalle afuera
+public final class CloseInvoiceUseCase {
+    private final InvoiceRepository invoices;
+    private final NotificationPort notifications;
+
+    public void execute(InvoiceId id) {
+        Invoice invoice = invoices.findById(id).orElseThrow();
+        invoice.close();
+        invoices.save(invoice);
+        notifications.invoiceClosed(invoice);
+    }
+}</code></pre>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title-text">Errores y manejo de excepciones</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-grid g2">
+    <div class="card c-amber"><div class="card-header"><div class="card-icon icon-amber">🛑</div><div><div class="card-num">04</div><div class="card-title">Fail fast y mensajes útiles</div></div></div><div class="card-desc">Lanza errores temprano con contexto relevante para diagnóstico. Evita “Exception” genérica sin información.</div></div>
+    <div class="card c-amber"><div class="card-header"><div class="card-icon icon-amber">🧭</div><div><div class="card-num">05</div><div class="card-title">Límite de traducción</div></div></div><div class="card-desc">Traduce errores técnicos a errores de dominio en fronteras de módulo para no propagar detalles internos.</div></div>
+  </div>
+  <div class="split-card mt-10">
+    <div class="split-half">
+      <div class="card-title">Error técnico filtrado</div>
+      <div class="card-desc">Exponer `SQLException` o mensajes del proveedor al dominio/cliente rompe encapsulamiento.</div>
+    </div>
+    <div class="split-half">
+      <div class="card-title">Error de dominio traducido</div>
+      <div class="card-desc">Mapear fallos de infraestructura a errores de negocio permite decisiones claras y estables.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title-text">Diseño emergente por refactor</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-grid g3">
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">♻</div><div><div class="card-num">06</div><div class="card-title">Paso pequeño y seguro</div></div></div><div class="card-desc">Refactoriza en cambios acotados con feedback de tests para evitar regresiones silenciosas.</div></div>
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">🔎</div><div><div class="card-num">07</div><div class="card-title">Eliminar duplicación</div></div></div><div class="card-desc">La duplicación no es solo código igual: también reglas replicadas en múltiples capas.</div></div>
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">📉</div><div><div class="card-num">08</div><div class="card-title">Complejidad accidental</div></div></div><div class="card-desc">Cada nueva abstracción debe pagar renta. Si no simplifica lectura o cambio, probablemente sobra.</div></div>
+  </div>
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-title-text">Flujo didáctico de refactor</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-grid g2">
+    <div class="card c-blue">
+      <div class="card-header"><div class="card-icon icon-blue">1</div><div><div class="card-num">PASO</div><div class="card-title">Asegura comportamiento</div></div></div>
+      <div class="card-desc">Primero protege con tests el comportamiento actual (aunque esté feo).</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header"><div class="card-icon icon-blue">2</div><div><div class="card-num">PASO</div><div class="card-title">Refactor mínimo</div></div></div>
+      <div class="card-desc">Extrae una responsabilidad o simplifica una función por iteración.</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header"><div class="card-icon icon-blue">3</div><div><div class="card-num">PASO</div><div class="card-title">Ejecuta tests</div></div></div>
+      <div class="card-desc">Si algo rompe, revierte rápido; el objetivo es progreso seguro, no heroísmo.</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header"><div class="card-icon icon-blue">4</div><div><div class="card-num">PASO</div><div class="card-title">Consolida reglas</div></div></div>
+      <div class="card-desc">Al final, documenta decisiones de diseño y patrones de uso para el equipo.</div>
+    </div>
+  </div>
+  <div class="cc-callout">
+    <strong>Checklist final antes de merge:</strong>
+    <ul class="cc-check">
+      <li>¿Cada clase tiene una razón de cambio clara?</li>
+      <li>¿Los errores se traducen en los límites del módulo?</li>
+      <li>¿Las abstracciones nuevas reducen complejidad real?</li>
+      <li>¿El diff mejora legibilidad sin cambiar comportamiento accidentalmente?</li>
+    </ul>
+  </div>
+</div>
+</div>
+<div class="footer">
+  <span class="footer-text">CLEAN CODE · PARTE 2 DE 2 · ESTRUCTURA</span>
+  <div class="footer-meta-row">
+    <a class="module-link" href="fundamentos.html"><span class="ml-text">← Parte 1</span></a>
+    <span class="footer-count">8 CONCEPTOS</span>
+  </div>
+</div>
+</body>
+</html>

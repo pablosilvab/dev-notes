@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean Code — Fundamentos</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+<style>
+  body.dn-clean .week-badge { background: #059669; color: #0A0E1A; }
+  body.dn-clean .header h1 span { color: #34D399; }
+  body.dn-clean .section-num { color: #34D399; }
+  body.dn-clean .footer-count { color: #34D399; }
+  body.dn-clean .aws-logo { color: #86EFAC; border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.08); }
+  body.dn-clean .pill-a { color: #86EFAC; border-color: rgba(134,239,172,.3); background: rgba(134,239,172,.07); }
+  body.dn-clean .pill-b { color: #5EEAD4; border-color: rgba(94,234,212,.3); background: rgba(94,234,212,.07); }
+  body.dn-clean .pill-c { color: #D1FAE5; border-color: rgba(209,250,229,.25); background: rgba(209,250,229,.06); }
+  .cc-callout {
+    border: 1px solid rgba(52,211,153,.25);
+    background: rgba(16,185,129,.08);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #A7F3D0;
+    font-size: 12px;
+    line-height: 1.55;
+    margin-top: 12px;
+  }
+  .cc-kicker {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .1em;
+    color: #86EFAC;
+    margin-bottom: 8px;
+  }
+  .cc-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .cc-list {
+    margin: 0;
+    padding-left: 18px;
+    color: #8899B8;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .cc-list li { margin-bottom: 6px; }
+  .cc-list li:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body class="dn-infographic dn-clean">
+<div class="page-shell">
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">CLEAN CODE · PARTE 1 DE 2</div>
+        <h1>Clean Code<br><span>Fundamentos</span></h1>
+        <p class="header-sub">Nombres, funciones, comentarios y formato para bajar fricción en mantenimiento</p>
+      </div>
+    </div>
+    <div class="aws-logo">CALIDAD DE CÓDIGO</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">Nombres expresivos</span>
+    <span class="pill pill-b">Funciones pequeñas</span>
+    <span class="pill pill-c">Código legible</span>
+  </div>
+</div>
+
+<div class="body">
+  <div class="section-header">
+    <span class="section-num">00</span>
+    <span class="section-title-text">Marco didáctico</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="split-card">
+    <div class="split-half">
+      <div class="cc-kicker">QUÉ ES</div>
+      <ul class="cc-list">
+        <li>Práctica para bajar costo de cambio en código vivo.</li>
+        <li>Legibilidad para humanos primero, compilador después.</li>
+        <li>Diseño incremental apoyado por refactor continuo.</li>
+      </ul>
+    </div>
+    <div class="split-half">
+      <div class="cc-kicker">QUÉ NO ES</div>
+      <ul class="cc-list">
+        <li>“Código bonito” sin impacto en mantenibilidad.</li>
+        <li>Dogma rígido: se aplican principios con contexto.</li>
+        <li>Eliminar toda duplicación prematuramente.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cc-callout"><strong>Idea central:</strong> la métrica real no es “qué tan elegante quedó”, sino cuánta fricción hay para entender, cambiar y desplegar con seguridad.</div>
+
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-title-text">Nombres que comunican intención</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-grid g3">
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">🏷</div>
+        <div><div class="card-num">01</div><div class="card-title">Intención sobre abreviación</div></div>
+      </div>
+      <div class="card-desc">Un nombre debe explicar por qué existe y qué representa. Si requiere comentario extra para entenderlo, todavía no está bien nombrado.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> <code>activeSubscriptions</code> aporta más que <code>subs</code>.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">🧭</div>
+        <div><div class="card-num">02</div><div class="card-title">Lenguaje del dominio</div></div>
+      </div>
+      <div class="card-desc">Nombra clases y métodos con términos del negocio; reduce traducciones mentales entre requisito y código.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> <code>InvoiceOverduePolicy</code> en vez de <code>CheckService</code>.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">🚫</div>
+        <div><div class="card-num">03</div><div class="card-title">Evitar ruido</div></div>
+      </div>
+      <div class="card-desc">Palabras vacías como <code>data</code>, <code>info</code>, <code>manager</code> suelen esconder falta de diseño o responsabilidades mezcladas.</div>
+      <div class="card-example"><strong>Regla:</strong> si todo termina en <code>Manager</code>, falta modelado.</div>
+    </div>
+  </div>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">MAL VS BIEN — NOMBRES EN CÓDIGO REAL (JAVA)</div>
+    <pre><code>// Mal: abreviaciones y ruido
+public BigDecimal calc(List<OrderItem> li, BigDecimal tx) {
+    BigDecimal r = BigDecimal.ZERO;
+    for (OrderItem i : li) r = r.add(i.getP().multiply(BigDecimal.valueOf(i.getQ())));
+    return r.add(tx);
+}
+
+// Bien: intención explícita y lenguaje del dominio
+public BigDecimal calculateOrderTotal(List<OrderItem> items, BigDecimal taxAmount) {
+    BigDecimal subtotal = BigDecimal.ZERO;
+    for (OrderItem item : items) {
+        subtotal = subtotal.add(item.unitPrice().multiply(BigDecimal.valueOf(item.quantity())));
+    }
+    return subtotal.add(taxAmount);
+}</code></pre>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-title-text">Funciones pequeñas y con un propósito</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-grid g2">
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">✂</div>
+        <div><div class="card-num">04</div><div class="card-title">Una sola cosa</div></div>
+      </div>
+      <div class="card-desc">Si un método valida, transforma, persiste y notifica, no hace “una cosa”: estás acoplando cambios distintos en el mismo lugar.</div>
+      <div class="card-example"><strong>Aplicación:</strong> separar en pasos privados o servicios dedicados.</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">↕</div>
+        <div><div class="card-num">05</div><div class="card-title">Nivel de abstracción uniforme</div></div>
+      </div>
+      <div class="card-desc">No mezcles narrativa de negocio con detalles técnicos en el mismo bloque. Mantén cada función en un único nivel de lectura.</div>
+      <div class="card-example"><strong>Señal de olor:</strong> llamadas SQL + reglas de negocio en el mismo método.</div>
+    </div>
+  </div>
+  <div class="cc-two-col mt-10">
+    <div class="card c-teal">
+      <div class="card-header"><div class="card-icon icon-teal">❌</div><div><div class="card-num">BAD</div><div class="card-title">Método “hacerTodo”</div></div></div>
+      <div class="card-desc">Valida payload, consulta BD, aplica reglas, construye DTO y envía email en 70 líneas. Cualquier cambio de infraestructura toca el flujo de negocio.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header"><div class="card-icon icon-green">✅</div><div><div class="card-num">GOOD</div><div class="card-title">Orquestación por pasos</div></div></div>
+      <div class="card-desc">`validate` → `buildDomainObject` → `persist` → `notify`. Cada paso es reemplazable y testeable por separado.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-title-text">Comentarios y formato</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="cards-grid g3">
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">💬</div>
+        <div><div class="card-num">06</div><div class="card-title">Comenta el por qué</div></div>
+      </div>
+      <div class="card-desc">El código debería mostrar el “qué”; comenta contexto, trade-offs y decisiones no obvias.</div>
+      <div class="card-example"><strong>Útil:</strong> “se usa timeout corto por límite del proveedor X”.</div>
+    </div>
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">🧹</div>
+        <div><div class="card-num">07</div><div class="card-title">Comentarios muertos, fuera</div></div>
+      </div>
+      <div class="card-desc">Comentarios obsoletos engañan más que ayudan. Mejor eliminarlos si ya no representan el comportamiento real.</div>
+      <div class="card-example"><strong>Regla:</strong> si cambias lógica, revisa comentarios en el mismo commit.</div>
+    </div>
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">📐</div>
+        <div><div class="card-num">08</div><div class="card-title">Formato consistente</div></div>
+      </div>
+      <div class="card-desc">Un estilo estable (indentación, longitud de líneas, orden) evita discusiones repetidas y acelera revisiones.</div>
+      <div class="card-example"><strong>Práctica:</strong> automatiza con formatter y linting en CI.</div>
+    </div>
+  </div>
+  <div class="cc-callout"><strong>Checklist de revisión:</strong> ¿el nombre cuenta intención?, ¿la función mezcla niveles de abstracción?, ¿el comentario agrega contexto o repite código?, ¿puedo entender el bloque en 30 segundos?</div>
+</div>
+
+</div>
+<div class="footer">
+  <span class="footer-text">CLEAN CODE · PARTE 1 DE 2 · FUNDAMENTOS</span>
+  <div class="footer-meta-row">
+    <span class="footer-count">8 CONCEPTOS</span>
+    <a class="module-link" href="estructura.html"><span class="ml-text">Continuar: Parte 2 →</span></a>
+  </div>
+</div>
+</body>
+</html>

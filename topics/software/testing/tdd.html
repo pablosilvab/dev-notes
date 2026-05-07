@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testing — TDD en práctica</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+<style>
+  body.dn-testing .week-badge { background: #EC4899; color: #0A0E1A; }
+  body.dn-testing .header h1 span { color: #F472B6; }
+  body.dn-testing .section-num { color: #F472B6; }
+  body.dn-testing .footer-count { color: #F472B6; }
+  body.dn-testing .aws-logo { color: #F9A8D4; border-color: rgba(244,114,182,.35); background: rgba(244,114,182,.08); }
+</style>
+</head>
+<body class="dn-infographic dn-testing">
+<div class="page-shell">
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">TESTING · PARTE 2 DE 2</div>
+        <h1>TDD<br><span>Test Driven Development</span></h1>
+        <p class="header-sub">Ciclos cortos red-green-refactor y diseño guiado por feedback automatizado</p>
+      </div>
+    </div>
+    <div class="aws-logo">DISEÑO GUIADO POR PRUEBAS</div>
+  </div>
+</div>
+<div class="body">
+  <div class="section-header"><span class="section-num">01</span><span class="section-title-text">Ciclo red-green-refactor</span><div class="section-line"></div></div>
+  <div class="cards-grid g3">
+    <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">🔴</div><div><div class="card-num">01</div><div class="card-title">Red</div></div></div><div class="card-desc">Escribe primero una prueba que falla por comportamiento aún no implementado.</div></div>
+    <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">🟢</div><div><div class="card-num">02</div><div class="card-title">Green</div></div></div><div class="card-desc">Implementa lo mínimo para pasar, sin adelantarte a escenarios no requeridos.</div></div>
+    <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">♻</div><div><div class="card-num">03</div><div class="card-title">Refactor</div></div></div><div class="card-desc">Mejora diseño y legibilidad manteniendo la red de seguridad de pruebas en verde.</div></div>
+  </div>
+
+  <div class="section-header"><span class="section-num">02</span><span class="section-title-text">Heurísticas didácticas</span><div class="section-line"></div></div>
+  <div class="cards-grid g2">
+    <div class="card c-amber"><div class="card-header"><div class="card-icon icon-amber">🧠</div><div><div class="card-num">04</div><div class="card-title">Del ejemplo al diseño</div></div></div><div class="card-desc">Empieza por casos simples y deja que aparezcan abstracciones cuando ya hay duplicación real.</div></div>
+    <div class="card c-amber"><div class="card-header"><div class="card-icon icon-amber">⚖</div><div><div class="card-num">05</div><div class="card-title">Fake vs mock</div></div></div><div class="card-desc">Prefiere fakes para flujos de negocio; usa mocks cuando necesites verificar interacción explícita.</div></div>
+  </div>
+
+  <div class="section-header"><span class="section-num">03</span><span class="section-title-text">Errores frecuentes en TDD</span><div class="section-line"></div></div>
+  <div class="cards-grid g3">
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">🏎</div><div><div class="card-num">06</div><div class="card-title">Tests enormes</div></div></div><div class="card-desc">Cuando un test valida demasiadas cosas, falla sin indicar causa y bloquea refactor.</div></div>
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">🧱</div><div><div class="card-num">07</div><div class="card-title">Acoplarse a implementación</div></div></div><div class="card-desc">Pruebas frágiles que dependen de internals rompen con cualquier mejora de diseño.</div></div>
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">📉</div><div><div class="card-num">08</div><div class="card-title">Saltarse refactor</div></div></div><div class="card-desc">Acumular “greens” sin limpiar deriva en deuda técnica y pérdida de velocidad futura.</div></div>
+  </div>
+</div>
+</div>
+<div class="footer">
+  <span class="footer-text">TESTING · PARTE 2 DE 2 · TDD</span>
+  <div class="footer-meta-row">
+    <a class="module-link" href="fundamentos.html"><span class="ml-text">← Parte 1</span></a>
+    <span class="footer-count">8 CONCEPTOS</span>
+  </div>
+</div>
+</body>
+</html>

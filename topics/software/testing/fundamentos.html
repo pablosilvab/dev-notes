@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testing — Fundamentos y estrategia</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+<style>
+  body.dn-testing .week-badge { background: #EC4899; color: #0A0E1A; }
+  body.dn-testing .header h1 span { color: #F472B6; }
+  body.dn-testing .section-num { color: #F472B6; }
+  body.dn-testing .footer-count { color: #F472B6; }
+  body.dn-testing .aws-logo { color: #F9A8D4; border-color: rgba(244,114,182,.35); background: rgba(244,114,182,.08); }
+</style>
+</head>
+<body class="dn-infographic dn-testing">
+<div class="page-shell">
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">TESTING · PARTE 1 DE 2</div>
+        <h1>Testing<br><span>Fundamentos</span></h1>
+        <p class="header-sub">Qué probar, con qué nivel de profundidad y cómo obtener feedback rápido</p>
+      </div>
+    </div>
+    <div class="aws-logo">CALIDAD DE SOFTWARE</div>
+  </div>
+</div>
+<div class="body">
+  <div class="section-header"><span class="section-num">01</span><span class="section-title-text">Pirámide y tipos de prueba</span><div class="section-line"></div></div>
+  <div class="cards-grid g3">
+    <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">🔺</div><div><div class="card-num">01</div><div class="card-title">Pirámide de testing</div></div></div><div class="card-desc">Más pruebas unitarias, menos e2e. Optimiza costo, velocidad y estabilidad del pipeline.</div></div>
+    <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">🧪</div><div><div class="card-num">02</div><div class="card-title">Unit tests</div></div></div><div class="card-desc">Validan reglas de negocio en aislamiento. Son la red más rápida para detectar regresiones.</div></div>
+    <div class="card c-pink"><div class="card-header"><div class="card-icon icon-pink">🧩</div><div><div class="card-num">03</div><div class="card-title">Integration tests</div></div></div><div class="card-desc">Validan contratos entre módulos y adaptadores (BD, colas, HTTP), donde fallan muchas suposiciones.</div></div>
+  </div>
+
+  <div class="section-header"><span class="section-num">02</span><span class="section-title-text">Diseño de pruebas efectivas</span><div class="section-line"></div></div>
+  <div class="cards-grid g2">
+    <div class="card c-amber"><div class="card-header"><div class="card-icon icon-amber">🎯</div><div><div class="card-num">04</div><div class="card-title">Una intención por test</div></div></div><div class="card-desc">Cada prueba debe fallar por una sola razón. Nombres explícitos ayudan a diagnosticar rápido.</div></div>
+    <div class="card c-amber"><div class="card-header"><div class="card-icon icon-amber">📐</div><div><div class="card-num">05</div><div class="card-title">Arrange-Act-Assert</div></div></div><div class="card-desc">Estructura predecible: prepara, ejecuta y verifica. Mejora legibilidad y mantenimiento del suite.</div></div>
+  </div>
+
+  <div class="section-header"><span class="section-num">03</span><span class="section-title-text">Métricas y cobertura</span><div class="section-line"></div></div>
+  <div class="cards-grid g3">
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">📊</div><div><div class="card-num">06</div><div class="card-title">Cobertura no es calidad</div></div></div><div class="card-desc">100% de líneas puede ocultar casos críticos no verificados. Mide riesgo cubierto, no solo porcentaje.</div></div>
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">⏱</div><div><div class="card-num">07</div><div class="card-title">Feedback rápido</div></div></div><div class="card-desc">Prioriza tests que corren en segundos para mantener ritmo de desarrollo y evitar bypass de CI.</div></div>
+    <div class="card c-teal"><div class="card-header"><div class="card-icon icon-teal">🧨</div><div><div class="card-num">08</div><div class="card-title">Flaky tests</div></div></div><div class="card-desc">Un test inestable cuesta confianza. Aísla dependencias de tiempo, red y orden de ejecución.</div></div>
+  </div>
+</div>
+</div>
+<div class="footer">
+  <span class="footer-text">TESTING · PARTE 1 DE 2 · FUNDAMENTOS</span>
+  <div class="footer-meta-row">
+    <span class="footer-count">8 CONCEPTOS</span>
+    <a class="module-link" href="tdd.html"><span class="ml-text">Parte 2 →</span></a>
+  </div>
+</div>
+</body>
+</html>

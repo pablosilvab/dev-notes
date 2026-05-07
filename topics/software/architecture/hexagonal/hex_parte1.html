@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../../../../assets/css/dev-notes.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0A0E1A;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ───── HEADER ───── */
+  .header {
+    padding: 48px 56px 32px;
+    border-bottom: 1px solid #1E2A40;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 440px; height: 440px;
+    background: radial-gradient(circle, rgba(99,102,241,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(20,184,166,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge {
+    background: #6366F1;
+    color: #fff;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    padding: 4px 12px; border-radius: 2px;
+    letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block;
+  }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #6366F1; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; font-weight: 400; }
+  .part-badge {
+    font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+    color: #6366F1; background: rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.3); padding: 8px 16px;
+    border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap;
+  }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill {
+    font-size: 11px; font-weight: 500; padding: 5px 12px;
+    border-radius: 20px; border: 1px solid;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
+  }
+  .pill-a { color: #A5B4FC; border-color: rgba(165,180,252,0.3); background: rgba(165,180,252,0.07); }
+  .pill-b { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
+  .pill-c { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+  .pill-d { color: #F9A8D4; border-color: rgba(249,168,212,0.3); background: rgba(249,168,212,0.07); }
+
+  /* ───── BODY ───── */
+  .body { padding: 0 56px 56px; }
+
+  /* ───── SECTION LABEL ───── */
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num {
+    font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  }
+  .sn-indigo { color: #6366F1; }
+  .sn-teal   { color: #14B8A6; }
+  .sn-amber  { color: #FF9900; }
+  .sn-green  { color: #22C55E; }
+  .sn-pink   { color: #EC4899; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  /* ───── CARDS ───── */
+  .cards-grid { display: grid; gap: 10px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g1 { grid-template-columns: 1fr; }
+
+  .card {
+    background: #0F1625; border: 1px solid #1E2A40;
+    border-radius: 12px; padding: 20px 22px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; width: 3px; height: 100%;
+    border-radius: 12px 0 0 12px;
+  }
+  .card.c-indigo::before { background: #6366F1; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-amber::before  { background: #FF9900; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-pink::before   { background: #EC4899; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-rose::before   { background: #F43F5E; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+  }
+  .icon-indigo { background: rgba(99,102,241,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-amber  { background: rgba(255,153,0,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw {
+    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+    padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em;
+  }
+  .kw-indigo { background: rgba(99,102,241,0.12); color: #A5B4FC; }
+  .kw-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .kw-amber  { background: rgba(255,153,0,0.12);  color: #FCD34D; }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-pink   { background: rgba(236,72,153,0.12); color: #F9A8D4; }
+  .kw-blue   { background: rgba(59,130,246,0.12); color: #93C5FD; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .kw-rose   { background: rgba(244,63,94,0.12);  color: #FDA4AF; }
+
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-indigo { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.18); color: #A5B4FC; }
+  .tip-teal   { background: rgba(20,184,166,0.06); border: 1px solid rgba(20,184,166,0.18); color: #5EEAD4; }
+  .tip-amber  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.18);  color: #FCD34D; }
+  .tip-green  { background: rgba(34,197,94,0.06);  border: 1px solid rgba(34,197,94,0.18);  color: #86EFAC; }
+  .tip-rose   { background: rgba(244,63,94,0.06);  border: 1px solid rgba(244,63,94,0.18);  color: #FDA4AF; }
+
+  /* ───── HEX DIAGRAM ───── */
+  .hex-diagram {
+    background: #0F1625;
+    border: 1px solid #1E2A40;
+    border-radius: 12px;
+    padding: 32px 24px;
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(520px, 1fr) minmax(260px, 340px);
+    column-gap: 56px;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    max-width: 1220px;
+    margin: 0 auto;
+  }
+  .hex-wrap {
+    position: relative;
+    width: 560px;
+    height: 380px;
+    flex-shrink: 0;
+  }
+
+  /* Rings via SVG inline */
+  .hex-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  .hex-layer {
+    position: absolute;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  /* Domain core */
+  .hl-domain {
+    width: 160px; height: 160px;
+    background: rgba(99,102,241,0.08);
+    border: 2px solid rgba(99,102,241,0.4);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: column; gap: 4px;
+    z-index: 3;
+  }
+  .hl-domain-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    color: #6366F1; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .hl-domain-name { font-size: 14px; font-weight: 700; color: #E2E8F0; }
+  .hl-domain-sub  { font-size: 10px; color: #4A5E7A; font-family: 'DM Mono', monospace; }
+
+  /* Application ring */
+  .hl-app {
+    width: 280px; height: 280px;
+    background: rgba(20,184,166,0.04);
+    border: 1.5px dashed rgba(20,184,166,0.25);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+
+  /* Infrastructure ring */
+  .hl-infra {
+    width: 400px; height: 400px;
+    background: rgba(255,153,0,0.03);
+    border: 1.5px dashed rgba(255,153,0,0.2);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  }
+
+  /* Port labels around the app ring */
+  .port-label {
+    position: absolute;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px; font-weight: 500;
+    padding: 3px 8px; border-radius: 3px;
+    z-index: 4; white-space: nowrap;
+  }
+  .pl-teal  { background: rgba(20,184,166,0.12); color: #5EEAD4; border: 1px solid rgba(20,184,166,0.25); }
+  .pl-amber { background: rgba(255,153,0,0.12);  color: #FCD34D; border: 1px solid rgba(255,153,0,0.25); }
+
+  /* Adapter nodes on the outer ring */
+  .adapter-node {
+    position: absolute;
+    background: #0A0E1A;
+    border: 1px solid #1E2A40;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 10px; font-weight: 500; color: #8899B8;
+    text-align: center; z-index: 4;
+    transition: border-color 0.15s;
+    min-width: 90px;
+  }
+  .an-icon { font-size: 14px; margin-bottom: 3px; display: block; }
+  .an-label { font-size: 9px; font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .an-driving { border-left: 2px solid #5EEAD4; }
+  .an-driven  { border-right: 2px solid #FCD34D; }
+  .an-driving {
+    left: 6px !important;
+    transform: translateX(-86%) !important;
+  }
+  .an-driving[style*="translate(-100%, -50%)"] {
+    transform: translate(-86%, -50%) !important;
+  }
+  .an-driven {
+    right: 6px !important;
+    transform: translateX(86%) !important;
+  }
+  .an-driven[style*="translate(100%, -50%)"] {
+    transform: translate(86%, -50%) !important;
+  }
+
+  /* Legend */
+  .hex-legend {
+    display: flex; flex-direction: column; gap: 14px;
+    margin-left: 0;
+    min-width: 260px;
+  }
+  .legend-item { display: flex; align-items: flex-start; gap: 10px; }
+  .legend-color {
+    width: 14px; height: 14px; border-radius: 3px;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .lc-indigo { background: rgba(99,102,241,0.3); border: 1.5px solid #6366F1; }
+  .lc-teal   { background: rgba(20,184,166,0.15); border: 1.5px dashed #14B8A6; }
+  .lc-amber  { background: rgba(255,153,0,0.1);   border: 1.5px dashed #FF9900; }
+  .lt-title  { font-size: 12px; font-weight: 600; color: #E2E8F0; margin-bottom: 2px; }
+  .lt-desc   { font-size: 11px; color: #4A5E7A; line-height: 1.5; }
+
+  /* ───── PROBLEM / SOLUTION SPLIT ───── */
+  .problem-solution {
+    display: grid; grid-template-columns: 1fr 1fr;
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden;
+  }
+  .ps-col { padding: 22px 24px; }
+  .ps-col:first-child { border-right: 1px solid #1E2A40; }
+  .ps-label {
+    font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .psl-red    { color: #F43F5E; }
+  .psl-green  { color: #22C55E; }
+  .ps-title   { font-size: 15px; font-weight: 600; color: #E2E8F0; margin-bottom: 14px; }
+  .ps-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin-bottom: 10px; font-size: 12px; color: #64748B; line-height: 1.5;
+  }
+  .ps-item::before {
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+  }
+  .psi-red::before   { background: #F43F5E; }
+  .psi-green::before { background: #22C55E; }
+
+  /* ───── PORTS & ADAPTERS DETAIL TABLE ───── */
+  .pa-table {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden;
+  }
+  .pa-header {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+    background: #080C17; border-bottom: 1px solid #1E2A40;
+  }
+  .pa-cell {
+    padding: 10px 16px; font-size: 10px; font-family: 'DM Mono', monospace;
+    color: #3B4C68; border-right: 1px solid #1A2236; letter-spacing: 0.04em;
+  }
+  .pa-cell:last-child { border-right: none; }
+  .pa-cell.pa-head { color: #6B7FA3; font-weight: 500; }
+  .pa-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+    border-bottom: 1px solid #1A2236;
+  }
+  .pa-row:last-child { border-bottom: none; }
+  .pa-row:hover { background: rgba(255,255,255,0.012); }
+  .pa-type {
+    padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+    border-right: 1px solid #1A2236;
+  }
+  .pa-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .pd-teal   { background: #14B8A6; }
+  .pd-amber  { background: #FF9900; }
+  .pa-type-name { font-size: 12px; font-weight: 600; color: #E2E8F0; }
+  .pa-val {
+    padding: 12px 16px; font-size: 11.5px; color: #64748B;
+    border-right: 1px solid #1A2236; line-height: 1.45;
+  }
+  .pa-val:last-child { border-right: none; }
+  .pa-badge {
+    display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace;
+    padding: 2px 6px; border-radius: 3px;
+  }
+  .pb-teal  { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .pb-amber { background: rgba(255,153,0,0.12);  color: #FCD34D; }
+
+  /* ───── DEPENDENCY RULE ───── */
+  .dep-rule {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px;
+    padding: 24px; display: flex; align-items: center; gap: 0; overflow: hidden;
+  }
+  .dep-layer {
+    flex: 1; padding: 16px 20px; border-radius: 8px; text-align: center;
+    position: relative;
+  }
+  .dl-infra  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.2); }
+  .dl-app    { background: rgba(20,184,166,0.06);  border: 1px solid rgba(20,184,166,0.2); }
+  .dl-domain { background: rgba(99,102,241,0.08);  border: 1px solid rgba(99,102,241,0.3); }
+
+  .dep-layer-label {
+    font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px;
+  }
+  .dll-infra  { color: #FF9900; }
+  .dll-app    { color: #14B8A6; }
+  .dll-domain { color: #6366F1; }
+
+  .dep-layer-name { font-size: 13px; font-weight: 600; color: #E2E8F0; margin-bottom: 6px; }
+  .dep-layer-items { font-size: 11px; color: #4A5E7A; line-height: 1.6; }
+
+  .dep-arrow {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 12px; gap: 3px;
+  }
+  .da-line  { width: 1px; height: 30px; background: #1E2A40; }
+  .da-arrow { font-size: 18px; color: #2D3E5A; }
+  .da-label { font-size: 9px; color: #3B4C68; font-family: 'DM Mono', monospace; transform: rotate(90deg); white-space: nowrap; }
+  .dep-rule-note {
+    margin-top: 16px; padding: 12px 16px;
+    background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.15);
+    border-radius: 8px; font-size: 12px; color: #64748B; line-height: 1.6;
+  }
+  .dep-rule-note strong { color: #A5B4FC; }
+
+  /* ───── BACK LINK ───── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: #3B4C68; text-decoration: none; transition: color 0.15s;
+  }
+  .back-link:hover { color: #6B7FA3; }
+
+  /* ───── FOOTER ───── */
+  .footer {
+    background: #080C17; border-top: 1px solid #1E2A40;
+    padding: 20px 56px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #6366F1; letter-spacing: 0.06em; }
+  .footer-next {
+    font-family: 'Space Mono', monospace; font-size: 10px; color: #6366F1;
+    background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2);
+    padding: 4px 12px; border-radius: 3px; text-decoration: none;
+    letter-spacing: 0.06em; transition: background 0.15s;
+  }
+  .footer-next:hover { background: rgba(99,102,241,0.14); }
+</style>
+</head>
+<body class="dn-infographic dn-hex">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">ARQUITECTURA · PARTE 1 DE 2</div>
+        <h1>Arquitectura<br><span>Hexagonal</span></h1>
+        <p class="header-sub">Fundamentos, el problema que resuelve, Ports & Adapters y la regla de dependencias</p>
+      </div>
+    </div>
+    <div class="part-badge">HEX-ARCH · P1</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">⬡ Ports & Adapters</span>
+    <span class="pill pill-b">🧅 Capas de la arquitectura</span>
+    <span class="pill pill-c">🔄 Regla de dependencias</span>
+    <span class="pill pill-d">🧪 Testabilidad</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 1 — ¿QUÉ PROBLEMA RESUELVE?
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-indigo">01</span>
+    <span class="section-title-text">El problema que resuelve</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="problem-solution">
+    <div class="ps-col">
+      <div class="ps-label psl-red">❌ Arquitectura tradicional acoplada</div>
+      <div class="ps-title">La lógica de negocio depende de todo</div>
+      <div class="ps-item psi-red">El dominio importa directamente la BD (JPA, SQLAlchemy) — cambiar de Postgres a Mongo rompe la lógica de negocio.</div>
+      <div class="ps-item psi-red">Los controladores HTTP llaman directo a los repositorios — no puedes probar la lógica sin levantar un servidor.</div>
+      <div class="ps-item psi-red">El servicio envía emails usando SMTP directamente — para testear, o mandas emails reales o mockeas librerías externas.</div>
+      <div class="ps-item psi-red">Una migración de framework (de Spring a Quarkus) implica reescribir lógica de negocio.</div>
+      <div class="ps-item psi-red">Los tests son lentos porque dependen de bases de datos reales, queues reales y APIs externas.</div>
+    </div>
+    <div class="ps-col">
+      <div class="ps-label psl-green">✅ Con Arquitectura Hexagonal</div>
+      <div class="ps-title">El dominio no depende de nada externo</div>
+      <div class="ps-item psi-green">El dominio define interfaces (Ports) — la implementación real de la BD va afuera. Cambias Postgres por Mongo sin tocar el dominio.</div>
+      <div class="ps-item psi-green">Puedes testear toda la lógica de negocio con implementaciones en memoria, sin HTTP ni BD real.</div>
+      <div class="ps-item psi-green">El servicio de email es un Port. Para tests usas un FakeEmailAdapter, en prod usas SmtpEmailAdapter.</div>
+      <div class="ps-item psi-green">El framework es solo un Adapter. Migrás de Spring a Quarkus cambiando solo los controllers, no el dominio.</div>
+      <div class="ps-item psi-green">Los tests unitarios son rapidísimos porque el dominio no tiene dependencias externas.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 2 — DIAGRAMA HEXAGONAL
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-indigo">02</span>
+    <span class="section-title-text">Diagrama — Ports & Adapters</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="hex-diagram">
+    <div class="hex-wrap">
+
+      <!-- Outer ring (Infrastructure) -->
+      <div class="hex-layer hl-infra"></div>
+      <!-- App ring -->
+      <div class="hex-layer hl-app"></div>
+      <!-- Domain core -->
+      <div class="hex-layer hl-domain" style="display:flex">
+        <div>
+          <div class="hl-domain-label">DOMAIN</div>
+          <div class="hl-domain-name">Lógica de negocio</div>
+          <div class="hl-domain-sub">Entities · Use Cases</div>
+          <div class="hl-domain-sub">Value Objects</div>
+        </div>
+      </div>
+
+      <!-- PORT LABELS on app ring -->
+      <div class="port-label pl-teal" style="top:62px; left:50%; transform:translateX(-50%)">Port: Input (driving)</div>
+      <div class="port-label pl-amber" style="bottom:62px; left:50%; transform:translateX(-50%)">Port: Output (driven)</div>
+      <div class="port-label pl-teal" style="top:50%; left:-10px; transform:translateY(-50%) rotate(-90deg)">Port: Input</div>
+      <div class="port-label pl-amber" style="top:50%; right:-10px; transform:translateY(-50%) rotate(90deg)">Port: Output</div>
+
+      <!-- DRIVING ADAPTERS (left side) -->
+      <div class="adapter-node an-driving" style="top:30px; left:-20px; transform:translateX(-100%)">
+        <span class="an-icon">🌐</span>
+        REST Controller
+        <div class="an-label">HTTP Adapter</div>
+      </div>
+      <div class="adapter-node an-driving" style="top:50%; left:-20px; transform:translate(-100%, -50%)">
+        <span class="an-icon">⌨️</span>
+        CLI Command
+        <div class="an-label">CLI Adapter</div>
+      </div>
+      <div class="adapter-node an-driving" style="bottom:30px; left:-20px; transform:translateX(-100%)">
+        <span class="an-icon">📨</span>
+        Event Consumer
+        <div class="an-label">Queue Adapter</div>
+      </div>
+
+      <!-- DRIVEN ADAPTERS (right side) -->
+      <div class="adapter-node an-driven" style="top:30px; right:-20px; transform:translateX(100%)">
+        <span class="an-icon">🗄</span>
+        SQL Repository
+        <div class="an-label">DB Adapter</div>
+      </div>
+      <div class="adapter-node an-driven" style="top:50%; right:-20px; transform:translate(100%, -50%)">
+        <span class="an-icon">📧</span>
+        SMTP Service
+        <div class="an-label">Email Adapter</div>
+      </div>
+      <div class="adapter-node an-driven" style="bottom:30px; right:-20px; transform:translateX(100%)">
+        <span class="an-icon">☁</span>
+        S3 Storage
+        <div class="an-label">Storage Adapter</div>
+      </div>
+
+      <!-- Arrows left -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:3" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr-teal" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#14B8A6"/>
+          </marker>
+          <marker id="arr-amber" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#FF9900"/>
+          </marker>
+        </defs>
+        <!-- Driving arrows → domain -->
+        <line x1="120" y1="68" x2="188" y2="148" stroke="#14B8A6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-teal)" opacity="0.5"/>
+        <line x1="120" y1="190" x2="180" y2="190" stroke="#14B8A6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-teal)" opacity="0.5"/>
+        <line x1="120" y1="312" x2="188" y2="232" stroke="#14B8A6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-teal)" opacity="0.5"/>
+        <!-- Domain → driven adapters -->
+        <line x1="340" y1="148" x2="400" y2="68" stroke="#FF9900" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-amber)" opacity="0.5"/>
+        <line x1="340" y1="190" x2="400" y2="190" stroke="#FF9900" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-amber)" opacity="0.5"/>
+        <line x1="340" y1="232" x2="400" y2="312" stroke="#FF9900" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-amber)" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <!-- Legend -->
+    <div class="hex-legend">
+      <div class="legend-item">
+        <div class="legend-color lc-indigo"></div>
+        <div class="legend-text">
+          <div class="lt-title">Domain Core</div>
+          <div class="lt-desc">Lógica de negocio pura. No importa nada externo. Solo define interfaces (Ports). Es el hexágono central.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color lc-teal"></div>
+        <div class="legend-text">
+          <div class="lt-title">Capa de Aplicación</div>
+          <div class="lt-desc">Orquesta los casos de uso. Coordina el dominio con los puertos. No contiene lógica de negocio.</div>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color lc-amber"></div>
+        <div class="legend-text">
+          <div class="lt-title">Capa de Infraestructura</div>
+          <div class="lt-desc">Implementaciones concretas (Adapters). BD, HTTP, email, queues. Conoce el dominio, pero el dominio no la conoce.</div>
+        </div>
+      </div>
+      <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:8px; padding:12px 14px; margin-top:4px">
+        <div style="font-size:11px; color:#5EEAD4; font-family:'DM Mono',monospace; margin-bottom:5px">→ Driving (izquierda)</div>
+        <div style="font-size:11px; color:#64748B; line-height:1.5; margin-bottom:8px">Adapters que <em>invocan</em> el dominio: HTTP, CLI, Consumers de eventos.</div>
+        <div style="font-size:11px; color:#FCD34D; font-family:'DM Mono',monospace; margin-bottom:5px">→ Driven (derecha)</div>
+        <div style="font-size:11px; color:#64748B; line-height:1.5">Adapters que <em>el dominio invoca</em>: BD, email, storage, APIs externas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 3 — PORTS & ADAPTERS EN DETALLE
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-teal">03</span>
+    <span class="section-title-text">Ports & Adapters — en detalle</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="pa-table">
+    <div class="pa-header">
+      <div class="pa-cell pa-head">Tipo</div>
+      <div class="pa-cell pa-head">¿Qué es?</div>
+      <div class="pa-cell pa-head">¿Quién lo define?</div>
+      <div class="pa-cell pa-head">Ejemplos reales</div>
+    </div>
+    <!-- Port Input -->
+    <div class="pa-row">
+      <div class="pa-type"><span class="pa-dot pd-teal"></span><span class="pa-type-name">Port de entrada<br><span style="font-size:10px;color:#3B4C68;font-family:'DM Mono',monospace">Driving Port</span></span></div>
+      <div class="pa-val">Interfaz que define <strong style="color:#94A3B8">cómo el mundo exterior puede invocar</strong> el dominio. Es el contrato de lo que la app puede hacer.</div>
+      <div class="pa-val">El <strong style="color:#94A3B8">dominio</strong>. Define la interfaz (ej: <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10px">OrderService</span>) sin saber quién la llama.</div>
+      <div class="pa-val"><span class="pa-badge pb-teal">CreateOrderUseCase</span> <span class="pa-badge pb-teal">GetUserQuery</span> <span class="pa-badge pb-teal">ProcessPaymentUseCase</span></div>
+    </div>
+    <!-- Adapter Input -->
+    <div class="pa-row">
+      <div class="pa-type"><span class="pa-dot pd-teal"></span><span class="pa-type-name">Adapter de entrada<br><span style="font-size:10px;color:#3B4C68;font-family:'DM Mono',monospace">Driving Adapter</span></span></div>
+      <div class="pa-val">Implementación concreta que traduce una señal externa al lenguaje del dominio e invoca el Port de entrada.</div>
+      <div class="pa-val">La <strong style="color:#94A3B8">infraestructura</strong>. Conoce el framework HTTP, CLI o queue. Llama al dominio.</div>
+      <div class="pa-val"><span class="pa-badge pb-teal">RestOrderController</span> <span class="pa-badge pb-teal">GraphQLResolver</span> <span class="pa-badge pb-teal">KafkaConsumer</span></div>
+    </div>
+    <!-- Port Output -->
+    <div class="pa-row">
+      <div class="pa-type"><span class="pa-dot pd-amber"></span><span class="pa-type-name">Port de salida<br><span style="font-size:10px;color:#3B4C68;font-family:'DM Mono',monospace">Driven Port</span></span></div>
+      <div class="pa-val">Interfaz que define <strong style="color:#94A3B8">lo que el dominio necesita del exterior</strong> (persistencia, notificaciones, etc.) sin saber cómo se implementa.</div>
+      <div class="pa-val">El <strong style="color:#94A3B8">dominio</strong>. Define la interfaz sin importar la tecnología de turno (JPA, Redis, SMTP).</div>
+      <div class="pa-val"><span class="pa-badge pb-amber">OrderRepository</span> <span class="pa-badge pb-amber">EmailNotifier</span> <span class="pa-badge pb-amber">PaymentGateway</span></div>
+    </div>
+    <!-- Adapter Output -->
+    <div class="pa-row">
+      <div class="pa-type"><span class="pa-dot pd-amber"></span><span class="pa-type-name">Adapter de salida<br><span style="font-size:10px;color:#3B4C68;font-family:'DM Mono',monospace">Driven Adapter</span></span></div>
+      <div class="pa-val">Implementación concreta del Port de salida. Contiene el código de JPA, SMTP, S3, Redis, etc.</div>
+      <div class="pa-val">La <strong style="color:#94A3B8">infraestructura</strong>. Implementa la interfaz del dominio usando tecnología específica.</div>
+      <div class="pa-val"><span class="pa-badge pb-amber">JpaOrderRepository</span> <span class="pa-badge pb-amber">SmtpEmailNotifier</span> <span class="pa-badge pb-amber">StripePaymentGateway</span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 4 — REGLA DE DEPENDENCIAS
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-amber">04</span>
+    <span class="section-title-text">La regla de dependencias — el principio fundamental</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div style="background:#0F1625; border:1px solid #1E2A40; border-radius:12px; padding:24px">
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px">
+      <div class="dep-layer dl-infra" style="flex:1">
+        <div class="dep-layer-label dll-infra">INFRAESTRUCTURA</div>
+        <div class="dep-layer-name">Adapters</div>
+        <div class="dep-layer-items">RestController · JpaRepository<br>SmtpEmailSender · KafkaProducer<br>S3StorageAdapter</div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:0 8px">
+        <div style="font-size:20px; color:#2D3E5A">→</div>
+        <div style="font-size:8px; color:#3B4C68; font-family:'DM Mono',monospace; white-space:nowrap">depende de</div>
+      </div>
+      <div class="dep-layer dl-app" style="flex:1">
+        <div class="dep-layer-label dll-app">APLICACIÓN</div>
+        <div class="dep-layer-name">Use Cases</div>
+        <div class="dep-layer-items">CreateOrderUseCase<br>ProcessPaymentUseCase<br>GetOrderQueryService</div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:0 8px">
+        <div style="font-size:20px; color:#2D3E5A">→</div>
+        <div style="font-size:8px; color:#3B4C68; font-family:'DM Mono',monospace; white-space:nowrap">depende de</div>
+      </div>
+      <div class="dep-layer dl-domain" style="flex:1">
+        <div class="dep-layer-label dll-domain">DOMINIO</div>
+        <div class="dep-layer-name">Entities & Ports</div>
+        <div class="dep-layer-items">Order · OrderItem · Customer<br>OrderRepository (interface)<br>PaymentGateway (interface)</div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:4px; padding:0 8px">
+        <div style="font-size:20px; color:#2D3E5A">🚫</div>
+        <div style="font-size:8px; color:#F43F5E; font-family:'DM Mono',monospace; white-space:nowrap">no depende de nada</div>
+      </div>
+    </div>
+    <div class="dep-rule-note">
+      <strong>La regla en una frase:</strong> Las dependencias siempre apuntan <strong>hacia adentro</strong>. La infraestructura conoce la aplicación, la aplicación conoce el dominio, pero el dominio <strong>no conoce a nadie</strong>. Si en tu código el dominio importa algo de infraestructura, la arquitectura hexagonal está rota.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 5 — CONCEPTOS CLAVE
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-green">05</span>
+    <span class="section-title-text">Conceptos clave del dominio</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-indigo">
+      <div class="card-header">
+        <div class="card-icon icon-indigo">🧱</div>
+        <div><div class="card-num">01</div><div class="card-title">Entity</div></div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-indigo">Identidad única</span>
+        <span class="kw kw-indigo">Mutable</span>
+        <span class="kw kw-indigo">ID</span>
+      </div>
+      <div class="card-desc">Objeto del dominio con identidad única que persiste en el tiempo. Dos entidades son iguales si tienen el mismo ID, aunque sus atributos difieran.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> <span style="font-family:'DM Mono',monospace;color:#A5B4FC;font-size:11px">Order</span>, <span style="font-family:'DM Mono',monospace;color:#A5B4FC;font-size:11px">User</span>, <span style="font-family:'DM Mono',monospace;color:#A5B4FC;font-size:11px">Product</span>. Una Order con id=42 es la misma Order aunque cambie su estado de PENDING a PAID.</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">💎</div>
+        <div><div class="card-num">02</div><div class="card-title">Value Object</div></div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">Sin identidad</span>
+        <span class="kw kw-teal">Inmutable</span>
+        <span class="kw kw-teal">Igual por valor</span>
+      </div>
+      <div class="card-desc">Objeto que describe una característica pero sin identidad propia. Es inmutable — si necesitas "cambiar" un VO, creas uno nuevo. Dos VOs son iguales si sus valores son iguales.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:11px">Money(100, "CLP")</span>, <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:11px">Email("user@mail.com")</span>, <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:11px">Address</span>. Dos Money(100, "CLP") son exactamente iguales.</div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🌳</div>
+        <div><div class="card-num">03</div><div class="card-title">Aggregate</div></div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">Aggregate Root</span>
+        <span class="kw kw-purple">Consistencia</span>
+        <span class="kw kw-purple">Boundary</span>
+      </div>
+      <div class="card-desc">Cluster de entidades y VOs que se tratan como una unidad. El Aggregate Root es la única puerta de entrada — nadie puede modificar los objetos internos sin pasar por él.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> <span style="font-family:'DM Mono',monospace;color:#D8B4FE;font-size:11px">Order</span> es el Aggregate Root. Para añadir un <span style="font-family:'DM Mono',monospace;color:#D8B4FE;font-size:11px">OrderItem</span> debes llamar a <span style="font-family:'DM Mono',monospace;color:#D8B4FE;font-size:11px">order.addItem()</span>, nunca manipular el item directamente.</div>
+    </div>
+    <div class="card c-amber">
+      <div class="card-header">
+        <div class="card-icon icon-amber">🎯</div>
+        <div><div class="card-num">04</div><div class="card-title">Use Case</div></div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-amber">Caso de uso</span>
+        <span class="kw kw-amber">Orquestación</span>
+        <span class="kw kw-amber">Application Service</span>
+      </div>
+      <div class="card-desc">Representa una operación específica del sistema desde el punto de vista del usuario. Vive en la capa de aplicación, orquesta entidades y puertos, pero no contiene lógica de negocio.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> <span style="font-family:'DM Mono',monospace;color:#FCD34D;font-size:11px">CreateOrderUseCase</span>: carga el usuario, valida el stock, crea la Order, llama al PaymentGateway (port), guarda en el OrderRepository (port), notifica por email.</div>
+    </div>
+    <div class="card c-pink">
+      <div class="card-header">
+        <div class="card-icon icon-pink">📢</div>
+        <div><div class="card-num">05</div><div class="card-title">Domain Event</div></div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-pink">Inmutable</span>
+        <span class="kw kw-pink">Pasado</span>
+        <span class="kw kw-pink">Desacoplamiento</span>
+      </div>
+      <div class="card-desc">Representa algo que ocurrió en el dominio. Siempre en pasado. Permite que otros componentes reaccionen a cambios sin que el dominio conozca a sus suscriptores.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> <span style="font-family:'DM Mono',monospace;color:#F9A8D4;font-size:11px">OrderPlaced</span>, <span style="font-family:'DM Mono',monospace;color:#F9A8D4;font-size:11px">PaymentProcessed</span>, <span style="font-family:'DM Mono',monospace;color:#F9A8D4;font-size:11px">UserRegistered</span>. Cuando se publica <span style="font-family:'DM Mono',monospace;color:#F9A8D4;font-size:11px">OrderPlaced</span>, el servicio de email reacciona sin que el dominio lo sepa.</div>
+    </div>
+    <div class="card c-rose">
+      <div class="card-header">
+        <div class="card-icon icon-rose">🗺</div>
+        <div><div class="card-num">06</div><div class="card-title">Bounded Context</div></div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-rose">DDD</span>
+        <span class="kw kw-rose">Límite explícito</span>
+        <span class="kw kw-rose">Lenguaje ubiquo</span>
+      </div>
+      <div class="card-desc">Límite explícito dentro del cual un modelo de dominio específico es válido. Dentro del contexto, los términos tienen un significado único y preciso (Ubiquitous Language).</div>
+      <div class="card-example"><strong>Ejemplo:</strong> "Cliente" en el contexto de Ventas es distinto a "Cliente" en el contexto de Soporte. Cada Bounded Context tiene su propio modelo y su propio hexágono.</div>
+      <div class="tip-box tip-rose">Un microservicio bien diseñado suele alinearse con un Bounded Context. Arquitectura Hexagonal + DDD es la combinación más frecuente en la práctica.</div>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-text">ARQUITECTURA HEXAGONAL · PARTE 1 DE 2 · FUNDAMENTOS Y PORTS & ADAPTERS</span>
+  <div class="footer-nav">
+    <span class="footer-count">6 conceptos core</span>
+    <a class="footer-next" href="hex_parte2.html">Parte 2: Implementación →</a>
+  </div>
+</div>
+
+</body>
+</html>
