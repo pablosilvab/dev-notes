@@ -15,11 +15,11 @@
       <div>
         <div class="site-eyebrow">Dev Notes</div>
         <h1>Notas técnicas<br><span>&amp; aprendizaje</span></h1>
-        <p class="header-desc">Apuntes, infografías y guías de estudio sobre ingeniería de software. Desde certificaciones cloud hasta patrones de arquitectura y buenas prácticas.</p>
+        <p class="header-desc">Apuntes, infografías y guías ordenadas por complejidad: cloud y certificaciones; código, pruebas y principios OOD; y patrones con arquitectura y dominio.</p>
       </div>
       <div class="header-stats">
         <div class="stat-item">
-          <div class="stat-num">04</div>
+          <div class="stat-num">08</div>
           <div class="stat-label">TEMAS EN ÍNDICE</div>
         </div>
         <div class="stat-divider"></div>
@@ -113,36 +113,38 @@
 
     </div><!-- /topics-grid: cloud -->
 
+    <!-- Orden de tarjetas: de menor a mayor complejidad / seniority (aprox. junior → staff) -->
+
     <div class="section-header mt-sm">
       <span class="section-num">02</span>
-      <span class="section-title-text">Arquitectura y calidad de software</span>
+      <span class="section-title-text">Código, pruebas y principios OOD</span>
       <div class="section-line"></div>
     </div>
 
     <div class="topics-grid">
 
-      <!-- ══ ARQUITECTURA HEXAGONAL ══ -->
+      <!-- ══ CLEAN CODE — base de legibilidad ══ -->
       <div class="topic-group">
-        <div class="tg-bar bar-indigo"></div>
+        <div class="tg-bar bar-emerald"></div>
         <div class="tg-inner">
           <div class="tg-head">
             <div class="tg-icon-title">
-              <div class="tg-icon icon-indigo">⬡</div>
+              <div class="tg-icon icon-emerald">✨</div>
               <div>
-                <div class="tg-label">ARQUITECTURA</div>
-                <div class="tg-title">Arquitectura Hexagonal</div>
+                <div class="tg-label">CALIDAD DE CÓDIGO · R. MARTIN</div>
+                <div class="tg-title">Clean Code</div>
               </div>
             </div>
             <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
           </div>
-          <p class="tg-desc">Ports &amp; Adapters, separación de dominio e infraestructura, inversión de dependencias y aplicación práctica en proyectos reales.</p>
+          <p class="tg-desc">Basado en <em>Clean Code: A Handbook of Agile Software Craftsmanship</em>. Nombres expresivos, funciones pequeñas, comentarios honestos, formato, objetos, errores, límites entre módulos y principios que emergen al refactorizar.</p>
           <div class="modules-list">
             <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Fundamentos y principios core</span></div>
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Fundamentos — nombres, funciones, comentarios y formato</span></div>
               <span class="ml-meta">próximamente</span>
             </div>
             <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Ports, Adapters y capas</span></div>
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Estructura — objetos, errores, clases y diseño emergente</span></div>
               <span class="ml-meta">próximamente</span>
             </div>
           </div>
@@ -156,42 +158,7 @@
         </div>
       </div>
 
-      <!-- ══ DDD ══ -->
-      <div class="topic-group">
-        <div class="tg-bar bar-teal"></div>
-        <div class="tg-inner">
-          <div class="tg-head">
-            <div class="tg-icon-title">
-              <div class="tg-icon icon-teal">🧩</div>
-              <div>
-                <div class="tg-label">DISEÑO DE SOFTWARE</div>
-                <div class="tg-title">Domain-Driven Design</div>
-              </div>
-            </div>
-            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
-          </div>
-          <p class="tg-desc">Ubiquitous language, bounded contexts, aggregates, value objects y cómo estructurar software alrededor del dominio del negocio.</p>
-          <div class="modules-list">
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Conceptos estratégicos de DDD</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Tácticas: Entidades, VO, Aggregates</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-          </div>
-          <div class="tg-footer">
-            <span class="tg-count">0 / 2 módulos publicados</span>
-            <div class="tg-progress">
-              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
-              <span class="tg-pct tg-pct-muted">0%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══ TESTING ══ -->
+      <!-- ══ TESTING — feedback y calidad incremental ══ -->
       <div class="topic-group">
         <div class="tg-bar bar-pink"></div>
         <div class="tg-inner">
@@ -226,11 +193,196 @@
         </div>
       </div>
 
-    </div><!-- /topics-grid: arquitectura -->
+      <!-- ══ SOLID — diseño de clases y módulos ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-violet"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-violet">📐</div>
+              <div>
+                <div class="tg-label">PRINCIPIOS DE DISEÑO · OOD · R. MARTIN</div>
+                <div class="tg-title">SOLID</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Los cinco principios para diseño orientado a objetos acuñados y popularizados por Robert C. Martin (SRP, OCP, LSP, ISP, DIP). Sirven para clases y módulos cohesionados, extensibles y desacoplados de implementaciones concretas — puente natural entre <em>Clean Code</em> a nivel de función y arquitectura en capas.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">SRP, OCP y LSP — una razón para cambiar, abierto/cerrado y sustitución</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">ISP y DIP — interfaces segregadas e inversión de dependencias</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /topics-grid: craft -->
+
+    <div class="section-header mt-sm">
+      <span class="section-num">03</span>
+      <span class="section-title-text">Patrones, dominio y arquitectura</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="topics-grid">
+
+      <!-- ══ GoF — catálogo de soluciones OO ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-gof"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-gof">📚</div>
+              <div>
+                <div class="tg-label">PATRONES DE DISEÑO · GANG OF FOUR</div>
+                <div class="tg-title">Design Patterns (GoF)</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Basado en <em>Design Patterns: Elements of Reusable Object-Oriented Software</em> (Gamma, Helm, Johnson, Vlissides). Los 23 patrones clásicos en tres familias — creacionales, estructurales y de comportamiento — con intención, consecuencias y cuándo (no) aplicarlos en código actual.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Creacionales y estructurales — Abstract Factory, Adapter, Composite…</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Comportamiento — Observer, Strategy, Command, State…</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Hexagonal — estilo arquitectónico con puertos y adaptadores ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-indigo"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-indigo">⬡</div>
+              <div>
+                <div class="tg-label">ARQUITECTURA</div>
+                <div class="tg-title">Arquitectura Hexagonal</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Ports &amp; Adapters, separación de dominio e infraestructura, inversión de dependencias y aplicación práctica en proyectos reales.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Fundamentos y principios core</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Ports, Adapters y capas</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Clean Architecture — regla de dependencia y capas ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-sky"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-sky">🏛</div>
+              <div>
+                <div class="tg-label">ARQUITECTURA · R. MARTIN</div>
+                <div class="tg-title">Clean Architecture</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Basado en <em>Clean Architecture: A Craftsman&rsquo;s Guide to Software Structure and Design</em>. Regla de dependencia, entidades y casos de uso, boundaries, frameworks como detalle, y cómo mantener el dominio independiente de la UI, la BD y los entregables.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Paradigmas, componentes y regla de dependencia</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Casos de uso, capas y arquitectura ensordecedora</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ DDD — modelo de dominio y alineación con el negocio (mayor alcance organizativo) ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-teal"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-teal">🧩</div>
+              <div>
+                <div class="tg-label">DISEÑO DE SOFTWARE</div>
+                <div class="tg-title">Domain-Driven Design</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Ubiquitous language, bounded contexts, aggregates, value objects y cómo estructurar software alrededor del dominio del negocio.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Conceptos estratégicos de DDD</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Tácticas: Entidades, VO, Aggregates</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /topics-grid: architecture -->
 
     <div class="coming-note">
       <span class="coming-note-icon">🗂</span>
-      <span class="coming-note-text">Más temas en preparación: SOLID, Clean Architecture, patrones de diseño, DevOps, y más. El contenido se publica a medida que avanza el estudio.</span>
+      <span class="coming-note-text">Más temas en preparación: catálogos fuera de GoF, integración y sistemas distribuidos, DevOps, observabilidad, y más. El contenido se publica a medida que avanza el estudio.</span>
     </div>
 
   </div>

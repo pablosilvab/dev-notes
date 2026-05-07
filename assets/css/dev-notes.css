@@ -184,6 +184,10 @@ body.dn-home .bar-amber  { background: linear-gradient(90deg, #FF9900, #F59E0B);
 body.dn-home .bar-indigo { background: linear-gradient(90deg, #6366F1, #818CF8); }
 body.dn-home .bar-teal   { background: linear-gradient(90deg, #14B8A6, #2DD4BF); }
 body.dn-home .bar-pink   { background: linear-gradient(90deg, #EC4899, #F472B6); }
+body.dn-home .bar-emerald { background: linear-gradient(90deg, #059669, #34D399); }
+body.dn-home .bar-sky    { background: linear-gradient(90deg, #0284C7, #38BDF8); }
+body.dn-home .bar-violet { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
+body.dn-home .bar-gof { background: linear-gradient(90deg, #B45309, #FBBF24); }
 body.dn-home .tg-inner { padding: 22px 24px 20px; }
 body.dn-home .tg-head {
   display: flex;
@@ -202,6 +206,10 @@ body.dn-home .icon-amber  { background: rgba(255,153,0,0.1); }
 body.dn-home .icon-indigo { background: rgba(99,102,241,0.1); }
 body.dn-home .icon-teal   { background: rgba(20,184,166,0.1); }
 body.dn-home .icon-pink   { background: rgba(236,72,153,0.1); }
+body.dn-home .icon-emerald { background: rgba(16,185,129,0.12); }
+body.dn-home .icon-sky     { background: rgba(14,165,233,0.12); }
+body.dn-home .icon-violet  { background: rgba(139,92,246,0.12); }
+body.dn-home .icon-gof     { background: rgba(180,83,9,0.14); }
 body.dn-home .tg-label {
   font-family: 'Space Mono', monospace;
   font-size: 9px;
