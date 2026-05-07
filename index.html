@@ -15,11 +15,11 @@
       <div>
         <div class="site-eyebrow">Dev Notes</div>
         <h1>Notas técnicas<br><span>&amp; aprendizaje</span></h1>
-        <p class="header-desc">Apuntes, infografías y guías ordenadas por complejidad: cloud y certificaciones; código, pruebas y principios OOD; y patrones con arquitectura y dominio.</p>
+        <p class="header-desc">Ruta de estudio de lo general a lo concreto: cloud; craft de código; plataforma Java y Spring; arquitectura y dominio; contenedores, CI/CD y sistemas distribuidos.</p>
       </div>
       <div class="header-stats">
         <div class="stat-item">
-          <div class="stat-num">08</div>
+          <div class="stat-num">25</div>
           <div class="stat-label">TEMAS EN ÍNDICE</div>
         </div>
         <div class="stat-divider"></div>
@@ -230,8 +230,326 @@
 
     </div><!-- /topics-grid: craft -->
 
+    <!-- 03: lenguaje y runtime → concurrencia → núcleo Spring → BD (agnóstico) → TX/consistencia (agnóstico) → Spring Data → APIs → seguridad → Spring web/ops -->
+
     <div class="section-header mt-sm">
       <span class="section-num">03</span>
+      <span class="section-title-text">Java, concurrencia, datos y Spring</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="topics-grid">
+
+      <div class="topic-group">
+        <div class="tg-bar bar-java"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-java">☕</div>
+              <div>
+                <div class="tg-label">LENGUAJE · JVM</div>
+                <div class="tg-title">Java en profundidad</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Tipos, genéricos, colecciones, <code>Optional</code>, streams, excepciones, módulos; modelo de memoria y GC a alto nivel; herramientas (<code>jcmd</code>, diagnóstico). Base antes de concurrencia avanzada y del ecosistema Spring.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Lenguaje, APIs clásicas y colecciones</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">JVM, memoria, concurrencia básica y herramientas</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-rose"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-rose">⚡</div>
+              <div>
+                <div class="tg-label">PARALELISMO · JVM</div>
+                <div class="tg-title">Concurrencia y modelo de memoria</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Visibilidad, orden de memoria, <code>synchronized</code>, locks, pools de hilos, estructuras concurrentes; virtual threads cuando apliquen; backpressure a nivel conceptual. Para entender fallos bajo carga más allá del código “limpio”.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Hilos, visibilidad y sincronización</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Pools, colas concurrentes y patrones prácticos</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-spring"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-spring">🌱</div>
+              <div>
+                <div class="tg-label">SPRING BOOT · NÚCLEO</div>
+                <div class="tg-title">Spring Boot — IoC y arranque</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Contenedor IoC, beans y scopes, <code>@Configuration</code>, perfiles y propiedades, auto-configuración (cómo razonarla), ciclo de vida del contexto y extensión por eventos. Puente entre SOLID en código y el ensamblado real de la aplicación.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Beans, configuración y perfiles</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Auto-configuración y puntos de extensión</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-slate"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-slate">🗄</div>
+              <div>
+                <div class="tg-label">BASES DE DATOS · AGNÓSTICO</div>
+                <div class="tg-title">Bases de datos relacionales</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Modelo relacional, normalización práctica, SQL, índices y planes de ejecución, consultas y antipatrones (p. ej. N+1 a nivel SQL). <strong>No es específico de Java</strong>; aplica a cualquier stack. Sirve de base antes de ORM y Spring Data.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Modelo, SQL y diseño físico</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Índices, planes y rendimiento de consultas</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-tx"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-tx">🔒</div>
+              <div>
+                <div class="tg-label">TRANSACCIONES · AGNÓSTICO</div>
+                <div class="tg-title">Transacciones y consistencia</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">ACID, niveles de aislamiento, fenómenos (dirty read, phantom…), idempotencia en escrituras, migraciones de esquema (Flyway/Liquibase como concepto). También <strong>independiente de Java</strong>; enlaza con la tarjeta de Spring Data donde se ve <code>@Transactional</code> y JPA.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Transacciones, aislamiento y consistencia</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Migraciones e idempotencia operativa</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-spring-jpa"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-spring-jpa">💾</div>
+              <div>
+                <div class="tg-label">SPRING · PERSISTENCIA</div>
+                <div class="tg-title">Spring Data, JPA y transacciones</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">JPA/Hibernate en producción: sesión, lazy/eager, fetch joins, <code>@Transactional</code> (propagación, rollbackFor), Spring Data JPA, Flyway/Liquibase. Materializa en Spring lo aprendido en bases de datos relacionales y transacciones.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Entidades, repositorios y consultas</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Transacciones declarativas y migraciones</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-api"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-api">🔗</div>
+              <div>
+                <div class="tg-label">APIS · CONTRATOS</div>
+                <div class="tg-title">Diseño de APIs y contratos</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">REST pragmático, recursos y verbos, errores y códigos, versionado, paginación, idempotencia (<code>Idempotency-Key</code>), OpenAPI; evolución sin romper clientes. Independiente del framework; luego se aterriza en Spring MVC.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Modelado REST, errores y versionado</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Contratos OpenAPI y compatibilidad</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-sec"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-sec">🛡</div>
+              <div>
+                <div class="tg-label">SEGURIDAD · APLICADA</div>
+                <div class="tg-title">Seguridad en APIs y aplicaciones</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">OWASP para APIs, autenticación vs autorización, manejo de secretos, dependencias vulnerables, cookies vs tokens, CORS y superficie de ataque. Marco general antes de Spring Security.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Amenazas comunes y modelo de amenazas ligero</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Tokens, sesiones y buenas prácticas de despliegue</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-spring-web"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-spring-web">🔐</div>
+              <div>
+                <div class="tg-label">SPRING · WEB Y OPERACIÓN</div>
+                <div class="tg-title">Spring Web MVC, Security y Actuator</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Controllers, validación, manejo de excepciones HTTP, Spring Security (cadena de filtros, JWT/OAuth2 según el caso), Actuator, health y métricas. Lo más específico del stack tras APIs y seguridad genérica.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Web MVC, validación y errores</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Security, Actuator y observabilidad básica</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /topics-grid: java-spring -->
+
+    <div class="section-header mt-sm">
+      <span class="section-num">04</span>
       <span class="section-title-text">Patrones, dominio y arquitectura</span>
       <div class="section-line"></div>
     </div>
@@ -380,9 +698,293 @@
 
     </div><!-- /topics-grid: architecture -->
 
+    <!-- 05: empaquetado → CI/CD → resiliencia/mensajería → event-driven → sagas → observabilidad → microservicios → K8s -->
+
+    <div class="section-header mt-sm">
+      <span class="section-num">05</span>
+      <span class="section-title-text">Contenedores, CI/CD y sistemas distribuidos</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="topics-grid">
+
+      <div class="topic-group">
+        <div class="tg-bar bar-docker"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-docker">🐳</div>
+              <div>
+                <div class="tg-label">CONTENEDORES</div>
+                <div class="tg-title">Docker</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Imágenes, capas, Dockerfile multi-stage, volúmenes y redes, límites de recursos, buenas prácticas de seguridad en imágenes. Base inmediata para reproducir entornos y para CI/CD.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Imágenes, contenedores y Dockerfile</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Compose, redes y patrones locales</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-cicd"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-cicd">⚙</div>
+              <div>
+                <div class="tg-label">ENTREGA CONTINUA</div>
+                <div class="tg-title">CI/CD</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Integración continua (build, test, análisis), artefactos, pipelines, despliegue continuo vs continuo delivery, estrategias de ramas y gates de calidad. Encaja después de contenedores porque muchos pipelines empaquetan con Docker.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">CI — build, test y calidad</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">CD — entornos, despliegues y rollback</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-res"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-res">🔁</div>
+              <div>
+                <div class="tg-label">DISTRIBUIDOS · INTEGRACIÓN</div>
+                <div class="tg-title">Resiliencia y mensajería</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Timeouts, retries con jitter, idempotencia, circuit breaker, bulkhead; colas, contratos de entrega (al menos una vez, exactamente una vez a nivel mental), patrón outbox. Las sagas y el estilo event-driven amplían esto en las dos tarjetas siguientes.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Patrones de resiliencia en HTTP y colas</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Mensajería, entrega y outbox (sin orquestar sagas aquí)</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-ed"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-ed">📡</div>
+              <div>
+                <div class="tg-label">INTEGRACIÓN · ASÍNCRONA</div>
+                <div class="tg-title">Arquitectura orientada a eventos (EDA)</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Eventos de dominio, publicación/suscripción, notificación vs <em>event-carried state transfer</em>, consistencia eventual, idempotencia en consumidores, log de eventos y streaming a alto nivel. Puente natural tras mensajería y antes de sagas y microservicios.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Modelado de eventos, contratos y bounded contexts</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Outbox, consumo fiable y antipatrones comunes</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-saga"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-saga">🔀</div>
+              <div>
+                <div class="tg-label">CONSISTENCIA DISTRIBUIDA</div>
+                <div class="tg-title">Patrón Saga</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Transacciones largas sin 2PC: <strong>coreografía</strong> (eventos entre servicios) vs <strong>orquestación</strong> (coordinador explícito). Pasos locales, compensaciones, estados del flujo y cuándo conviene cada estilo. Complementa EDA y microservicios con datos por servicio.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Saga coreografiada — eventos y responsabilidades</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Saga orquestada — coordinador, fallos y compensación</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-observe"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-observe">📊</div>
+              <div>
+                <div class="tg-label">OPERACIÓN</div>
+                <div class="tg-title">Observabilidad</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Logs estructurados, métricas (RED/USE), trazas distribuidas y correlación de <code>trace-id</code>. Pensado para servicios en contenedores, flujos saga y publicación de eventos.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Logs, métricas y trazas — pilares</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Correlación y buenas prácticas en producción</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-ms"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-ms">🧱</div>
+              <div>
+                <div class="tg-label">ARQUITECTURA DISTRIBUIDA</div>
+                <div class="tg-title">Microservicios</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Descomposición por límites de dominio, contratos entre equipos, datos por servicio, despliegue independiente, trade-offs frente al monolito y acoplamiento accidental. Integración sincrónica vs asíncrona; eventos y sagas cuando hay consistencia distribuida. Asume contenedores, CI/CD, resiliencia y observabilidad.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Límites, contratos y gobernanza</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Datos distribuidos y patrones de descomposición</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="tg-bar bar-k8s"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-k8s">☸</div>
+              <div>
+                <div class="tg-label">ORQUESTACIÓN</div>
+                <div class="tg-title">Kubernetes</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Pods, Deployments, Services, ConfigMaps y Secrets, recursos y límites, probes, Ingress a alto nivel, y cómo encaja con microservicios y CI/CD. Lo más específico de plataforma en esta pista.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Objetos básicos y redes de cluster</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Operación, escalado y despliegues</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 2 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /topics-grid: platform -->
+
     <div class="coming-note">
       <span class="coming-note-icon">🗂</span>
-      <span class="coming-note-text">Más temas en preparación: catálogos fuera de GoF, integración y sistemas distribuidos, DevOps, observabilidad, y más. El contenido se publica a medida que avanza el estudio.</span>
+      <span class="coming-note-text">El índice cubre la ruta completa; dentro de cada tarjeta se irán publicando módulos. Temas adicionales posibles: patrones fuera de GoF, WebFlux/reactivo, plataformas de streaming en detalle (Kafka, Pulsar) y hardening avanzado.</span>
     </div>
 
   </div>
