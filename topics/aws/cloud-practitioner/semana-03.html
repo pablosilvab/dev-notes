@@ -105,27 +105,27 @@
   <div class="split-card split-grid-3 mt-10">
     <div class="split-half sh-amber">
       <div class="split-label sl-amber">S3 — Object</div>
-      <div class="card-keywords" style="margin-bottom:8px">
+      <div class="card-keywords mb-8">
         <span class="kw kw-amber">Archivos / Media</span>
         <span class="kw kw-amber">Backups</span>
       </div>
-      <div class="card-desc" style="font-size:11px">Acceso por URL. Sin límite de tamaño. Duradero en 3+ AZs. <strong style="color:#94A3B8">No se adjunta a EC2.</strong></div>
+      <div class="card-desc card-desc--sm">Acceso por URL. Sin límite de tamaño. Duradero en 3+ AZs. <strong>No se adjunta a EC2.</strong></div>
     </div>
     <div class="split-half sh-blue">
       <div class="split-label sl-blue">EBS — Block</div>
-      <div class="card-keywords" style="margin-bottom:8px">
+      <div class="card-keywords mb-8">
         <span class="kw kw-blue">OS / Bases de datos</span>
         <span class="kw kw-blue">Alta I/O</span>
       </div>
-      <div class="card-desc" style="font-size:11px">Disco virtual para 1 EC2 a la vez. Alta performance. Solo en 1 AZ. <strong style="color:#94A3B8">Requiere EC2 para usarse.</strong></div>
+      <div class="card-desc card-desc--sm">Disco virtual para 1 EC2 a la vez. Alta performance. Solo en 1 AZ. <strong>Requiere EC2 para usarse.</strong></div>
     </div>
     <div class="split-half sh-teal">
       <div class="split-label sl-teal">EFS — File</div>
-      <div class="card-keywords" style="margin-bottom:8px">
+      <div class="card-keywords mb-8">
         <span class="kw kw-teal">Multi-instancia</span>
         <span class="kw kw-teal">Compartido</span>
       </div>
-      <div class="card-desc" style="font-size:11px">NFS compartido entre muchas EC2. Escala solo. Multi-AZ. <strong style="color:#94A3B8">Más caro por GB que EBS.</strong></div>
+      <div class="card-desc card-desc--sm">NFS compartido entre muchas EC2. Escala solo. Multi-AZ. <strong>Más caro por GB que EBS.</strong></div>
     </div>
   </div>
 
@@ -146,19 +146,19 @@
         <span class="kw kw-indigo">Cumplimiento legal</span>
       </div>
       <div class="card-desc">Clase de almacenamiento de S3 diseñada para datos que se consultan muy rara vez. Costo por GB mucho menor que S3 Standard, pero con tiempos de recuperación que van desde minutos (Glacier Instant) hasta horas (Glacier Deep Archive).</div>
-      <div class="card-example" style="border:none; padding:0; margin-top:4px"><strong>Ejemplo:</strong> Guardar registros legales de hace 5 años que solo necesitas si hay una auditoría. También para backups de largo plazo que debes retener por regulaciones.</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:12px">
-        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:10px 12px">
-          <div style="font-family:'Space Mono',monospace; font-size:9px; color:#6366F1; margin-bottom:4px">GLACIER INSTANT</div>
-          <div style="font-size:11px; color:#8899B8">Recuperación en milisegundos. Acceso 1x por trimestre.</div>
+      <div class="card-example card-example--flush"><strong>Ejemplo:</strong> Guardar registros legales de hace 5 años que solo necesitas si hay una auditoría. También para backups de largo plazo que debes retener por regulaciones.</div>
+      <div class="mini-tier-grid">
+        <div class="mini-tier-card">
+          <div class="mini-tier-label">GLACIER INSTANT</div>
+          <div class="mini-tier-desc">Recuperación en milisegundos. Acceso 1x por trimestre.</div>
         </div>
-        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:10px 12px">
-          <div style="font-family:'Space Mono',monospace; font-size:9px; color:#6366F1; margin-bottom:4px">GLACIER FLEXIBLE</div>
-          <div style="font-size:11px; color:#8899B8">Recuperación en 1–5 min (Expedited) o 3–5 h (Standard).</div>
+        <div class="mini-tier-card">
+          <div class="mini-tier-label">GLACIER FLEXIBLE</div>
+          <div class="mini-tier-desc">Recuperación en 1–5 min (Expedited) o 3–5 h (Standard).</div>
         </div>
-        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:10px 12px">
-          <div style="font-family:'Space Mono',monospace; font-size:9px; color:#6366F1; margin-bottom:4px">DEEP ARCHIVE</div>
-          <div style="font-size:11px; color:#8899B8">El más barato. Recuperación en 12 h. Datos raramente accedidos.</div>
+        <div class="mini-tier-card">
+          <div class="mini-tier-label">DEEP ARCHIVE</div>
+          <div class="mini-tier-desc">El más barato. Recuperación en 12 h. Datos raramente accedidos.</div>
         </div>
       </div>
     </div>
@@ -441,37 +441,37 @@
     <div class="dg-title">Si en el examen lees estas palabras clave → elige este servicio</div>
     <div class="dg-grid">
       <div class="dg-item">
-        <div class="dg-keyword" style="color:#86EFAC">"Esquema flexible" · "Escalabilidad masiva" · "Milisegundos a cualquier escala"</div>
+        <div class="dg-keyword dg-keyword--green">"Esquema flexible" · "Escalabilidad masiva" · "Milisegundos a cualquier escala"</div>
         <div class="dg-arrow">↓</div>
         <div class="dg-answer">Amazon DynamoDB</div>
         <div class="dg-why">NoSQL serverless, escala horizontal infinita sin gestión.</div>
       </div>
       <div class="dg-item">
-        <div class="dg-keyword" style="color:#93C5FD">"Consultas complejas" · "Joins" · "ACID" · "Transacciones" · "Esquema fijo"</div>
+        <div class="dg-keyword dg-keyword--blue">"Consultas complejas" · "Joins" · "ACID" · "Transacciones" · "Esquema fijo"</div>
         <div class="dg-arrow">↓</div>
         <div class="dg-answer">Amazon RDS / Aurora</div>
         <div class="dg-why">RDS si es estándar. Aurora si necesitas mayor rendimiento y es MySQL/Postgres.</div>
       </div>
       <div class="dg-item">
-        <div class="dg-keyword" style="color:#5EEAD4">"Analytics" · "Business Intelligence" · "Data Warehouse" · "Historial" · "OLAP"</div>
+        <div class="dg-keyword dg-keyword--teal">"Analytics" · "Business Intelligence" · "Data Warehouse" · "Historial" · "OLAP"</div>
         <div class="dg-arrow">↓</div>
         <div class="dg-answer">Amazon Redshift</div>
         <div class="dg-why">No es para la app — es para el equipo de datos y reportes masivos.</div>
       </div>
       <div class="dg-item">
-        <div class="dg-keyword" style="color:#FCD34D">"Caché" · "Acelerar base de datos" · "In-memory" · "Redis" · "Memcached"</div>
+        <div class="dg-keyword dg-keyword--amber">"Caché" · "Acelerar base de datos" · "In-memory" · "Redis" · "Memcached"</div>
         <div class="dg-arrow">↓</div>
         <div class="dg-answer">Amazon ElastiCache</div>
         <div class="dg-why">Reduce la carga en RDS cacheando resultados frecuentes en RAM.</div>
       </div>
       <div class="dg-item">
-        <div class="dg-keyword" style="color:#FDA4AF">"Archivo a largo plazo" · "Bajo costo" · "Auditoría" · "Raramente accedido"</div>
+        <div class="dg-keyword dg-keyword--rose">"Archivo a largo plazo" · "Bajo costo" · "Auditoría" · "Raramente accedido"</div>
         <div class="dg-arrow">↓</div>
         <div class="dg-answer">S3 Glacier</div>
         <div class="dg-why">Máxima durabilidad al mínimo costo, para datos "fríos" que casi nunca se leen.</div>
       </div>
       <div class="dg-item">
-        <div class="dg-keyword" style="color:#D8B4FE">"Migrar BD sin downtime" · "On-premise a AWS" · "Replicación continua"</div>
+        <div class="dg-keyword dg-keyword--purple">"Migrar BD sin downtime" · "On-premise a AWS" · "Replicación continua"</div>
         <div class="dg-arrow">↓</div>
         <div class="dg-answer">AWS DMS</div>
         <div class="dg-why">La app sigue corriendo mientras la migración ocurre en segundo plano.</div>
@@ -480,11 +480,11 @@
   </div>
 
   <!-- Callout confusión común S3 vs EBS -->
-  <div class="callout callout-amber" style="margin-top:10px">
+  <div class="callout callout-amber mt-10">
     <span class="callout-icon">⚠️</span>
     <div class="callout-content">
       <div class="callout-title ct-amber">Confusión más común del examen: S3 vs EBS</div>
-      <div class="callout-text"><strong style="color:#94A3B8">S3</strong> es para archivos que accedes vía URL (como una web pública, backups, fotos). No puedes instalarlo en una EC2 como disco. <strong style="color:#94A3B8">EBS</strong> es solo para ser el "disco duro" de un servidor EC2 — no es accesible desde fuera de esa instancia. Si la pregunta habla de "disco", "OS" o "base de datos en EC2" → EBS. Si habla de "archivos", "URL" o "backup" → S3.</div>
+      <div class="callout-text"><strong>S3</strong> es para archivos que accedes vía URL (como una web pública, backups, fotos). No puedes instalarlo en una EC2 como disco. <strong>EBS</strong> es solo para ser el "disco duro" de un servidor EC2 — no es accesible desde fuera de esa instancia. Si la pregunta habla de "disco", "OS" o "base de datos en EC2" → EBS. Si habla de "archivos", "URL" o "backup" → S3.</div>
     </div>
   </div>
 

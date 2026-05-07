@@ -71,8 +71,8 @@
           <div class="org-root-name">Management Account</div>
         </div>
         <div class="org-connector-down"></div>
-        <div style="width:80%; height:1px; background:#1E2A40; margin:0 auto"></div>
-        <div class="org-ou-row" style="margin-top:0">
+        <div class="org-bridge-line"></div>
+        <div class="org-ou-row org-ou-row--tight">
           <div class="org-ou-col">
             <div class="org-v-line"></div>
             <div class="org-ou ou-dev">
@@ -136,7 +136,7 @@
   <div class="billing-compare">
     <!-- Cost Explorer -->
     <div class="bc-card">
-      <div class="bc-top bc-top-blue" style="height:4px"></div>
+      <div class="bc-top bc-top-blue bc-top--strip"></div>
       <div class="bc-body">
         <div class="bc-icon">📊</div>
         <div class="bc-name">AWS Cost Explorer</div>
@@ -147,7 +147,7 @@
     </div>
     <!-- Budgets -->
     <div class="bc-card">
-      <div class="bc-top bc-top-green" style="height:4px"></div>
+      <div class="bc-top bc-top-green bc-top--strip"></div>
       <div class="bc-body">
         <div class="bc-icon">🔔</div>
         <div class="bc-name">AWS Budgets</div>
@@ -158,7 +158,7 @@
     </div>
     <!-- Pricing Calculator -->
     <div class="bc-card">
-      <div class="bc-top bc-top-amber" style="height:4px"></div>
+      <div class="bc-top bc-top-amber bc-top--strip"></div>
       <div class="bc-body">
         <div class="bc-icon">🧮</div>
         <div class="bc-name">Pricing Calculator</div>
@@ -169,7 +169,7 @@
     </div>
     <!-- Cost & Usage Reports -->
     <div class="bc-card">
-      <div class="bc-top bc-top-purple" style="height:4px"></div>
+      <div class="bc-top bc-top-purple bc-top--strip"></div>
       <div class="bc-body">
         <div class="bc-icon">📋</div>
         <div class="bc-name">Cost & Usage Reports</div>
@@ -195,7 +195,7 @@
       <div class="pricing-label pl-blue">On-Demand</div>
       <div class="pricing-name">Pago por uso</div>
       <div class="pricing-desc">Pagas por hora o segundo sin compromisos. El precio base más alto, pero con total flexibilidad.</div>
-      <div class="pricing-saving" style="color:#3B82F6">Sin descuento</div>
+      <div class="pricing-saving pricing-saving--info">Sin descuento</div>
       <div class="pricing-saving-label">Precio base de referencia</div>
       <div class="pricing-note">Ideal para: workloads impredecibles, testing, apps con picos esporádicos.</div>
     </div>
@@ -251,7 +251,7 @@
         <span class="kw kw-green">Siempre gratis</span>
         <span class="kw kw-green">Prueba corta</span>
       </div>
-      <div class="card-desc">Capa gratuita con tres tipos: <strong style="color:#94A3B8">12 meses gratis</strong> (EC2 t2.micro, S3 5GB, etc.), <strong style="color:#94A3B8">Siempre gratis</strong> (Lambda 1M req/mes, DynamoDB 25GB) y <strong style="color:#94A3B8">Pruebas cortas</strong> (30 días de Lightsail, etc.).</div>
+      <div class="card-desc">Capa gratuita con tres tipos: <strong>12 meses gratis</strong> (EC2 t2.micro, S3 5GB, etc.), <strong>Siempre gratis</strong> (Lambda 1M req/mes, DynamoDB 25GB) y <strong>Pruebas cortas</strong> (30 días de Lightsail, etc.).</div>
       <div class="card-example"><strong>Tip examen:</strong> Lambda tiene 1 millón de invocaciones gratis al mes para siempre (no solo los 12 meses iniciales).</div>
       <div class="tip-box tip-green">Usa AWS Budgets con un umbral de $0.01 para recibir alertas si accidentalmente superas el Free Tier.</div>
     </div>
@@ -274,12 +274,12 @@
         <div class="vc-service vcs-blue">06 — AUDITORÍA DE ACCIONES</div>
         <div class="vc-name">AWS CloudTrail</div>
         <div class="vc-question">Pregunta que responde:</div>
-        <div class="vc-answer" style="font-size:15px; font-weight:600; color:#93C5FD; margin-bottom:12px">¿Quién hizo qué y cuándo?</div>
+        <div class="vc-answer vc-answer--lead-blue">¿Quién hizo qué y cuándo?</div>
         <div class="vc-row vcr-blue">Registra cada llamada a la API de AWS (consola, CLI, SDK)</div>
         <div class="vc-row vcr-blue">Indica qué usuario o rol realizó la acción</div>
         <div class="vc-row vcr-blue">Registra desde qué IP y a qué hora</div>
         <div class="vc-row vcr-blue">Guarda los logs por defecto 90 días (más con S3)</div>
-        <div class="vc-analogy">📷 <strong style="color:#94A3B8">Analogía:</strong> La "cámara de seguridad" que graba quién entró a la consola, qué botones tocó y cuándo borró un servidor.</div>
+        <div class="vc-analogy">📷 <strong>Analogía:</strong> La "cámara de seguridad" que graba quién entró a la consola, qué botones tocó y cuándo borró un servidor.</div>
       </div>
       <div class="versus-divider">
         <div class="versus-badge">VS</div>
@@ -288,12 +288,12 @@
         <div class="vc-service vcs-amber">07 — CUMPLIMIENTO DE CONFIGURACIÓN</div>
         <div class="vc-name">AWS Config</div>
         <div class="vc-question">Pregunta que responde:</div>
-        <div class="vc-answer" style="font-size:15px; font-weight:600; color:#FCD34D; margin-bottom:12px">¿Cómo cambió el estado del recurso?</div>
+        <div class="vc-answer vc-answer--lead-amber">¿Cómo cambió el estado del recurso?</div>
         <div class="vc-row vcr-amber">Evalúa si los recursos cumplen reglas de configuración</div>
         <div class="vc-row vcr-amber">Guarda historial de configuración de cada recurso</div>
         <div class="vc-row vcr-amber">Alerta cuando un recurso viola una regla (ej: S3 público)</div>
         <div class="vc-row vcr-amber">Permite ver cómo estaba configurado un recurso en el pasado</div>
-        <div class="vc-analogy">📋 <strong style="color:#94A3B8">Analogía:</strong> El inspector de cumplimiento que revisa si las puertas cumplen el reglamento y avisa si alguien las dejó abiertas.</div>
+        <div class="vc-analogy">📋 <strong>Analogía:</strong> El inspector de cumplimiento que revisa si las puertas cumplen el reglamento y avisa si alguien las dejó abiertas.</div>
       </div>
     </div>
   </div>
@@ -474,22 +474,22 @@
   </div>
 
   <div class="cards-grid g3">
-    <div class="callout callout-rose" style="margin-top:0; flex-direction:column; gap:8px">
-      <div style="display:flex; gap:12px; align-items:center">
+    <div class="callout callout-rose callout--stack">
+      <div class="callout__head">
         <span class="callout-icon">🕵️</span>
         <div class="callout-title ct-rose">CloudTrail ≠ Config</div>
       </div>
       <div class="callout-text"><strong>CloudTrail</strong> = "¿quién hizo la acción?" (el culpable). Registra eventos de API. <strong>Config</strong> = "¿cómo cambió el recurso?" (el estado). Evalúa si cumple reglas. Pregunta fácil de diferenciar: si dice "auditoría" o "quién borró" → CloudTrail. Si dice "compliance" o "bucket público" → Config.</div>
     </div>
-    <div class="callout callout-amber" style="margin-top:0; flex-direction:column; gap:8px">
-      <div style="display:flex; gap:12px; align-items:center">
+    <div class="callout callout-amber callout--stack">
+      <div class="callout__head">
         <span class="callout-icon">💰</span>
         <div class="callout-title ct-amber">Organizations + descuentos</div>
       </div>
       <div class="callout-text">AWS Organizations no solo sirve para gobernar — también permite obtener <strong>descuentos por volumen</strong> sumando el consumo de todas las cuentas. Una cuenta sola podría pagar $X, pero 10 cuentas consolidadas pagan menos por GB porque el total activa mejores precios de tier en S3, data transfer, etc.</div>
     </div>
-    <div class="callout callout-purple" style="margin-top:0; flex-direction:column; gap:8px">
-      <div style="display:flex; gap:12px; align-items:center">
+    <div class="callout callout-purple callout--stack">
+      <div class="callout__head">
         <span class="callout-icon">📊</span>
         <div class="callout-title ct-purple">Modelo de precios AWS</div>
       </div>

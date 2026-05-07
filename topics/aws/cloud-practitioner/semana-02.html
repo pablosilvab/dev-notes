@@ -199,7 +199,7 @@
         <div class="arr-label">DNS</div>
         <div>→</div>
       </div>
-      <div class="net-node" style="border-color:rgba(52,211,153,0.3)">
+      <div class="net-node net-node--accent-emerald">
         <div class="nn-icon">🌐</div>
         <div class="nn-name">Route 53</div>
         <div class="nn-sub">DNS resolution</div>
@@ -208,7 +208,7 @@
         <div class="arr-label">HTTP/S</div>
         <div>→</div>
       </div>
-      <div class="net-node" style="border-color:rgba(251,191,36,0.3)">
+      <div class="net-node net-node--accent-amber">
         <div class="nn-icon">☁</div>
         <div class="nn-name">CloudFront</div>
         <div class="nn-sub">CDN / Edge</div>
@@ -217,7 +217,7 @@
         <div class="arr-label">origin req.</div>
         <div>→</div>
       </div>
-      <div class="net-node" style="border-color:rgba(147,197,253,0.3)">
+      <div class="net-node net-node--accent-sky">
         <div class="nn-icon">⚖️</div>
         <div class="nn-name">ELB</div>
         <div class="nn-sub">Load Balancer</div>
@@ -226,13 +226,13 @@
         <div class="arr-label">distribuye</div>
         <div>→</div>
       </div>
-      <div class="net-node" style="border-color:rgba(167,139,250,0.3)">
+      <div class="net-node net-node--accent-violet">
         <div class="nn-icon">🔒</div>
         <div class="nn-name">VPC</div>
         <div class="nn-sub">+ Security Groups</div>
       </div>
       <div class="net-arrow">→</div>
-      <div class="net-node" style="border-color:rgba(59,130,246,0.3)">
+      <div class="net-node net-node--accent-blue">
         <div class="nn-icon">🖥</div>
         <div class="nn-name">EC2 / Lambda</div>
         <div class="nn-sub">tu app</div>
@@ -447,27 +447,27 @@
   <div class="split-card split-grid-3 mt-10">
     <div class="split-half sh-amber">
       <div class="split-label sl-amber">S3 — Object Storage</div>
-      <div class="card-keywords" style="margin-bottom:8px">
+      <div class="card-keywords mb-8">
         <span class="kw kw-amber">Archivos / Multimedia</span>
         <span class="kw kw-amber">Backups</span>
       </div>
-      <div class="card-desc" style="font-size:11px">Acceso por URL. Sin límite de tamaño. Duradero entre múltiples AZs. No se adjunta a EC2.</div>
+      <div class="card-desc card-desc--sm">Acceso por URL. Sin límite de tamaño. Duradero entre múltiples AZs. No se adjunta a EC2.</div>
     </div>
     <div class="split-half sh-blue">
       <div class="split-label sl-blue">EBS — Block Storage</div>
-      <div class="card-keywords" style="margin-bottom:8px">
+      <div class="card-keywords mb-8">
         <span class="kw kw-blue">OS / Bases de datos</span>
         <span class="kw kw-blue">Alta I/O</span>
       </div>
-      <div class="card-desc" style="font-size:11px">Disco virtual para EC2. Alta performance. Solo en 1 AZ. Una instancia a la vez (salvo Multi-Attach).</div>
+      <div class="card-desc card-desc--sm">Disco virtual para EC2. Alta performance. Solo en 1 AZ. Una instancia a la vez (salvo Multi-Attach).</div>
     </div>
     <div class="split-half sh-teal">
       <div class="split-label sl-teal">EFS — File Storage</div>
-      <div class="card-keywords" style="margin-bottom:8px">
+      <div class="card-keywords mb-8">
         <span class="kw kw-teal">Multi-instancia</span>
         <span class="kw kw-teal">Archivos compartidos</span>
       </div>
-      <div class="card-desc" style="font-size:11px">Sistema de archivos NFS. Múltiples EC2 simultáneas. Escala solo. Más caro que EBS por GB.</div>
+      <div class="card-desc card-desc--sm">Sistema de archivos NFS. Múltiples EC2 simultáneas. Escala solo. Más caro que EBS por GB.</div>
     </div>
   </div>
 
