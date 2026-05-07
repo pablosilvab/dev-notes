@@ -1694,4 +1694,162 @@ body.dn-week-02 .tip-box:not(.tip-amber):not(.tip-green):not(.tip-blue):not(.tip
   .compare-col:last-child { border-bottom: none; }
   .versus-body { grid-template-columns: 1fr; }
   .versus-divider { display: none; }
+  .solid-compare { grid-template-columns: 1fr; }
 }
+
+/* ───────── SOLID — artículos por principio ───────── */
+body.dn-solid .header::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+body.dn-solid .week-badge {
+  background: linear-gradient(90deg, #6D28D9, #A78BFA);
+  color: #fff;
+}
+body.dn-solid .header h1 span { color: #C4B5FD; }
+body.dn-solid .section-num { color: #A78BFA; }
+body.dn-solid .aws-logo {
+  color: #C4B5FD;
+  background: rgba(124,58,237,0.1);
+  border-color: rgba(167,139,250,0.35);
+}
+body.dn-solid .footer-count { color: #A78BFA; }
+body.dn-solid .pill-a { color: #C4B5FD; border-color: rgba(196,181,253,0.35); background: rgba(124,58,237,0.08); }
+body.dn-solid .pill-b { color: #A5B4FC; border-color: rgba(165,180,252,0.35); background: rgba(99,102,241,0.08); }
+body.dn-solid .pill-c { color: #E9D5FF; border-color: rgba(233,213,255,0.3); background: rgba(167,139,250,0.08); }
+
+.solid-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.solid-nav a {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  padding: 5px 11px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.solid-nav a:hover {
+  border-color: rgba(167,139,250,0.4);
+  color: #E9D5FF;
+  background: rgba(124,58,237,0.08);
+}
+.solid-nav a.is-current {
+  border-color: rgba(167,139,250,0.55);
+  color: #DDD6FE;
+  background: rgba(124,58,237,0.12);
+}
+
+.solid-def {
+  background: rgba(124,58,237,0.06);
+  border: 1px solid rgba(167,139,250,0.22);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 8px;
+}
+.solid-def__label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #C4B5FD;
+  margin-bottom: 10px;
+}
+.solid-def p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #E2E8F0;
+  font-style: italic;
+}
+.solid-prose {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #8899B8;
+  max-width: none;
+  width: 100%;
+}
+.solid-prose p { margin: 0 0 12px; }
+.solid-prose p:last-child { margin-bottom: 0; }
+
+.dn-java-block {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 14px 0 0;
+}
+.dn-java-block__cap {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: #94A3B8;
+  background: rgba(10,14,26,0.5);
+}
+.dn-java-block pre {
+  margin: 0;
+  padding: 14px 16px 16px;
+  overflow-x: auto;
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.55;
+  color: #CBD5E1;
+  tab-size: 4;
+}
+.dn-java-block code { font-family: inherit; }
+
+.solid-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+  align-items: stretch;
+}
+.solid-compare .card { margin: 0; }
+.solid-compare-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  color: #94A3B8;
+}
+
+.solid-patterns {
+  margin-top: 8px;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.55), rgba(15, 23, 42, 0.4));
+  border: 1px solid rgba(167,139,250,0.28);
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+.solid-patterns__label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #C4B5FD;
+  margin-bottom: 8px;
+}
+.solid-patterns ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #94A3B8;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.solid-patterns li { margin-bottom: 5px; }
+.solid-patterns li:last-child { margin-bottom: 0; }
+.solid-patterns strong { color: #DDD6FE; font-weight: 600; }

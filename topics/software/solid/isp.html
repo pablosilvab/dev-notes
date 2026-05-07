@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLID — Principio de segregación de interfaces (ISP)</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+</head>
+<body class="dn-infographic dn-solid">
+
+<div class="page-shell">
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">SOLID · 04 / 05</div>
+        <h1>ISP<br><span>INTERFACE SEGREGATION</span></h1>
+        <p class="header-sub">Ningún cliente debe depender de métodos que no usa</p>
+      </div>
+      <nav class="solid-nav" aria-label="Principios SOLID">
+        <a href="srp.html">SRP</a>
+        <a href="ocp.html">OCP</a>
+        <a href="lsp.html">LSP</a>
+        <a class="is-current" href="isp.html">ISP</a>
+        <a href="dip.html">DIP</a>
+      </nav>
+    </div>
+    <div class="aws-logo">PRERREQ · SRP + INTERFACES EN JAVA</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">Interfaces mínimas</span>
+    <span class="pill pill-b">Acoplamiento nominal</span>
+    <span class="pill pill-c">Roles</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-purple">01</span>
+    <span class="section-title-text">Definición formal</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="solid-def">
+    <div class="solid-def__label">FORMAL · DEFINICIÓN</div>
+    <p>Ningún cliente debe verse forzado a depender de métodos que no utiliza. Las interfaces deben ser <strong style="font-style:normal;color:#E9D5FF;">cohesivas y pequeñas</strong> respecto a los roles que los consumidores requieren; una interfaz «gorda» acopla a todos los implementadores a preocupaciones ajenas.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p>El ISP es el hermano del SRP aplicado a contratos: muchas interfaces específicas suelen mejorar que una general que mezcla responsabilidades ortogonales.</p>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">02</span>
+    <span class="section-title-text">Idea clave</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="solid-prose">
+    <p>Si obligas a un desarrollador de librería interna a implementar <code>deployToProduction()</code> porque comparte interfaz con el equipo de SRE, introduces métodos vacíos, <code>UnsupportedOperationException</code> o mentiras en el contrato. Mejor modelar <strong>roles</strong> separados: quien codea, quien revisa PRs, quien tiene guardia.</p>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">03</span>
+    <span class="section-title-text">Cuando se rompe · Java</span>
+    <div class="section-line"></div>
+  </div>
+  <p class="solid-compare-title" style="margin-top:0">Una sola interfaz «empleado tech» mezcla implementación de features, revisión de código y guardia on-call.</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ROMPE ISP — INTERFAZ GORDA</div>
+    <pre><code>public interface TechEmployee {
+    void implementFeature(String ticketId);
+    void reviewPullRequest(String prUrl);
+    void acknowledgePagerDutyAlert(String incidentId);
+}
+
+public final class JuniorDeveloper implements TechEmployee {
+    @Override public void implementFeature(String ticketId) { /* … */ }
+
+    @Override public void reviewPullRequest(String prUrl) {
+        throw new UnsupportedOperationException("aún no reviso PRs");
+    }
+
+    @Override public void acknowledgePagerDutyAlert(String incidentId) {
+        throw new UnsupportedOperationException("no estoy en on-call");
+    }
+}</code></pre>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">04</span>
+    <span class="section-title-text">Aplicación adecuada · Java</span>
+    <div class="section-line"></div>
+  </div>
+  <p class="solid-compare-title" style="margin-top:0">El mismo humano puede implementar varios roles; cada consumidor solo pide el rol que necesita.</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">RESPETA ISP — ROLES SEGREGADOS</div>
+    <pre><code>public interface FeatureContributor {
+    void implementFeature(String ticketId);
+}
+
+public interface CodeReviewer {
+    void reviewPullRequest(String prUrl);
+}
+
+public interface OnCallResponder {
+    void acknowledgeAlert(String incidentId);
+}
+
+public final class JuniorDeveloper implements FeatureContributor {
+    @Override public void implementFeature(String ticketId) { /* … */ }
+}
+
+public final class StaffEngineer
+        implements FeatureContributor, CodeReviewer, OnCallResponder {
+    @Override public void implementFeature(String ticketId) { /* … */ }
+    @Override public void reviewPullRequest(String prUrl) { /* … */ }
+    @Override public void acknowledgeAlert(String incidentId) { /* … */ }
+}</code></pre>
+  </div>
+  <div class="solid-prose mt-10">
+    <p>El servicio de asignación de revisiones depende solo de <code>CodeReviewer</code>; el orquestador de incidentes solo de <code>OnCallResponder</code>. Nadie arrastra métodos fantasma.</p>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">05</span>
+    <span class="section-title-text">Relación con patrones</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="solid-patterns">
+    <div class="solid-patterns__label">PUENTE SOLID ↔ GOF</div>
+    <ul>
+      <li><strong>Facade:</strong> ofrece una interfaz pequeña para un caso de uso sin exponer todos los detalles internos.</li>
+      <li><strong>Adapter:</strong> adapta APIs externas grandes a interfaces mínimas que tu dominio sí necesita.</li>
+      <li><strong>Evita sobreingeniería:</strong> no fragmentes interfaces por anticipación extrema; hazlo por consumidores reales.</li>
+    </ul>
+  </div>
+
+</div><!-- /body -->
+
+</div><!-- /page-shell -->
+
+<div class="footer">
+  <span class="footer-text">SOLID — ISP · SEGREGACIÓN DE INTERFACES</span>
+  <span class="footer-count">SIGUIENTE · DIP</span>
+</div>
+
+</body>
+</html>

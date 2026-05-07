@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLID — Principio de inversión de dependencias (DIP)</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+</head>
+<body class="dn-infographic dn-solid">
+
+<div class="page-shell">
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">SOLID · 05 / 05</div>
+        <h1>DIP<br><span>DEPENDENCY INVERSION</span></h1>
+        <p class="header-sub">Los detalles dependen de las políticas, no al revés</p>
+      </div>
+      <nav class="solid-nav" aria-label="Principios SOLID">
+        <a href="srp.html">SRP</a>
+        <a href="ocp.html">OCP</a>
+        <a href="lsp.html">LSP</a>
+        <a href="isp.html">ISP</a>
+        <a class="is-current" href="dip.html">DIP</a>
+      </nav>
+    </div>
+    <div class="aws-logo">PRERREQ · OCP + ISP + INYECCIÓN DE DEP.</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">Abstracciones</span>
+    <span class="pill pill-b">Inyección</span>
+    <span class="pill pill-c">Frameworks al borde</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-purple">01</span>
+    <span class="section-title-text">Definición formal</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="solid-def">
+    <div class="solid-def__label">FORMAL · DEFINICIÓN</div>
+    <p>Los módulos de alto nivel (políticas de negocio) no deben depender de módulos de bajo nivel (detalles de implementación). Ambos deben depender de <strong style="font-style:normal;color:#E9D5FF;">abstracciones</strong>. Las abstracciones no deben depender de los detalles; son los detalles (infraestructura, SDKs, drivers) los que deben depender de las abstracciones.</p>
+  </div>
+  <div class="solid-prose mt-10">
+    <p>En Java moderno suele traducirse en interfaces en el núcleo del dominio o de la aplicación, con adaptadores en el borde que implementan esas interfaces usando JDBC, REST, colas, etc.</p>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">02</span>
+    <span class="section-title-text">Idea clave</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="solid-prose">
+    <p>Si el caso de uso «generar informe semanal de ventas» instancia <code>new SmtpEmailClient()</code>, el negocio queda acoplado a SMTP y a esa biblioteca. Cambiar a SendGrid o a un bus de eventos obliga a <strong>editar</strong> la lógica que debería ser estable. La inversión: el caso de uso depende de <code>ReportDelivery</code>; el adaptador SMTP implementa eso.</p>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">03</span>
+    <span class="section-title-text">Cuando se rompe · Java</span>
+    <div class="section-line"></div>
+  </div>
+  <p class="solid-compare-title" style="margin-top:0">El servicio de informes conoce directamente el cliente HTTP del proveedor de correo y la ruta del archivo PDF.</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">ROMPE DIP — ALTO NIVEL → DETALLE CONCRETO</div>
+    <pre><code>public final class WeeklySalesReportJob {
+
+    public void run(SalesRepository repo) {
+        var rows = repo.lastWeekRows();
+        byte[] pdf = new PdfBoxRenderer().render(rows);
+
+        var mail = new com.vendor.mail.MailApiClient(
+            System.getenv("MAIL_API_KEY")); // SDK concreto
+        mail.sendBinary("ops@empresa.com", "ventas.pdf", pdf);
+    }
+}</code></pre>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">04</span>
+    <span class="section-title-text">Aplicación adecuada · Java</span>
+    <div class="section-line"></div>
+  </div>
+  <p class="solid-compare-title" style="margin-top:0">El trabajo declara la necesidad de «entregar un informe»; quien compone el grafo en el <code>main</code> o el contenedor Spring elige SMTP, S3 o Slack.</p>
+  <div class="dn-java-block">
+    <div class="dn-java-block__cap">RESPETA DIP — POLÍTICA SOBRE ABSTRACCIÓN</div>
+    <pre><code>public interface ReportRenderer {
+    byte[] render(SalesSummary summary);
+}
+
+public interface ReportDelivery {
+    void deliver(String filename, byte[] content);
+}
+
+public final class WeeklySalesReportJob {
+    private final ReportRenderer renderer;
+    private final ReportDelivery delivery;
+
+    public WeeklySalesReportJob(ReportRenderer renderer, ReportDelivery delivery) {
+        this.renderer = renderer;
+        this.delivery = delivery;
+    }
+
+    public void run(SalesRepository repo) {
+        var summary = SalesSummary.from(repo.lastWeekRows());
+        byte[] pdf = renderer.render(summary);
+        delivery.deliver("ventas-semana.pdf", pdf);
+    }
+}
+
+// En infraestructura: MailApiReportDelivery implements ReportDelivery { … }</code></pre>
+  </div>
+  <div class="solid-prose mt-10">
+    <p><code>WeeklySalesReportJob</code> sigue estable si mañana el informe va a un bucket S3 o a un canal interno: solo cambian los adaptadores, no la política de «obtener datos → renderizar → entregar».</p>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">05</span>
+    <span class="section-title-text">Relación con patrones</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="solid-patterns">
+    <div class="solid-patterns__label">PUENTE SOLID ↔ GOF</div>
+    <ul>
+      <li><strong>Abstract Factory / Factory Method:</strong> ayudan a crear dependencias concretas fuera del caso de uso.</li>
+      <li><strong>Adapter:</strong> implementa puertos del dominio envolviendo SDKs o frameworks de infraestructura.</li>
+      <li><strong>Evita sobreingeniería:</strong> no abstraigas librerías que no van a cambiar ni forman parte del núcleo.</li>
+    </ul>
+  </div>
+
+</div><!-- /body -->
+
+</div><!-- /page-shell -->
+
+<div class="footer">
+  <span class="footer-text">SOLID — DIP · INVERSIÓN DE DEPENDENCIAS</span>
+  <span class="footer-count">SERIE COMPLETA · 05 / 05</span>
+</div>
+
+</body>
+</html>
