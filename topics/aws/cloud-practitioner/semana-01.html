@@ -463,6 +463,20 @@
 
   /* DIVIDER LINE */
   .divider { height: 1px; background: #1A2236; margin: 8px 0; }
+
+  /* ───── BACK LINK ───── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #3B4C68;
+    text-decoration: none;
+    margin-bottom: 0;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: #6B7FA3; }
 </style>
 </head>
 <body>
@@ -471,9 +485,12 @@
 <div class="header">
   <div class="header-top">
     <div>
-      <div class="week-badge">SEMANA 01 / 04</div>
-      <h1>AWS CLOUD<br><span>PRACTITIONER</span></h1>
-      <p class="header-sub">15 conceptos fundamentales que debes dominar esta semana</p>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="week-badge">SEMANA 01 / 04</div>
+        <h1>AWS CLOUD<br><span>PRACTITIONER</span></h1>
+        <p class="header-sub">15 conceptos fundamentales que debes dominar esta semana</p>
+      </div>
     </div>
     <div class="aws-logo">AWS CLF-C02</div>
   </div>

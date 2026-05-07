@@ -168,7 +168,6 @@
     transition: border-color 0.2s;
   }
   .topic-group:hover { border-color: #2D3E5A; }
-  .topic-group.tg-active:hover { border-color: rgba(255,153,0,0.35); }
 
   .tg-bar { height: 3px; width: 100%; }
   .bar-amber  { background: linear-gradient(90deg, #FF9900, #F59E0B); }
@@ -221,6 +220,7 @@
     flex-shrink: 0;
   }
   .sp-active { background: rgba(255,153,0,0.1);  color: #FCD34D; border: 1px solid rgba(255,153,0,0.22); }
+  .sp-done   { background: rgba(34,197,94,0.1);  color: #86EFAC; border: 1px solid rgba(34,197,94,0.22); }
   .sp-soon   { background: rgba(45,62,90,0.4);   color: #3B4C68; border: 1px solid #1A2236; }
 
   .tg-desc {
@@ -338,12 +338,12 @@
       </div>
       <div class="header-stats">
         <div class="stat-item">
-          <div class="stat-num">01</div>
-          <div class="stat-label">TEMAS ACTIVOS</div>
+          <div class="stat-num">04</div>
+          <div class="stat-label">TEMAS EN ÍNDICE</div>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <div class="stat-num">45</div>
+          <div class="stat-num">59</div>
           <div class="stat-label">CONCEPTOS PUBLICADOS</div>
         </div>
       </div>
@@ -357,14 +357,14 @@
 
     <div class="section-header">
       <span class="section-num">01</span>
-      <span class="section-title-text">Temas de estudio</span>
+      <span class="section-title-text">Certificaciones y cloud</span>
       <div class="section-line"></div>
     </div>
 
     <div class="topics-grid">
 
       <!-- ══ AWS CLOUD PRACTITIONER ══ -->
-      <div class="topic-group tg-active">
+      <div class="topic-group">
         <div class="tg-bar bar-amber"></div>
         <div class="tg-inner">
           <div class="tg-head">
@@ -375,11 +375,11 @@
                 <div class="tg-title">AWS Cloud Practitioner</div>
               </div>
             </div>
-            <span class="status-pill sp-active">EN CURSO</span>
+            <span class="status-pill sp-done">COMPLETADO</span>
           </div>
           <p class="tg-desc">Plan de 4 semanas para dominar los fundamentos de AWS y aprobar el examen CLF-C02. Infografías por dominio con ejemplos reales y tips de examen.</p>
           <div class="modules-list">
-            <a class="module-link" href="aws_semana1_infografia.html">
+            <a class="module-link" href="topics/aws/cloud-practitioner/semana-01.html">
               <div class="ml-left">
                 <span class="ml-dot dot-amber"></span>
                 <span class="ml-text">Semana 1 — Conceptos de Nube y Seguridad</span>
@@ -389,7 +389,7 @@
                 <span class="ml-arrow">→</span>
               </div>
             </a>
-            <a class="module-link" href="aws_semana2_infografia.html">
+            <a class="module-link" href="topics/aws/cloud-practitioner/semana-02.html">
               <div class="ml-left">
                 <span class="ml-dot dot-amber"></span>
                 <span class="ml-text">Semana 2 — Cómputo, Redes y Almacenamiento</span>
@@ -399,7 +399,7 @@
                 <span class="ml-arrow">→</span>
               </div>
             </a>
-            <a class="module-link" href="aws_semana3_infografia.html">
+            <a class="module-link" href="topics/aws/cloud-practitioner/semana-03.html">
               <div class="ml-left">
                 <span class="ml-dot dot-amber"></span>
                 <span class="ml-text">Semana 3 — Bases de Datos y Almacenamiento</span>
@@ -409,7 +409,7 @@
                 <span class="ml-arrow">→</span>
               </div>
             </a>
-            <a class="module-link" href="aws_semana4_infografia.html">
+            <a class="module-link" href="topics/aws/cloud-practitioner/semana-04.html">
               <div class="ml-left">
                 <span class="ml-dot dot-amber"></span>
                 <span class="ml-text">Semana 4 — Costos, Facturación, Gobernanza</span>
@@ -429,6 +429,16 @@
           </div>
         </div>
       </div>
+
+    </div><!-- /topics-grid: cloud -->
+
+    <div class="section-header" style="margin-top:8px">
+      <span class="section-num">02</span>
+      <span class="section-title-text">Arquitectura y calidad de software</span>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="topics-grid">
 
       <!-- ══ ARQUITECTURA HEXAGONAL ══ -->
       <div class="topic-group">
@@ -535,7 +545,7 @@
         </div>
       </div>
 
-    </div><!-- /topics-grid -->
+    </div><!-- /topics-grid: arquitectura -->
 
     <div class="coming-note">
       <span class="coming-note-icon">🗂</span>
