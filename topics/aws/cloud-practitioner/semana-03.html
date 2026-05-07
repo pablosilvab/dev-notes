@@ -2,444 +2,20 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1200">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: #0A0E1A;
-    font-family: 'DM Sans', sans-serif;
-    width: 1200px;
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  /* ───── HEADER ───── */
-  .header {
-    background: #0A0E1A;
-    padding: 48px 56px 32px;
-    border-bottom: 1px solid #1E2A40;
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 420px; height: 420px;
-    background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: 80px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-  }
-  .week-badge {
-    background: #22C55E;
-    color: #0A0E1A;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 2px;
-    letter-spacing: 0.1em;
-    margin-bottom: 12px;
-    display: inline-block;
-  }
-  .header h1 {
-    font-size: 42px;
-    font-weight: 700;
-    color: #FFFFFF;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-  }
-  .header h1 span { color: #22C55E; }
-  .header-sub {
-    font-size: 15px;
-    color: #6B7FA3;
-    margin-top: 8px;
-    font-weight: 400;
-  }
-  .aws-logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    color: #FF9900;
-    background: rgba(255,153,0,0.08);
-    border: 1px solid rgba(255,153,0,0.3);
-    padding: 8px 16px;
-    border-radius: 4px;
-    letter-spacing: 0.12em;
-  }
-  .header-pills {
-    display: flex;
-    gap: 8px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .pill {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 5px 12px;
-    border-radius: 20px;
-    border: 1px solid;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.04em;
-  }
-  .pill-a { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
-  .pill-b { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
-  .pill-c { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
-  .pill-d { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
-
-  /* ───── BODY ───── */
-  .body { padding: 0 56px 56px; background: #0A0E1A; }
-
-  /* ───── SECTION LABEL ───── */
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 32px 0 16px;
-  }
-  .section-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-  }
-  .sn-green  { color: #22C55E; }
-  .sn-blue   { color: #3B82F6; }
-  .sn-purple { color: #A855F7; }
-  .sn-amber  { color: #FF9900; }
-
-  .section-title-text {
-    font-size: 11px;
-    font-weight: 600;
-    color: #6B7FA3;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .section-line { flex: 1; height: 1px; background: #1E2A40; }
-
-  /* ───── CARDS ───── */
-  .cards-grid { display: grid; gap: 10px; }
-  .g3 { grid-template-columns: repeat(3, 1fr); }
-  .g2 { grid-template-columns: repeat(2, 1fr); }
-  .g1 { grid-template-columns: 1fr; }
-
-  .card {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    padding: 20px 22px;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
-    border-radius: 12px 0 0 12px;
-  }
-  .card.c-green::before  { background: #22C55E; }
-  .card.c-blue::before   { background: #3B82F6; }
-  .card.c-teal::before   { background: #14B8A6; }
-  .card.c-purple::before { background: #A855F7; }
-  .card.c-amber::before  { background: #FF9900; }
-  .card.c-pink::before   { background: #EC4899; }
-  .card.c-indigo::before { background: #6366F1; }
-  .card.c-sky::before    { background: #0EA5E9; }
-  .card.c-rose::before   { background: #F43F5E; }
-
-  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
-  .card-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; flex-shrink: 0;
-  }
-  .icon-green  { background: rgba(34,197,94,0.12); }
-  .icon-blue   { background: rgba(59,130,246,0.12); }
-  .icon-teal   { background: rgba(20,184,166,0.12); }
-  .icon-purple { background: rgba(168,85,247,0.12); }
-  .icon-amber  { background: rgba(255,153,0,0.12); }
-  .icon-pink   { background: rgba(236,72,153,0.12); }
-  .icon-indigo { background: rgba(99,102,241,0.12); }
-  .icon-sky    { background: rgba(14,165,233,0.12); }
-  .icon-rose   { background: rgba(244,63,94,0.12); }
-
-  .card-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    color: #3B4C68;
-    margin-top: 2px;
-  }
-  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
-  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
-  .kw {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    font-weight: 500;
-    padding: 2px 7px;
-    border-radius: 3px;
-    letter-spacing: 0.04em;
-  }
-  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
-  .kw-blue   { background: rgba(59,130,246,0.12);  color: #93C5FD; }
-  .kw-teal   { background: rgba(20,184,166,0.12);  color: #5EEAD4; }
-  .kw-purple { background: rgba(168,85,247,0.12);  color: #D8B4FE; }
-  .kw-amber  { background: rgba(255,153,0,0.12);   color: #FCD34D; }
-  .kw-pink   { background: rgba(236,72,153,0.12);  color: #F9A8D4; }
-  .kw-indigo { background: rgba(99,102,241,0.12);  color: #A5B4FC; }
-  .kw-sky    { background: rgba(14,165,233,0.12);  color: #7DD3FC; }
-  .kw-rose   { background: rgba(244,63,94,0.12);   color: #FDA4AF; }
-
-  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
-  .card-example {
-    font-size: 11.5px; color: #64748B; line-height: 1.55;
-    border-top: 1px solid #1A2236; padding-top: 10px;
-  }
-  .card-example strong { color: #94A3B8; font-weight: 500; }
-
-  .tip-box {
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-size: 11px;
-    margin-top: 10px;
-    line-height: 1.5;
-  }
-  .tip-box::before { content: '⚡ '; }
-  .tip-green  { background: rgba(34,197,94,0.06);  border: 1px solid rgba(34,197,94,0.18);  color: #86EFAC; }
-  .tip-blue   { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.18); color: #93C5FD; }
-  .tip-amber  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.18);  color: #FCD34D; }
-  .tip-purple { background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.18); color: #D8B4FE; }
-  .tip-rose   { background: rgba(244,63,94,0.06);  border: 1px solid rgba(244,63,94,0.18);  color: #FDA4AF; }
-
-  /* ───── DECISION TABLE ───── */
-  .decision-table {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-top: 10px;
-  }
-  .dt-header {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr 1fr;
-    background: #080C17;
-    border-bottom: 1px solid #1E2A40;
-    padding: 0;
-  }
-  .dt-cell {
-    padding: 11px 14px;
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    color: #3B4C68;
-    border-right: 1px solid #1A2236;
-    letter-spacing: 0.04em;
-  }
-  .dt-cell:last-child { border-right: none; }
-  .dt-cell.dt-head { color: #6B7FA3; font-weight: 500; }
-  .dt-row {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr 1fr;
-    border-bottom: 1px solid #1A2236;
-    transition: background 0.1s;
-  }
-  .dt-row:last-child { border-bottom: none; }
-  .dt-row:hover { background: rgba(255,255,255,0.015); }
-  .dt-service {
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-right: 1px solid #1A2236;
-  }
-  .dt-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-  .dot-green  { background: #22C55E; }
-  .dot-blue   { background: #3B82F6; }
-  .dot-teal   { background: #14B8A6; }
-  .dot-purple { background: #A855F7; }
-  .dot-amber  { background: #FF9900; }
-  .dot-rose   { background: #F43F5E; }
-  .dot-indigo { background: #6366F1; }
-  .dot-sky    { background: #0EA5E9; }
-  .dt-sname { font-size: 12px; font-weight: 600; color: #E2E8F0; }
-  .dt-val {
-    padding: 12px 14px;
-    font-size: 11px;
-    color: #64748B;
-    border-right: 1px solid #1A2236;
-    line-height: 1.4;
-  }
-  .dt-val:last-child { border-right: none; }
-  .dt-badge {
-    display: inline-block;
-    font-size: 9px;
-    font-family: 'DM Mono', monospace;
-    padding: 2px 6px;
-    border-radius: 3px;
-  }
-  .db-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
-  .db-blue   { background: rgba(59,130,246,0.12);  color: #93C5FD; }
-  .db-purple { background: rgba(168,85,247,0.12);  color: #D8B4FE; }
-  .db-amber  { background: rgba(255,153,0,0.12);   color: #FCD34D; }
-  .db-rose   { background: rgba(244,63,94,0.12);   color: #FDA4AF; }
-  .db-teal   { background: rgba(20,184,166,0.12);  color: #5EEAD4; }
-
-  /* ───── EXAM DECISION GUIDE ───── */
-  .decision-guide {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    padding: 22px 24px;
-    margin-top: 10px;
-  }
-  .dg-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    color: #3B4C68;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-  .dg-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  .dg-item {
-    background: #0A0E1A;
-    border: 1px solid #1A2236;
-    border-radius: 8px;
-    padding: 14px 16px;
-  }
-  .dg-keyword {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    line-height: 1.5;
-  }
-  .dg-arrow {
-    font-size: 10px;
-    color: #3B4C68;
-    margin: 4px 0;
-  }
-  .dg-answer {
-    font-size: 13px;
-    font-weight: 600;
-    color: #E2E8F0;
-    margin-bottom: 3px;
-  }
-  .dg-why { font-size: 11px; color: #4A5E7A; line-height: 1.4; }
-
-  /* ───── SPLIT CARD ───── */
-  .split-card {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .split-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; }
-  .split-half { padding: 18px 22px; position: relative; }
-  .split-half:not(:last-child) { border-right: 1px solid #1E2A40; }
-  .split-half::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; width: 100%; height: 3px;
-  }
-  .sh-green::before  { background: #22C55E; }
-  .sh-blue::before   { background: #3B82F6; }
-  .sh-teal::before   { background: #14B8A6; }
-  .sh-purple::before { background: #A855F7; }
-  .sh-amber::before  { background: #FF9900; }
-  .sh-rose::before   { background: #F43F5E; }
-
-  .split-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .sl-green  { color: #22C55E; }
-  .sl-blue   { color: #3B82F6; }
-  .sl-teal   { color: #14B8A6; }
-  .sl-purple { color: #A855F7; }
-  .sl-amber  { color: #FF9900; }
-  .sl-rose   { color: #F43F5E; }
-
-  /* ───── CALLOUT BOX ───── */
-  .callout {
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-top: 10px;
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-  }
-  .callout-green  { background: rgba(34,197,94,0.05);  border: 1px solid rgba(34,197,94,0.18); }
-  .callout-amber  { background: rgba(255,153,0,0.05);  border: 1px solid rgba(255,153,0,0.18); }
-  .callout-purple { background: rgba(168,85,247,0.05); border: 1px solid rgba(168,85,247,0.18); }
-  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
-  .callout-content {}
-  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
-  .ct-green  { color: #86EFAC; }
-  .ct-amber  { color: #FCD34D; }
-  .ct-purple { color: #D8B4FE; }
-  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
-
-  /* ───── BACK LINK ───── */
-  .back-link {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    color: #3B4C68; text-decoration: none; transition: color 0.15s;
-  }
-  .back-link:hover { color: #6B7FA3; }
-
-  /* ───── FOOTER ───── */
-  .footer {
-    background: #080C17;
-    border-top: 1px solid #1E2A40;
-    padding: 20px 56px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer-text {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em;
-  }
-  .footer-count {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px; color: #22C55E; letter-spacing: 0.06em;
-  }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Cloud Practitioner — Semana 3</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
 </head>
-<body>
+<body class="dn-infographic dn-week-03">
+<div class="page-shell">
+
 
 <!-- HEADER -->
 <div class="header">
   <div class="header-top">
     <div>
       <a class="back-link" href="../../../index.html">← dev-notes</a>
-      <div style="margin-top:10px">
+      <div class="header-stack">
         <div class="week-badge">SEMANA 03 / 04</div>
         <h1>Bases de Datos<br><span>& Almacenamiento</span></h1>
         <p class="header-sub">13 servicios para persistir, consultar y mover datos en AWS</p>
@@ -526,7 +102,7 @@
   </div>
 
   <!-- Comparativa de almacenamiento -->
-  <div class="split-card split-grid-3" style="margin-top:10px">
+  <div class="split-card split-grid-3 mt-10">
     <div class="split-half sh-amber">
       <div class="split-label sl-amber">S3 — Object</div>
       <div class="card-keywords" style="margin-bottom:8px">
@@ -554,7 +130,7 @@
   </div>
 
   <!-- S3 Glacier -->
-  <div class="cards-grid g1" style="margin-top:10px">
+  <div class="cards-grid g1 mt-10">
     <div class="card c-indigo">
       <div class="card-header">
         <div class="card-icon icon-indigo">🧊</div>
@@ -767,6 +343,7 @@
     <div class="section-line"></div>
   </div>
 
+  <div class="table-scroll">
   <div class="decision-table">
     <div class="dt-header">
       <div class="dt-cell dt-head">Servicio</div>
@@ -802,11 +379,11 @@
     </div>
     <div class="dt-row">
       <div class="dt-service"><span class="dt-dot dot-indigo"></span><span class="dt-sname">S3 Glacier</span></div>
-      <div class="dt-val"><span class="dt-badge" style="background:rgba(99,102,241,0.12);color:#A5B4FC">Archivo frío</span></div>
+      <div class="dt-val"><span class="dt-badge db-indigo">Archivo frío</span></div>
       <div class="dt-val">Datos raramente accedidos, cumplimiento legal</div>
       <div class="dt-val">Ilimitado</div>
       <div class="dt-val">Totalmente gestionado</div>
-      <div class="dt-val"><span class="dt-badge" style="background:rgba(99,102,241,0.12);color:#A5B4FC">Bajo costo · Horas</span></div>
+      <div class="dt-val"><span class="dt-badge db-indigo">Bajo costo · Horas</span></div>
     </div>
     <div class="dt-row">
       <div class="dt-service"><span class="dt-dot dot-blue"></span><span class="dt-sname">RDS</span></div>
@@ -848,6 +425,7 @@
       <div class="dt-val">Gestionado</div>
       <div class="dt-val"><span class="dt-badge db-green">Redis · μs</span></div>
     </div>
+  </div>
   </div>
 
   <!-- ══════════════════════════════════════════
@@ -911,6 +489,8 @@
   </div>
 
 </div><!-- /body -->
+
+</div><!-- /page-shell -->
 
 <!-- FOOTER -->
 <div class="footer">

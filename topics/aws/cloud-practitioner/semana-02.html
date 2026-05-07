@@ -2,459 +2,20 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1200">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: #0A0E1A;
-    font-family: 'DM Sans', sans-serif;
-    width: 1200px;
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  /* ───── HEADER ───── */
-  .header {
-    background: #0A0E1A;
-    padding: 48px 56px 32px;
-    border-bottom: 1px solid #1E2A40;
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: 100px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(20,184,166,0.06) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-  }
-  .week-badge {
-    background: #3B82F6;
-    color: #ffffff;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 2px;
-    letter-spacing: 0.1em;
-    margin-bottom: 12px;
-    display: inline-block;
-  }
-  .header h1 {
-    font-size: 42px;
-    font-weight: 700;
-    color: #FFFFFF;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-  }
-  .header h1 span { color: #3B82F6; }
-  .header-sub {
-    font-size: 15px;
-    color: #6B7FA3;
-    margin-top: 8px;
-    font-weight: 400;
-  }
-  .aws-logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    color: #FF9900;
-    background: rgba(255,153,0,0.08);
-    border: 1px solid rgba(255,153,0,0.3);
-    padding: 8px 16px;
-    border-radius: 4px;
-    letter-spacing: 0.12em;
-  }
-  .header-pills {
-    display: flex;
-    gap: 8px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .pill {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 5px 12px;
-    border-radius: 20px;
-    border: 1px solid;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.04em;
-  }
-  .pill-a { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
-  .pill-b { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
-  .pill-c { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
-  .pill-d { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
-
-  /* ───── BODY ───── */
-  .body { padding: 0 56px 56px; background: #0A0E1A; }
-
-  /* ───── SECTION LABEL ───── */
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 32px 0 16px;
-  }
-  .section-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: #3B82F6;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-  }
-  .section-title-text {
-    font-size: 11px;
-    font-weight: 600;
-    color: #6B7FA3;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: #1E2A40;
-  }
-
-  /* ───── CARDS ───── */
-  .cards-grid { display: grid; gap: 10px; }
-  .g4 { grid-template-columns: repeat(4, 1fr); }
-  .g3 { grid-template-columns: repeat(3, 1fr); }
-  .g2 { grid-template-columns: repeat(2, 1fr); }
-  .g1 { grid-template-columns: 1fr; }
-
-  .card {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    padding: 20px 22px;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
-    border-radius: 12px 0 0 12px;
-  }
-  .card.c-blue::before   { background: #3B82F6; }
-  .card.c-teal::before   { background: #14B8A6; }
-  .card.c-amber::before  { background: #FF9900; }
-  .card.c-purple::before { background: #A855F7; }
-  .card.c-green::before  { background: #22C55E; }
-  .card.c-pink::before   { background: #EC4899; }
-  .card.c-indigo::before { background: #6366F1; }
-  .card.c-sky::before    { background: #0EA5E9; }
-
-  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
-  .card-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; flex-shrink: 0;
-  }
-  .icon-blue   { background: rgba(59,130,246,0.12); }
-  .icon-teal   { background: rgba(20,184,166,0.12); }
-  .icon-amber  { background: rgba(255,153,0,0.12); }
-  .icon-purple { background: rgba(168,85,247,0.12); }
-  .icon-green  { background: rgba(34,197,94,0.12); }
-  .icon-pink   { background: rgba(236,72,153,0.12); }
-  .icon-indigo { background: rgba(99,102,241,0.12); }
-  .icon-sky    { background: rgba(14,165,233,0.12); }
-
-  .card-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    color: #3B4C68;
-    margin-top: 2px;
-  }
-  .card-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #E2E8F0;
-    line-height: 1.2;
-  }
-  .card-keywords {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 10px;
-  }
-  .kw {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    font-weight: 500;
-    padding: 2px 7px;
-    border-radius: 3px;
-    letter-spacing: 0.04em;
-  }
-  .kw-blue   { background: rgba(59,130,246,0.12);  color: #93C5FD; }
-  .kw-teal   { background: rgba(20,184,166,0.12);  color: #5EEAD4; }
-  .kw-amber  { background: rgba(255,153,0,0.12);   color: #FCD34D; }
-  .kw-purple { background: rgba(168,85,247,0.12);  color: #D8B4FE; }
-  .kw-green  { background: rgba(34,197,94,0.12);   color: #86EFAC; }
-  .kw-pink   { background: rgba(236,72,153,0.12);  color: #F9A8D4; }
-  .kw-indigo { background: rgba(99,102,241,0.12);  color: #A5B4FC; }
-  .kw-sky    { background: rgba(14,165,233,0.12);  color: #7DD3FC; }
-
-  .card-desc {
-    font-size: 12px;
-    color: #8899B8;
-    line-height: 1.6;
-    margin-bottom: 10px;
-  }
-  .card-example {
-    font-size: 11.5px;
-    color: #64748B;
-    line-height: 1.55;
-    border-top: 1px solid #1A2236;
-    padding-top: 10px;
-  }
-  .card-example strong { color: #94A3B8; font-weight: 500; }
-  .tip-box {
-    background: rgba(59,130,246,0.06);
-    border: 1px solid rgba(59,130,246,0.18);
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-size: 11px;
-    color: #93C5FD;
-    margin-top: 10px;
-    line-height: 1.5;
-  }
-  .tip-box::before { content: '⚡ '; }
-  .tip-amber {
-    background: rgba(255,153,0,0.06);
-    border: 1px solid rgba(255,153,0,0.18);
-    color: #FCD34D;
-  }
-  .tip-green {
-    background: rgba(34,197,94,0.06);
-    border: 1px solid rgba(34,197,94,0.18);
-    color: #86EFAC;
-  }
-
-  /* ───── COMPARISON BLOCK (EC2 vs Lambda vs Containers) ───── */
-  .compare-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-top: 10px;
-  }
-  .compare-col {
-    padding: 18px 18px 20px;
-    border-right: 1px solid #1A2236;
-    position: relative;
-  }
-  .compare-col:last-child { border-right: none; }
-  .compare-col::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .cc-blue::before   { background: #3B82F6; }
-  .cc-teal::before   { background: #14B8A6; }
-  .cc-purple::before { background: #A855F7; }
-  .cc-amber::before  { background: #FF9900; }
-
-  .compare-service {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    margin-bottom: 6px;
-  }
-  .cs-blue   { color: #3B82F6; }
-  .cs-teal   { color: #14B8A6; }
-  .cs-purple { color: #A855F7; }
-  .cs-amber  { color: #FF9900; }
-
-  .compare-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: #E2E8F0;
-    margin-bottom: 10px;
-  }
-  .compare-row {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .cr-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-    font-size: 11px;
-    color: #64748B;
-    line-height: 1.4;
-  }
-  .cr-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: #3B4C68;
-    white-space: nowrap;
-    padding-top: 1px;
-    min-width: 52px;
-  }
-  .cr-val { color: #8899B8; font-size: 11px; }
-
-  /* ───── NETWORK FLOW DIAGRAM ───── */
-  .net-diagram {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    padding: 22px 24px;
-  }
-  .net-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    color: #3B4C68;
-    letter-spacing: 0.1em;
-    margin-bottom: 16px;
-    text-transform: uppercase;
-  }
-  .net-flow {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-  .net-node {
-    background: #0A0E1A;
-    border: 1px solid #1E2A40;
-    border-radius: 8px;
-    padding: 10px 14px;
-    text-align: center;
-    min-width: 110px;
-    flex-shrink: 0;
-  }
-  .nn-icon { font-size: 18px; margin-bottom: 4px; }
-  .nn-name {
-    font-size: 11px;
-    font-weight: 600;
-    color: #94A3B8;
-    line-height: 1.2;
-  }
-  .nn-sub {
-    font-size: 9px;
-    color: #3B4C68;
-    font-family: 'DM Mono', monospace;
-    margin-top: 2px;
-  }
-  .net-arrow {
-    color: #2D3E5A;
-    font-size: 18px;
-    padding: 0 6px;
-    flex-shrink: 0;
-  }
-  .net-arrow.arr-labeled { display: flex; flex-direction: column; align-items: center; }
-  .arr-label { font-size: 9px; color: #3B4C68; font-family: 'DM Mono', monospace; margin-bottom: 2px; }
-
-  /* ───── SPLIT CARD ───── */
-  .split-card {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .split-half { padding: 18px 22px; position: relative; }
-  .split-half:first-child { border-right: 1px solid #1E2A40; }
-  .split-half::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 3px;
-  }
-  .sh-blue::before   { background: #3B82F6; }
-  .sh-purple::before { background: #A855F7; }
-  .sh-teal::before   { background: #14B8A6; }
-  .sh-amber::before  { background: #FF9900; }
-
-  .split-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .sl-blue   { color: #3B82F6; }
-  .sl-purple { color: #A855F7; }
-  .sl-teal   { color: #14B8A6; }
-  .sl-amber  { color: #FF9900; }
-
-  /* ───── FOOTER ───── */
-  .footer {
-    background: #080C17;
-    border-top: 1px solid #1E2A40;
-    padding: 20px 56px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer-text {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: #2D3E5A;
-    letter-spacing: 0.06em;
-  }
-  .footer-count {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: #3B82F6;
-    letter-spacing: 0.06em;
-  }
-
-  /* ───── BACK LINK ───── */
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: #3B4C68;
-    text-decoration: none;
-    margin-bottom: 0;
-    transition: color 0.15s;
-  }
-  .back-link:hover { color: #6B7FA3; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Cloud Practitioner — Semana 2</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
 </head>
-<body>
+<body class="dn-infographic dn-week-02">
+<div class="page-shell">
+
 
 <!-- HEADER -->
 <div class="header">
   <div class="header-top">
     <div>
       <a class="back-link" href="../../../index.html">← dev-notes</a>
-      <div style="margin-top:10px">
+      <div class="header-stack">
         <div class="week-badge">SEMANA 02 / 04</div>
         <h1>Cómputo, Redes<br><span>& Almacenamiento</span></h1>
         <p class="header-sub">17 servicios core de AWS para arquitecturas modernas en producción</p>
@@ -526,7 +87,7 @@
   </div>
 
   <!-- Cards detalle: EC2 + Lambda -->
-  <div class="cards-grid g2" style="margin-top:10px">
+  <div class="cards-grid g2 mt-10">
     <div class="card c-blue">
       <div class="card-header">
         <div class="card-icon icon-blue">🖥</div>
@@ -565,7 +126,7 @@
   </div>
 
   <!-- Cards detalle: ECS/EKS + Fargate + Lightsail -->
-  <div class="cards-grid g3" style="margin-top:10px">
+  <div class="cards-grid g3 mt-10">
     <div class="card c-purple">
       <div class="card-header">
         <div class="card-icon icon-purple">🐳</div>
@@ -680,7 +241,7 @@
   </div>
 
   <!-- Cards de red -->
-  <div class="cards-grid g2" style="margin-top:10px">
+  <div class="cards-grid g2 mt-10">
     <div class="card c-indigo">
       <div class="card-header">
         <div class="card-icon icon-indigo">🏡</div>
@@ -718,7 +279,7 @@
     </div>
   </div>
 
-  <div class="cards-grid g3" style="margin-top:10px">
+  <div class="cards-grid g3 mt-10">
     <div class="card c-amber">
       <div class="card-header">
         <div class="card-icon icon-amber">☁</div>
@@ -883,8 +444,8 @@
   </div>
 
   <!-- Tabla comparativa de storage -->
-  <div class="split-card" style="margin-top:10px; grid-template-columns: 1fr 1fr 1fr; display:grid">
-    <div class="split-half sh-amber" style="border-right: 1px solid #1E2A40">
+  <div class="split-card split-grid-3 mt-10">
+    <div class="split-half sh-amber">
       <div class="split-label sl-amber">S3 — Object Storage</div>
       <div class="card-keywords" style="margin-bottom:8px">
         <span class="kw kw-amber">Archivos / Multimedia</span>
@@ -892,7 +453,7 @@
       </div>
       <div class="card-desc" style="font-size:11px">Acceso por URL. Sin límite de tamaño. Duradero entre múltiples AZs. No se adjunta a EC2.</div>
     </div>
-    <div class="split-half sh-blue" style="border-right: 1px solid #1E2A40">
+    <div class="split-half sh-blue">
       <div class="split-label sl-blue">EBS — Block Storage</div>
       <div class="card-keywords" style="margin-bottom:8px">
         <span class="kw kw-blue">OS / Bases de datos</span>
@@ -957,6 +518,8 @@
   </div>
 
 </div><!-- /body -->
+
+</div><!-- /page-shell -->
 
 <!-- FOOTER -->
 <div class="footer">

@@ -2,491 +2,20 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1200">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: #0A0E1A;
-    font-family: 'DM Sans', sans-serif;
-    width: 1200px;
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  /* ───── HEADER ───── */
-  .header {
-    background: #0A0E1A;
-    padding: 48px 56px 32px;
-    border-bottom: 1px solid #1E2A40;
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -80px; right: -80px;
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(255,153,0,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-  }
-  .week-badge {
-    background: #FF9900;
-    color: #0A0E1A;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 2px;
-    letter-spacing: 0.1em;
-    margin-bottom: 12px;
-    display: inline-block;
-  }
-  .header h1 {
-    font-size: 42px;
-    font-weight: 700;
-    color: #FFFFFF;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-  }
-  .header h1 span { color: #FF9900; }
-  .header-sub {
-    font-size: 15px;
-    color: #6B7FA3;
-    margin-top: 8px;
-    font-weight: 400;
-  }
-  .aws-logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    color: #FF9900;
-    background: rgba(255,153,0,0.08);
-    border: 1px solid rgba(255,153,0,0.3);
-    padding: 8px 16px;
-    border-radius: 4px;
-    letter-spacing: 0.12em;
-  }
-  .header-pills {
-    display: flex;
-    gap: 8px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .pill {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 5px 12px;
-    border-radius: 20px;
-    border: 1px solid;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: 0.04em;
-  }
-  .pill-a { color: #64B5F6; border-color: rgba(100,181,246,0.3); background: rgba(100,181,246,0.07); }
-  .pill-b { color: #81C784; border-color: rgba(129,199,132,0.3); background: rgba(129,199,132,0.07); }
-  .pill-c { color: #FFB74D; border-color: rgba(255,183,77,0.3); background: rgba(255,183,77,0.07); }
-  .pill-d { color: #CE93D8; border-color: rgba(206,147,216,0.3); background: rgba(206,147,216,0.07); }
-
-  /* ───── BODY ───── */
-  .body { padding: 0 56px 56px; background: #0A0E1A; }
-
-  /* ───── SECTION LABEL ───── */
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 32px 0 16px;
-  }
-  .section-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: #FF9900;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-  }
-  .section-title-text {
-    font-size: 11px;
-    font-weight: 600;
-    color: #6B7FA3;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: #1E2A40;
-  }
-
-  /* ───── CONCEPT CARDS GRID ───── */
-  .cards-grid {
-    display: grid;
-    gap: 10px;
-  }
-  .g3 { grid-template-columns: repeat(3, 1fr); }
-  .g2 { grid-template-columns: repeat(2, 1fr); }
-  .g1 { grid-template-columns: 1fr; }
-
-  .card {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    padding: 20px 22px;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
-    border-radius: 12px 0 0 12px;
-  }
-  .card.c-blue::before { background: #3B82F6; }
-  .card.c-green::before { background: #22C55E; }
-  .card.c-amber::before { background: #FF9900; }
-  .card.c-purple::before { background: #A855F7; }
-  .card.c-teal::before { background: #14B8A6; }
-  .card.c-pink::before { background: #EC4899; }
-
-  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
-  .card-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px;
-    flex-shrink: 0;
-  }
-  .icon-blue { background: rgba(59,130,246,0.12); }
-  .icon-green { background: rgba(34,197,94,0.12); }
-  .icon-amber { background: rgba(255,153,0,0.12); }
-  .icon-purple { background: rgba(168,85,247,0.12); }
-  .icon-teal { background: rgba(20,184,166,0.12); }
-  .icon-pink { background: rgba(236,72,153,0.12); }
-
-  .card-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    color: #3B4C68;
-    margin-top: 2px;
-  }
-  .card-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #E2E8F0;
-    line-height: 1.2;
-  }
-  .card-keywords {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 10px;
-  }
-  .kw {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    font-weight: 500;
-    padding: 2px 7px;
-    border-radius: 3px;
-    letter-spacing: 0.04em;
-  }
-  .kw-blue { background: rgba(59,130,246,0.12); color: #93C5FD; }
-  .kw-green { background: rgba(34,197,94,0.12); color: #86EFAC; }
-  .kw-amber { background: rgba(255,153,0,0.12); color: #FCD34D; }
-  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
-  .kw-teal { background: rgba(20,184,166,0.12); color: #5EEAD4; }
-  .kw-pink { background: rgba(236,72,153,0.12); color: #F9A8D4; }
-
-  .card-desc {
-    font-size: 12px;
-    color: #8899B8;
-    line-height: 1.6;
-    margin-bottom: 10px;
-  }
-  .card-example {
-    font-size: 11.5px;
-    color: #64748B;
-    line-height: 1.55;
-    border-top: 1px solid #1A2236;
-    padding-top: 10px;
-  }
-  .card-example strong {
-    color: #94A3B8;
-    font-weight: 500;
-  }
-  .tip-box {
-    background: rgba(255,153,0,0.06);
-    border: 1px solid rgba(255,153,0,0.18);
-    border-radius: 6px;
-    padding: 8px 10px;
-    font-size: 11px;
-    color: #FCD34D;
-    margin-top: 10px;
-    line-height: 1.5;
-  }
-  .tip-box::before { content: '⚡ '; }
-
-  /* ───── SPECIAL: Managed vs Unmanaged row ───── */
-  .split-card {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .split-half {
-    padding: 18px 22px;
-    position: relative;
-  }
-  .split-half:first-child { border-right: 1px solid #1E2A40; }
-  .split-half::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 3px;
-  }
-  .split-half.sh-green::before { background: #22C55E; }
-  .split-half.sh-amber::before { background: #F59E0B; }
-  .split-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .sl-green { color: #22C55E; }
-  .sl-amber { color: #F59E0B; }
-
-  /* ───── SUPPORT TIERS ───── */
-  .support-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .support-tier {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 10px;
-    padding: 16px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .support-tier::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .t-basic::before { background: #475569; }
-  .t-dev::before { background: #3B82F6; }
-  .t-biz::before { background: #22C55E; }
-  .t-ent::before { background: #FF9900; }
-  .tier-name {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    margin-bottom: 6px;
-  }
-  .t-basic .tier-name { color: #64748B; }
-  .t-dev .tier-name { color: #93C5FD; }
-  .t-biz .tier-name { color: #86EFAC; }
-  .t-ent .tier-name { color: #FF9900; }
-  .tier-desc { font-size: 11px; color: #64748B; line-height: 1.5; }
-  .tier-tag {
-    font-size: 9px;
-    margin-top: 8px;
-    padding: 3px 8px;
-    border-radius: 3px;
-    display: inline-block;
-  }
-  .t-ent .tier-tag { background: rgba(255,153,0,0.12); color: #FCD34D; }
-
-  /* ───── SHARED RESPONSIBILITY ───── */
-  .resp-grid {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 0;
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .resp-col {
-    padding: 22px 24px;
-  }
-  .resp-col:last-child { background: rgba(34,197,94,0.04); }
-  .resp-col:first-child { background: rgba(59,130,246,0.04); }
-  .resp-divider {
-    width: 1px;
-    background: #1E2A40;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  .resp-divider-icon {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 50%;
-    width: 32px; height: 32px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    position: relative;
-    z-index: 1;
-  }
-  .resp-col-title {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .rt-blue { color: #3B82F6; }
-  .rt-green { color: #22C55E; }
-  .resp-subtitle {
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    margin-bottom: 12px;
-  }
-  .rs-blue { color: #64748B; }
-  .rs-green { color: #64748B; }
-  .resp-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 7px;
-    font-size: 12px;
-    color: #8899B8;
-  }
-  .resp-item::before {
-    content: '';
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .ri-blue::before { background: #3B82F6; }
-  .ri-green::before { background: #22C55E; }
-  .resp-analogy {
-    background: #0A0E1A;
-    border: 1px solid #1E2A40;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 11.5px;
-    color: #64748B;
-    line-height: 1.6;
-    margin-top: 10px;
-    grid-column: 1 / -1;
-  }
-
-  /* ───── TRUSTED ADVISOR ───── */
-  .ta-card {
-    background: #0F1625;
-    border: 1px solid #1E2A40;
-    border-radius: 12px;
-    padding: 22px 24px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 24px;
-    align-items: center;
-  }
-  .ta-pillars {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-    flex-wrap: wrap;
-  }
-  .ta-pillar {
-    font-size: 10px;
-    font-family: 'DM Mono', monospace;
-    padding: 4px 10px;
-    border-radius: 4px;
-    border: 1px solid;
-  }
-  .tp1 { color: #93C5FD; border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.07); }
-  .tp2 { color: #86EFAC; border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.07); }
-  .tp3 { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
-  .tp4 { color: #F9A8D4; border-color: rgba(249,168,212,0.3); background: rgba(249,168,212,0.07); }
-  .tp5 { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
-  .ta-visual {
-    width: 120px; height: 120px;
-    border: 2px solid #1E2A40;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    position: relative;
-    background: radial-gradient(circle at center, rgba(255,153,0,0.06), transparent);
-  }
-  .ta-visual::after {
-    content: '';
-    position: absolute;
-    inset: -6px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,153,0,0.15);
-  }
-
-  /* ───── FOOTER ───── */
-  .footer {
-    background: #080C17;
-    border-top: 1px solid #1E2A40;
-    padding: 20px 56px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer-text {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: #2D3E5A;
-    letter-spacing: 0.06em;
-  }
-  .footer-count {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: #FF9900;
-    letter-spacing: 0.06em;
-  }
-
-  /* DIVIDER LINE */
-  .divider { height: 1px; background: #1A2236; margin: 8px 0; }
-
-  /* ───── BACK LINK ───── */
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: #3B4C68;
-    text-decoration: none;
-    margin-bottom: 0;
-    transition: color 0.15s;
-  }
-  .back-link:hover { color: #6B7FA3; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Cloud Practitioner — Semana 1</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
 </head>
-<body>
+<body class="dn-infographic dn-week-01">
+<div class="page-shell">
+
 
 <!-- HEADER -->
 <div class="header">
   <div class="header-top">
     <div>
       <a class="back-link" href="../../../index.html">← dev-notes</a>
-      <div style="margin-top:10px">
+      <div class="header-stack">
         <div class="week-badge">SEMANA 01 / 04</div>
         <h1>AWS CLOUD<br><span>PRACTITIONER</span></h1>
         <p class="header-sub">15 conceptos fundamentales que debes dominar esta semana</p>
@@ -563,7 +92,7 @@
     </div>
   </div>
 
-  <div class="cards-grid g3" style="margin-top:10px">
+  <div class="cards-grid g3 mt-10">
     <!-- Región -->
     <div class="card c-teal">
       <div class="card-header">
@@ -618,7 +147,7 @@
   </div>
 
   <!-- Managed vs Unmanaged -->
-  <div class="split-card" style="margin-top:10px">
+  <div class="split-card mt-10">
     <div class="split-half sh-green">
       <div class="split-label sl-green">06 — Servicios Gestionados (Sincrónicos)</div>
       <div class="card-keywords" style="margin-bottom:8px">
@@ -684,7 +213,7 @@
     </div>
   </div>
 
-  <div class="cards-grid g3" style="margin-top:10px">
+  <div class="cards-grid g3 mt-10">
     <!-- IAM Users -->
     <div class="card c-pink">
       <div class="card-header">
@@ -829,7 +358,7 @@
         <span class="kw kw-amber">Best practices</span>
       </div>
       <div class="card-desc">Herramienta que analiza tu cuenta y sugiere mejoras en 5 pilares clave de buenas prácticas de AWS.</div>
-      <div class="card-example" style="margin-top:4px"><strong>Analogía:</strong> Un "linter" de infraestructura que te avisa si dejaste un puerto abierto, si estás gastando de más, o si una AZ tiene baja disponibilidad.</div>
+      <div class="card-example mt-4"><strong>Analogía:</strong> Un "linter" de infraestructura que te avisa si dejaste un puerto abierto, si estás gastando de más, o si una AZ tiene baja disponibilidad.</div>
       <div class="ta-pillars">
         <span class="ta-pillar tp1">Seguridad</span>
         <span class="ta-pillar tp2">Ahorro de costos</span>
@@ -842,6 +371,8 @@
   </div>
 
 </div><!-- /body -->
+
+</div><!-- /page-shell -->
 
 <!-- FOOTER -->
 <div class="footer">
