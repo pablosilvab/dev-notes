@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(20,184,166,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #A855F7; color: #fff; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #A855F7; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #A855F7; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+  .pill-b { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
+  .pill-c { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+  .pill-d { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-purple { color: #A855F7; }
+  .sn-teal   { color: #14B8A6; }
+  .sn-amber  { color: #FF9900; }
+  .sn-green  { color: #22C55E; }
+  .sn-rose   { color: #F43F5E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .cards-grid { display: grid; gap: 10px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-amber::before  { background: #FF9900; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-indigo::before { background: #6366F1; }
+  .card.c-pink::before   { background: #EC4899; }
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-amber  { background: rgba(255,153,0,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-indigo { background: rgba(99,102,241,0.12); }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .kw-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .kw-amber  { background: rgba(255,153,0,0.12);  color: #FCD34D; }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-rose   { background: rgba(244,63,94,0.12);  color: #FDA4AF; }
+  .kw-blue   { background: rgba(59,130,246,0.12); color: #93C5FD; }
+  .kw-indigo { background: rgba(99,102,241,0.12); color: #A5B4FC; }
+  .kw-pink   { background: rgba(236,72,153,0.12); color: #F9A8D4; }
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-purple { background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.18); color: #D8B4FE; }
+  .tip-teal   { background: rgba(20,184,166,0.06); border: 1px solid rgba(20,184,166,0.18); color: #5EEAD4; }
+  .tip-amber  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.18);  color: #FCD34D; }
+  .tip-green  { background: rgba(34,197,94,0.06);  border: 1px solid rgba(34,197,94,0.18);  color: #86EFAC; }
+  .tip-rose   { background: rgba(244,63,94,0.06);  border: 1px solid rgba(244,63,94,0.18);  color: #FDA4AF; }
+
+  /* VERSUS BLOCK */
+  .versus-card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .versus-header { background: #080C17; border-bottom: 1px solid #1E2A40; padding: 12px 24px; font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; }
+  .versus-body { display: grid; grid-template-columns: 1fr auto 1fr; }
+  .versus-col { padding: 20px 22px; }
+  .versus-divider { width: 1px; background: #1E2A40; display: flex; align-items: center; justify-content: center; }
+  .versus-badge { background: #0F1625; border: 1px solid #1E2A40; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 8px; font-weight: 700; color: #3B4C68; }
+  .vc-service { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .vcs-purple { color: #A855F7; }
+  .vcs-teal   { color: #14B8A6; }
+  .vcs-amber  { color: #FF9900; }
+  .vcs-green  { color: #22C55E; }
+  .vc-name { font-size: 15px; font-weight: 600; color: #E2E8F0; margin-bottom: 10px; }
+  .vc-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; font-size: 12px; color: #64748B; line-height: 1.45; }
+  .vc-row::before { content: ''; width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .vcr-purple::before { background: #A855F7; }
+  .vcr-teal::before   { background: #14B8A6; }
+  .vcr-amber::before  { background: #FF9900; }
+  .vcr-green::before  { background: #22C55E; }
+  .vc-analogy { background: #0A0E1A; border: 1px solid #1A2236; border-radius: 6px; padding: 10px 12px; font-size: 11px; color: #4A5E7A; line-height: 1.5; margin-top: 10px; }
+
+  /* CODE PANEL */
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; letter-spacing: 0.05em; }
+  .code-lang { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; background: #0F1625; border: 1px solid #1A2236; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.06em; }
+  pre { padding: 16px 20px; font-family: 'DM Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword  { color: #A5B4FC; }
+  .c-type     { color: #5EEAD4; }
+  .c-string   { color: #86EFAC; }
+  .c-comment  { color: #2D3E5A; font-style: italic; }
+  .c-method   { color: #FCD34D; }
+  .c-deco     { color: #D8B4FE; }
+  .c-error    { color: #FDA4AF; }
+
+  /* AGGREGATE DIAGRAM */
+  .agg-diagram { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 24px; }
+  .agg-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+  .agg-root { background: rgba(255,153,0,0.07); border: 2px solid rgba(255,153,0,0.4); border-radius: 10px; padding: 14px 18px; text-align: center; display: inline-block; margin: 0 auto; }
+  .agg-root-label { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #FF9900; letter-spacing: 0.1em; margin-bottom: 3px; }
+  .agg-root-name { font-size: 14px; font-weight: 700; color: #E2E8F0; }
+  .agg-root-sub { font-size: 10px; color: #4A5E7A; font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .agg-children { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+  .agg-child { background: #0A0E1A; border: 1px solid #1E2A40; border-radius: 8px; padding: 10px 14px; text-align: center; min-width: 130px; }
+  .agg-child-type { font-size: 9px; font-family: 'DM Mono', monospace; color: #3B4C68; margin-bottom: 3px; }
+  .agg-child-name { font-size: 12px; font-weight: 600; }
+  .acn-teal   { color: #5EEAD4; }
+  .acn-purple { color: #D8B4FE; }
+  .agg-connector { display: flex; flex-direction: column; align-items: center; width: 100%; margin: 8px 0; }
+  .ac-line { width: 1px; height: 16px; background: #2D3E5A; }
+  .ac-hline { height: 1px; background: #2D3E5A; }
+  .invariant-box { background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.2); border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
+  .inv-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #F43F5E; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .inv-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; font-size: 11px; color: #64748B; line-height: 1.4; }
+  .inv-item::before { content: '🔒'; font-size: 10px; flex-shrink: 0; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; margin-top: 10px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-amber  { background: rgba(255,153,0,0.05);   border: 1px solid rgba(255,153,0,0.2); }
+  .callout-purple { background: rgba(168,85,247,0.05);  border: 1px solid rgba(168,85,247,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05);   border: 1px solid rgba(244,63,94,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-amber  { color: #FCD34D; }
+  .ct-purple { color: #D8B4FE; }
+  .ct-rose   { color: #FDA4AF; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #A855F7; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #A855F7; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+  .footer-btn:hover { background: rgba(168,85,247,0.14); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">DDD · PARTE 2 DE 4</div>
+        <h1>Diseño Táctico<br><span>Los bloques de construcción</span></h1>
+        <p class="header-sub">Entities, Value Objects, Aggregates, Invariantes y la distinción entre Domain Services y Application Services</p>
+      </div>
+    </div>
+    <div class="part-badge">DDD · P2</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🧱 Entities vs. Value Objects</span>
+    <span class="pill pill-b">🌳 Aggregates e Invariantes</span>
+    <span class="pill pill-c">⚙️ Domain vs. App Services</span>
+    <span class="pill pill-d">✅ Reglas de diseño</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN 1: ENTITY vs VALUE OBJECT -->
+  <div class="section-header">
+    <span class="section-num sn-purple">01</span>
+    <span class="section-title-text">Entity vs. Value Object — la distinción más importante</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="versus-card">
+    <div class="versus-header">Comparación crítica — Entity vs. Value Object</div>
+    <div class="versus-body">
+      <div class="versus-col">
+        <div class="vc-service vcs-purple">ENTITY</div>
+        <div class="vc-name">Identidad que persiste en el tiempo</div>
+        <div class="vc-row vcr-purple">Tiene un <strong style="color:#94A3B8">ID único</strong> que la define. Dos entidades con el mismo ID son el mismo objeto aunque todos sus atributos cambien.</div>
+        <div class="vc-row vcr-purple">Es <strong style="color:#94A3B8">mutable</strong>. Su estado cambia a lo largo del ciclo de vida (ej: un Pedido pasa de PENDING → PAID → SHIPPED).</div>
+        <div class="vc-row vcr-purple">Se compara por <strong style="color:#94A3B8">identidad</strong>: <span style="font-family:'DM Mono',monospace;color:#D8B4FE;font-size:10px">order1.id == order2.id</span></div>
+        <div class="vc-row vcr-purple">Se persiste con su ID como clave primaria.</div>
+        <div class="vc-analogy">🪪 <strong style="color:#94A3B8">Analogía:</strong> Una persona. Si Juan cambia de nombre, dirección y trabajo, sigue siendo Juan — porque su RUT/ID no cambió.</div>
+      </div>
+      <div class="versus-divider"><div class="versus-badge">VS</div></div>
+      <div class="versus-col">
+        <div class="vc-service vcs-teal">VALUE OBJECT</div>
+        <div class="vc-name">Describe una característica, sin identidad</div>
+        <div class="vc-row vcr-teal">No tiene ID. Dos VOs son iguales si todos sus <strong style="color:#94A3B8">valores son iguales</strong>: <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10px">Money(100,"CLP") == Money(100,"CLP")</span></div>
+        <div class="vc-row vcr-teal">Es <strong style="color:#94A3B8">inmutable</strong>. Para "modificar" un VO, creas uno nuevo. Nunca mutas el existente.</div>
+        <div class="vc-row vcr-teal">Se compara por <strong style="color:#94A3B8">valor</strong>: igualdad estructural de todos sus atributos.</div>
+        <div class="vc-row vcr-teal">Puede persistirse embebido dentro de la Entity que lo contiene (columna de la misma tabla).</div>
+        <div class="vc-analogy">💵 <strong style="color:#94A3B8">Analogía:</strong> Un billete de $1000. No importa cuál billete en particular tienes — lo que importa es el valor. Dos billetes de $1000 son intercambiables.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards-grid g3" style="margin-top:10px">
+    <div class="code-panel">
+      <div class="code-header"><span class="code-title">Entity — con identidad e ID</span><span class="code-lang">JAVA</span></div>
+      <pre><span class="c-keyword">public class</span> <span class="c-type">Order</span> {
+    <span class="c-keyword">private final</span> <span class="c-type">OrderId</span> id;    <span class="c-comment">// identidad</span>
+    <span class="c-keyword">private</span> <span class="c-type">OrderStatus</span> status;   <span class="c-comment">// mutable</span>
+    <span class="c-keyword">private</span> <span class="c-type">Money</span> total;
+
+    <span class="c-comment">// igualdad por identidad, no por atributos</span>
+    <span class="c-deco">@Override</span>
+    <span class="c-keyword">public boolean</span> <span class="c-method">equals</span>(<span class="c-type">Object</span> o) {
+        <span class="c-keyword">if</span> (!(o <span class="c-keyword">instanceof</span> <span class="c-type">Order</span> other)) <span class="c-keyword">return false</span>;
+        <span class="c-keyword">return</span> id.<span class="c-method">equals</span>(other.id);
+    }
+}</pre>
+    </div>
+    <div class="code-panel">
+      <div class="code-header"><span class="code-title">Value Object — inmutable e igualdad por valor</span><span class="code-lang">JAVA</span></div>
+      <pre><span class="c-comment">// record = VO perfecto: inmutable + equals por valor</span>
+<span class="c-keyword">public record</span> <span class="c-type">Money</span>(<span class="c-type">BigDecimal</span> amount,
+                      <span class="c-type">String</span> currency) {
+
+    <span class="c-keyword">public</span> <span class="c-type">Money</span> {
+        <span class="c-comment">// validación en el constructor</span>
+        <span class="c-keyword">if</span> (amount.<span class="c-method">compareTo</span>(<span class="c-type">BigDecimal</span>.ZERO) &lt; <span class="c-number">0</span>)
+            <span class="c-keyword">throw new</span> <span class="c-type">InvalidMoneyException</span>(...);
+    }
+
+    <span class="c-keyword">public</span> <span class="c-type">Money</span> <span class="c-method">add</span>(<span class="c-type">Money</span> other) {
+        <span class="c-keyword">return new</span> <span class="c-type">Money</span>(amount.<span class="c-method">add</span>(other.amount), currency);
+    }
+}</pre>
+    </div>
+    <div class="card c-teal" style="padding:16px 18px">
+      <div style="font-family:'Space Mono',monospace; font-size:9px; font-weight:700; color:#14B8A6; letter-spacing:0.1em; margin-bottom:10px">CUÁNDO USAR CADA UNO</div>
+      <div style="display:flex; flex-direction:column; gap:7px">
+        <div style="background:#0A0E1A; border-left:2px solid #A855F7; border-radius:0 6px 6px 0; padding:8px 12px">
+          <div style="font-size:10px; color:#D8B4FE; font-family:'DM Mono',monospace; margin-bottom:2px">Usa Entity si…</div>
+          <div style="font-size:11px; color:#64748B; line-height:1.4">Necesitas rastrear el objeto en el tiempo. Tiene ciclo de vida. Cambios de estado importan. Se persiste como fila con ID.</div>
+        </div>
+        <div style="background:#0A0E1A; border-left:2px solid #14B8A6; border-radius:0 6px 6px 0; padding:8px 12px">
+          <div style="font-size:10px; color:#5EEAD4; font-family:'DM Mono',monospace; margin-bottom:2px">Usa Value Object si…</div>
+          <div style="font-size:11px; color:#64748B; line-height:1.4">Es una medida, cantidad, rango o descripción. No importa "cuál" instancia específica tienes. Dos instancias con los mismos valores son intercambiables.</div>
+        </div>
+        <div style="background:#0A0E1A; border-left:2px solid #FCD34D; border-radius:0 6px 6px 0; padding:8px 12px">
+          <div style="font-size:10px; color:#FCD34D; font-family:'DM Mono',monospace; margin-bottom:2px">VOs comunes</div>
+          <div style="font-size:11px; color:#64748B; line-height:1.4"><span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10px">Money · Email · PhoneNumber · Address · DateRange · Percentage · Coordinates</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: AGGREGATES -->
+  <div class="section-header">
+    <span class="section-num sn-amber">02</span>
+    <span class="section-title-text">Aggregates — fronteras de consistencia e Invariantes</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="callout callout-amber" style="margin-top:0">
+    <span class="callout-icon">🎯</span>
+    <div>
+      <div class="callout-title ct-amber">La palabra mágica en entrevistas senior: "Invariante"</div>
+      <div class="callout-text">Cuando te pregunten sobre Aggregates, no digas solo "grupo de entidades". Di: <strong>"El Aggregate Root es el guardián de las invariantes del negocio. Ninguna operación puede dejar al Aggregate en un estado que viole sus reglas de negocio."</strong> Eso es lo que diferencia una respuesta senior de una junior.</div>
+    </div>
+  </div>
+
+  <div class="cards-grid g2" style="margin-top:10px">
+    <div class="agg-diagram">
+      <div class="agg-title">Aggregate — Order como Aggregate Root</div>
+      <div style="text-align:center">
+        <div style="display:inline-block; background:rgba(255,153,0,0.04); border:1px solid rgba(255,153,0,0.2); border-radius:12px; padding:20px 24px; width:100%">
+          <div class="agg-root" style="display:inline-block; margin-bottom:16px">
+            <div class="agg-root-label">AGGREGATE ROOT</div>
+            <div class="agg-root-name">Order</div>
+            <div class="agg-root-sub">id · status · customerId</div>
+          </div>
+          <div style="display:flex; justify-content:center; gap:1px; margin-bottom:4px">
+            <div style="width:1px; height:16px; background:#2D3E5A; margin:0 auto"></div>
+          </div>
+          <div style="height:1px; background:#2D3E5A; width:60%; margin:0 auto 4px"></div>
+          <div class="agg-children">
+            <div class="agg-child">
+              <div class="agg-child-type">ENTITY</div>
+              <div class="agg-child-name acn-teal">OrderItem</div>
+              <div style="font-size:10px; color:#3B4C68; font-family:'DM Mono',monospace; margin-top:3px">productId · qty</div>
+            </div>
+            <div class="agg-child">
+              <div class="agg-child-type">VALUE OBJECT</div>
+              <div class="agg-child-name acn-purple">Money</div>
+              <div style="font-size:10px; color:#3B4C68; font-family:'DM Mono',monospace; margin-top:3px">amount · currency</div>
+            </div>
+            <div class="agg-child">
+              <div class="agg-child-type">VALUE OBJECT</div>
+              <div class="agg-child-name acn-purple">Discount</div>
+              <div style="font-size:10px; color:#3B4C68; font-family:'DM Mono',monospace; margin-top:3px">percentage · code</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="invariant-box">
+        <div class="inv-title">INVARIANTES QUE EL AGGREGATE PROTEGE</div>
+        <div class="inv-item">Un pedido confirmado no puede tener 0 líneas de producto.</div>
+        <div class="inv-item">El total siempre debe ser igual a la suma de los items menos los descuentos.</div>
+        <div class="inv-item">No se pueden añadir items a un pedido en estado CANCELLED o SHIPPED.</div>
+        <div class="inv-item">El descuento nunca puede superar el 100% del total.</div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:10px">
+      <div class="card c-amber">
+        <div class="card-header"><div class="card-icon icon-amber">📐</div><div><div class="card-num">REGLAS DEL AGGREGATE</div><div class="card-title">4 reglas de oro para diseñar Aggregates</div></div></div>
+        <div style="display:flex; flex-direction:column; gap:7px; margin-top:4px">
+          <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px">
+            <div style="font-family:'Space Mono',monospace; font-size:9px; color:#FF9900; font-weight:700; margin-bottom:3px">REGLA 1 — Una sola Aggregate Root por Aggregate</div>
+            <div style="font-size:11px; color:#64748B; line-height:1.4">Solo se accede a los objetos internos (OrderItem) a través de la raíz (Order). Nunca se obtiene un OrderItem directamente del repositorio.</div>
+          </div>
+          <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px">
+            <div style="font-family:'Space Mono',monospace; font-size:9px; color:#FF9900; font-weight:700; margin-bottom:3px">REGLA 2 — Boundaries pequeños</div>
+            <div style="font-size:11px; color:#64748B; line-height:1.4">Un Aggregate grande es un problema de contención (lock). Preferir Aggregates pequeños con 1-3 entidades y referencias a otros Aggregates solo por ID.</div>
+          </div>
+          <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px">
+            <div style="font-family:'Space Mono',monospace; font-size:9px; color:#FF9900; font-weight:700; margin-bottom:3px">REGLA 3 — Consistencia eventual entre Aggregates</div>
+            <div style="font-size:11px; color:#64748B; line-height:1.4">Dentro de un Aggregate: consistencia inmediata (transacción). Entre Aggregates: consistencia eventual vía Domain Events. Nunca en la misma transacción.</div>
+          </div>
+          <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px">
+            <div style="font-family:'Space Mono',monospace; font-size:9px; color:#FF9900; font-weight:700; margin-bottom:3px">REGLA 4 — Referencia por ID fuera del boundary</div>
+            <div style="font-size:11px; color:#64748B; line-height:1.4"><span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">Order</span> no contiene un objeto <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">Customer</span> completo. Contiene un <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">CustomerId</span>. Evita acoplar Aggregates distintos.</div>
+          </div>
+        </div>
+      </div>
+      <div class="code-panel">
+        <div class="code-header"><span class="code-title">Order.java — comportamiento rico, no anémico</span><span class="code-lang">JAVA</span></div>
+        <pre><span class="c-keyword">public class</span> <span class="c-type">Order</span> {
+    <span class="c-comment">// La lógica vive en el dominio, no en el servicio</span>
+    <span class="c-keyword">public void</span> <span class="c-method">addItem</span>(<span class="c-type">OrderItem</span> item) {
+        <span class="c-keyword">if</span> (status != <span class="c-type">DRAFT</span>)
+            <span class="c-keyword">throw new</span> <span class="c-type">OrderNotEditableException</span>();
+        items.<span class="c-method">add</span>(item);
+        <span class="c-keyword">this</span>.total = <span class="c-method">recalculate</span>();  <span class="c-comment">// invariante</span>
+    }
+
+    <span class="c-keyword">public void</span> <span class="c-method">confirm</span>() {
+        <span class="c-keyword">if</span> (items.<span class="c-method">isEmpty</span>())
+            <span class="c-keyword">throw new</span> <span class="c-type">EmptyOrderException</span>();
+        <span class="c-keyword">this</span>.status = <span class="c-type">CONFIRMED</span>;
+        <span class="c-method">registerEvent</span>(<span class="c-keyword">new</span> <span class="c-type">OrderConfirmed</span>(<span class="c-keyword">this</span>.id));
+    }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3: DOMAIN SERVICES vs APPLICATION SERVICES -->
+  <div class="section-header">
+    <span class="section-num sn-green">03</span>
+    <span class="section-title-text">Domain Services vs. Application Services — dónde va cada lógica</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="versus-card">
+    <div class="versus-header">Distinción clave — Domain Service vs. Application Service</div>
+    <div class="versus-body">
+      <div class="versus-col">
+        <div class="vc-service vcs-amber">DOMAIN SERVICE</div>
+        <div class="vc-name">Lógica de negocio sin hogar</div>
+        <div class="vc-row vcr-amber">Contiene lógica de negocio que <strong style="color:#94A3B8">no pertenece naturalmente a ninguna entidad</strong> porque involucra múltiples Aggregates o conceptos del dominio.</div>
+        <div class="vc-row vcr-amber">Vive en la capa de <strong style="color:#94A3B8">dominio</strong>. No tiene estado. Es stateless.</div>
+        <div class="vc-row vcr-amber">Sus métodos tienen nombres del <strong style="color:#94A3B8">Ubiquitous Language</strong>: <span style="font-family:'DM Mono',monospace;color:#FCD34D;font-size:10px">transferFunds()</span>, <span style="font-family:'DM Mono',monospace;color:#FCD34D;font-size:10px">calculateShippingCost()</span></div>
+        <div class="vc-row vcr-amber">Puede recibir <strong style="color:#94A3B8">Ports</strong> como parámetros (si necesita algo del exterior), pero no los inyecta en el constructor.</div>
+        <div class="vc-analogy">🧮 <strong style="color:#94A3B8">Ejemplo:</strong> <span style="font-family:'DM Mono',monospace;color:#FCD34D;font-size:10px">TransferService.transfer(accountFrom, accountTo, amount)</span> — la lógica de transferencia no pertenece solo a Account origen ni a Account destino.</div>
+      </div>
+      <div class="versus-divider"><div class="versus-badge">VS</div></div>
+      <div class="versus-col">
+        <div class="vc-service vcs-green">APPLICATION SERVICE</div>
+        <div class="vc-name">El director de orquesta</div>
+        <div class="vc-row vcr-green">Contiene <strong style="color:#94A3B8">lógica de orquestación</strong>, no de negocio. Coordina repositorios, domain services y eventos pero no toma decisiones de negocio.</div>
+        <div class="vc-row vcr-green">Vive en la capa de <strong style="color:#94A3B8">aplicación</strong> (Use Case). Implementa los Input Ports de la arquitectura hexagonal.</div>
+        <div class="vc-row vcr-green">Sigue el patrón: <strong style="color:#94A3B8">obtener → ejecutar → persistir → publicar eventos</strong>. Siempre en ese orden.</div>
+        <div class="vc-row vcr-green">Gestiona la <strong style="color:#94A3B8">transacción</strong> y la <strong style="color:#94A3B8">seguridad</strong> (autorización). El dominio no sabe nada de transacciones.</div>
+        <div class="vc-analogy">🎼 <strong style="color:#94A3B8">Analogía:</strong> El director de orquesta sabe en qué orden entran los músicos (repositorios, servicios, eventos), pero no toca ningún instrumento (lógica de negocio).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards-grid g2" style="margin-top:10px">
+    <div class="code-panel">
+      <div class="code-header"><span class="code-title">Domain Service — lógica que involucra múltiples Aggregates</span><span class="code-lang">JAVA</span></div>
+      <pre><span class="c-comment">// Vive en domain/ — lógica pura sin frameworks</span>
+<span class="c-keyword">public class</span> <span class="c-type">TransferDomainService</span> {
+
+    <span class="c-keyword">public void</span> <span class="c-method">transfer</span>(
+        <span class="c-type">Account</span> from, <span class="c-type">Account</span> to, <span class="c-type">Money</span> amount) {
+
+        <span class="c-comment">// regla de negocio: ¿puede transferir?</span>
+        <span class="c-keyword">if</span> (!from.<span class="c-method">hasSufficientFunds</span>(amount))
+            <span class="c-keyword">throw new</span> <span class="c-type">InsufficientFundsException</span>();
+
+        from.<span class="c-method">debit</span>(amount);   <span class="c-comment">// método rico en la entidad</span>
+        to.<span class="c-method">credit</span>(amount);   <span class="c-comment">// método rico en la entidad</span>
+    }
+}
+
+<span class="c-comment">// Nótese: sin @Service, sin @Transactional, sin repos</span></pre>
+    </div>
+    <div class="code-panel">
+      <div class="code-header"><span class="code-title">Application Service — orquestador sin lógica de negocio</span><span class="code-lang">JAVA</span></div>
+      <pre><span class="c-deco">@UseCase</span>
+<span class="c-keyword">public class</span> <span class="c-type">TransferMoneyUseCase</span> {
+
+    <span class="c-keyword">private final</span> <span class="c-type">AccountRepository</span> accounts;
+    <span class="c-keyword">private final</span> <span class="c-type">TransferDomainService</span> transferService;
+    <span class="c-keyword">private final</span> <span class="c-type">EventPublisher</span> events;
+
+    <span class="c-keyword">public void</span> <span class="c-method">execute</span>(<span class="c-type">TransferCommand</span> cmd) {
+        <span class="c-comment">// 1. Obtener</span>
+        <span class="c-type">Account</span> from = accounts.<span class="c-method">findById</span>(cmd.fromId());
+        <span class="c-type">Account</span> to   = accounts.<span class="c-method">findById</span>(cmd.toId());
+        <span class="c-comment">// 2. Ejecutar (lógica en el Domain Service)</span>
+        transferService.<span class="c-method">transfer</span>(from, to, cmd.amount());
+        <span class="c-comment">// 3. Persistir</span>
+        accounts.<span class="c-method">save</span>(from); accounts.<span class="c-method">save</span>(to);
+        <span class="c-comment">// 4. Publicar eventos del dominio</span>
+        events.<span class="c-method">publish</span>(from.<span class="c-method">domainEvents</span>());
+    }
+}</pre>
+    </div>
+  </div>
+
+  <div class="callout callout-purple" style="margin-top:10px">
+    <span class="callout-icon">🧠</span>
+    <div>
+      <div class="callout-title ct-purple">La pregunta que te harán en la entrevista</div>
+      <div class="callout-text"><em>"¿Dónde pones la lógica de descuento de un pedido?"</em> — La respuesta correcta depende del contexto. Si la regla es <strong>solo sobre Order</strong> (<em>"si tiene más de 5 items, aplica 10%"</em>): va en la <strong>Entity</strong> (<span style="font-family:'DM Mono',monospace;color:#D8B4FE">order.applyDiscount()</span>). Si involucra <strong>múltiples Aggregates</strong> (<em>"si el cliente es VIP y compró más de $X este mes en todos sus pedidos"</em>): va en un <strong>Domain Service</strong>. Si es <strong>orquestación pura</strong> (obtener cliente, calcular, guardar): <strong>Application Service</strong>.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">DOMAIN-DRIVEN DESIGN · PARTE 2 DE 4 · DISEÑO TÁCTICO</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="parte1.html">← Parte 1</a>
+    <span class="footer-count">Entities · VOs · Aggregates · Services</span>
+    <a class="footer-btn" href="parte3.html">Parte 3 →</a>
+  </div>
+</div>
+</body>
+</html>

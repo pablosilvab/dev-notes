@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDD · Parte 4 — Arquitectura y casos prácticos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(255,153,0,0.10) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(20,184,166,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #FF9900; color: #0A0E1A; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #FF9900; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #FF9900; background: rgba(255,153,0,0.08); border: 1px solid rgba(255,153,0,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #FCD34D; border-color: rgba(252,211,77,0.3);  background: rgba(252,211,77,0.07); }
+  .pill-b { color: #5EEAD4; border-color: rgba(94,234,212,0.3);  background: rgba(94,234,212,0.07); }
+  .pill-c { color: #A5B4FC; border-color: rgba(165,180,252,0.3); background: rgba(165,180,252,0.07); }
+  .pill-d { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+
+  /* ── BODY ── */
+  .body { padding: 0 56px 56px; }
+
+  /* ── SECTION ── */
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-amber  { color: #FF9900; }
+  .sn-teal   { color: #14B8A6; }
+  .sn-indigo { color: #6366F1; }
+  .sn-green  { color: #22C55E; }
+  .sn-rose   { color: #F43F5E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  /* ── CARDS ── */
+  .cards-grid { display: grid; gap: 10px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.c-amber::before  { background: #FF9900; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-indigo::before { background: #6366F1; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-pink::before   { background: #EC4899; }
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-amber  { background: rgba(255,153,0,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-indigo { background: rgba(99,102,241,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-amber  { background: rgba(255,153,0,0.12);  color: #FCD34D; }
+  .kw-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .kw-indigo { background: rgba(99,102,241,0.12); color: #A5B4FC; }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-rose   { background: rgba(244,63,94,0.12);  color: #FDA4AF; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-amber  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.18);  color: #FCD34D; }
+  .tip-teal   { background: rgba(20,184,166,0.06); border: 1px solid rgba(20,184,166,0.18); color: #5EEAD4; }
+  .tip-indigo { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.18); color: #A5B4FC; }
+  .tip-green  { background: rgba(34,197,94,0.06);  border: 1px solid rgba(34,197,94,0.18);  color: #86EFAC; }
+  .tip-rose   { background: rgba(244,63,94,0.06);  border: 1px solid rgba(244,63,94,0.18);  color: #FDA4AF; }
+
+  /* ── CALLOUT ── */
+  .callout { border-radius: 10px; padding: 16px 20px; margin-top: 10px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-amber  { background: rgba(255,153,0,0.05);   border: 1px solid rgba(255,153,0,0.22); }
+  .callout-teal   { background: rgba(20,184,166,0.05);  border: 1px solid rgba(20,184,166,0.2); }
+  .callout-indigo { background: rgba(99,102,241,0.05);  border: 1px solid rgba(99,102,241,0.2); }
+  .callout-green  { background: rgba(34,197,94,0.05);   border: 1px solid rgba(34,197,94,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05);   border: 1px solid rgba(244,63,94,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-amber  { color: #FCD34D; }
+  .ct-teal   { color: #5EEAD4; }
+  .ct-indigo { color: #A5B4FC; }
+  .ct-green  { color: #86EFAC; }
+  .ct-rose   { color: #FDA4AF; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  /* ── CODE PANEL ── */
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; letter-spacing: 0.05em; }
+  .code-lang { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; background: #0F1625; border: 1px solid #1A2236; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.06em; }
+  pre { padding: 16px 20px; font-family: 'DM Mono', monospace; font-size: 11.5px; line-height: 1.75; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-deco    { color: #D8B4FE; }
+  .c-pkg     { color: #94A3B8; }
+  .c-ann     { color: #FF9900; }
+
+  /* ── HEX ARCHITECTURE DIAGRAM ── */
+  .hex-arch { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 28px 32px; }
+  .hex-arch-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+  .hex-layers { display: flex; flex-direction: column; gap: 8px; }
+  .hex-layer { border-radius: 8px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .hl-infra  { background: rgba(255,153,0,0.05);  border: 1px solid rgba(255,153,0,0.2); }
+  .hl-app    { background: rgba(99,102,241,0.05);  border: 1px solid rgba(99,102,241,0.2); }
+  .hl-domain { background: rgba(20,184,166,0.07);  border: 1px solid rgba(20,184,166,0.3); }
+  .hl-label  { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; min-width: 120px; }
+  .ll-infra  { color: #FF9900; }
+  .ll-app    { color: #818CF8; }
+  .ll-domain { color: #14B8A6; }
+  .hl-content { flex: 1; display: flex; gap: 8px; flex-wrap: wrap; }
+  .hl-chip { font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 10px; border-radius: 4px; }
+  .hc-infra  { background: rgba(255,153,0,0.10);  color: #FCD34D; }
+  .hc-app    { background: rgba(99,102,241,0.10);  color: #A5B4FC; }
+  .hc-domain { background: rgba(20,184,166,0.10);  color: #5EEAD4; }
+  .hl-rule   { font-size: 10px; color: #2D3E5A; font-family: 'DM Mono', monospace; min-width: 160px; text-align: right; }
+  .hex-arrow { text-align: center; font-size: 18px; color: #2D3E5A; padding: 0 12px; }
+
+  /* ── DO / DON'T TABLE ── */
+  .dd-table { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dd-col { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .dd-header { padding: 12px 18px; border-bottom: 1px solid #1A2236; font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; }
+  .ddh-do   { background: rgba(34,197,94,0.05);  color: #86EFAC; }
+  .ddh-dont { background: rgba(244,63,94,0.05);   color: #FDA4AF; }
+  .dd-item  { padding: 10px 18px; border-bottom: 1px solid #1A2236; font-size: 12px; color: #64748B; line-height: 1.5; display: flex; gap: 8px; }
+  .dd-item:last-child { border-bottom: none; }
+  .dd-item strong { color: #94A3B8; }
+
+  /* ── INTERVIEW TIPS ── */
+  .tip-card { background: #0F1625; border: 1px solid rgba(255,153,0,0.22); border-left: 3px solid #FF9900; border-radius: 12px; padding: 18px 22px; display: flex; gap: 14px; }
+  .tip-card + .tip-card { margin-top: 10px; }
+  .tip-num { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: rgba(255,153,0,0.25); line-height: 1; flex-shrink: 0; min-width: 28px; }
+  .tip-body {}
+  .tip-title { font-size: 13px; font-weight: 600; color: #FCD34D; margin-bottom: 5px; }
+  .tip-text  { font-size: 12px; color: #64748B; line-height: 1.65; }
+  .tip-text strong { color: #94A3B8; }
+  .tip-phrase { display: inline-block; background: rgba(255,153,0,0.08); border: 1px solid rgba(255,153,0,0.2); color: #FCD34D; font-family: 'DM Mono', monospace; font-size: 10.5px; padding: 3px 10px; border-radius: 4px; margin-top: 7px; }
+
+  /* ── BACK LINK / FOOTER ── */
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; transition: color 0.15s; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #FF9900; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #FF9900; background: rgba(255,153,0,0.08); border: 1px solid rgba(255,153,0,0.2); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+  .footer-btn:hover { background: rgba(255,153,0,0.14); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">DDD · PARTE 4 DE 4</div>
+        <h1>Arquitectura<br><span>& Casos Prácticos</span></h1>
+        <p class="header-sub">Hexagonal, Dependency Inversion, estructura en Spring Boot y cuándo NO usar DDD</p>
+      </div>
+    </div>
+    <div class="part-badge">DDD · P4</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">⬡ Hexagonal Architecture</span>
+    <span class="pill pill-b">🔄 Dependency Inversion</span>
+    <span class="pill pill-c">🌿 Spring Boot + DDD</span>
+    <span class="pill pill-d">⚠ Cuándo NO usar DDD</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- ── SECCIÓN 1 — HEXAGONAL + DDD ── -->
+  <div class="section-header">
+    <span class="section-num sn-amber">01</span>
+    <span class="section-title-text">Arquitectura Hexagonal — el dominio en el centro</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="callout callout-amber" style="margin-top:0">
+    <span class="callout-icon">⬡</span>
+    <div>
+      <div class="callout-title ct-amber">La sinergia que más impresiona en una entrevista senior</div>
+      <div class="callout-text">Hexagonal Architecture (Ports &amp; Adapters) y DDD son <strong>naturalmente complementarios</strong>. DDD te dice <em>qué</em> poner en el centro (el modelo de dominio con sus Aggregates, Entities y Value Objects). Hexagonal te dice <em>cómo</em> aislarlo: el dominio no depende de Spring, JPA ni de ningún framework. Son los adapters los que dependen del dominio, no al revés.
+        <br><br>
+        <a href="../hexagonal/hex_parte1.html" style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10.5px;color:#FF9900;text-decoration:none;background:rgba(255,153,0,0.08);border:1px solid rgba(255,153,0,0.25);padding:5px 12px;border-radius:5px;transition:background 0.15s" onmouseover="this.style.background='rgba(255,153,0,0.14)'" onmouseout="this.style.background='rgba(255,153,0,0.08)'">
+          ⬡ Ver infografía completa: Arquitectura Hexagonal →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hex-arch" style="margin-top:12px">
+    <div class="hex-arch-title">Capas de la arquitectura — dependencias solo apuntan hacia adentro</div>
+    <div class="hex-layers">
+      <div class="hex-layer hl-infra">
+        <div class="hl-label ll-infra">INFRAESTRUCTURA</div>
+        <div class="hl-content">
+          <span class="hl-chip hc-infra">@RestController</span>
+          <span class="hl-chip hc-infra">JpaRepositoryImpl</span>
+          <span class="hl-chip hc-infra">KafkaEventPublisher</span>
+          <span class="hl-chip hc-infra">SmtpEmailAdapter</span>
+          <span class="hl-chip hc-infra">StripePaymentAdapter</span>
+        </div>
+        <div class="hl-rule">→ depende de Aplicación</div>
+      </div>
+      <div style="text-align:center;font-size:16px;color:#2D3E5A;padding:2px 0">↓ depende de ↓</div>
+      <div class="hex-layer hl-app">
+        <div class="hl-label ll-app">APLICACIÓN</div>
+        <div class="hl-content">
+          <span class="hl-chip hc-app">PlaceOrderUseCase</span>
+          <span class="hl-chip hc-app">ProcessPaymentService</span>
+          <span class="hl-chip hc-app">OrderRepository (port)</span>
+          <span class="hl-chip hc-app">PaymentGateway (port)</span>
+        </div>
+        <div class="hl-rule">→ depende de Dominio</div>
+      </div>
+      <div style="text-align:center;font-size:16px;color:#2D3E5A;padding:2px 0">↓ depende de ↓</div>
+      <div class="hex-layer hl-domain">
+        <div class="hl-label ll-domain">DOMINIO</div>
+        <div class="hl-content">
+          <span class="hl-chip hc-domain">Order (Aggregate)</span>
+          <span class="hl-chip hc-domain">OrderItem (Entity)</span>
+          <span class="hl-chip hc-domain">Money (Value Object)</span>
+          <span class="hl-chip hc-domain">OrderPlaced (Event)</span>
+          <span class="hl-chip hc-domain">OrderId (Value Object)</span>
+        </div>
+        <div class="hl-rule">sin dependencias externas</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards-grid g3" style="margin-top:12px">
+    <div class="card c-teal">
+      <div class="card-header"><div class="card-icon icon-teal">🔌</div><div><div class="card-num">PORT</div><div class="card-title">Puerto — el contrato</div></div></div>
+      <div class="card-keywords"><span class="kw kw-teal">Interface Java</span><span class="kw kw-teal">Dominio define</span></div>
+      <div class="card-desc">Una interfaz Java definida <em>por el dominio</em> que describe lo que necesita sin saber cómo se implementa. Es la frontera estable del sistema.</div>
+      <div class="card-example">
+        <strong>Ejemplo:</strong><br>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#5EEAD4">OrderRepository</span> — el dominio lo define.<br>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#5EEAD4">PaymentGateway</span> — el dominio lo usa como abstracción.
+      </div>
+      <div class="tip-box tip-teal">Los puertos son inmutables desde el punto de vista del dominio. Cambian solo cuando cambia el negocio, no cuando cambia el proveedor.</div>
+    </div>
+    <div class="card c-amber">
+      <div class="card-header"><div class="card-icon icon-amber">🔧</div><div><div class="card-num">ADAPTER</div><div class="card-title">Adaptador — la implementación</div></div></div>
+      <div class="card-keywords"><span class="kw kw-amber">Infraestructura</span><span class="kw kw-amber">Implements Port</span></div>
+      <div class="card-desc">Implementación concreta del puerto. Habla con el mundo externo (BD, APIs, colas) y traduce al lenguaje del dominio.</div>
+      <div class="card-example">
+        <strong>Ejemplo:</strong><br>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#FCD34D">JpaOrderRepository implements OrderRepository</span><br>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:#FCD34D">StripePaymentAdapter implements PaymentGateway</span>
+      </div>
+      <div class="tip-box tip-amber">Puedes tener múltiples adapters para el mismo puerto: uno real para producción, uno in-memory para tests. El dominio ni se entera.</div>
+    </div>
+    <div class="card c-indigo">
+      <div class="card-header"><div class="card-icon icon-indigo">🧪</div><div><div class="card-num">TESTABILIDAD</div><div class="card-title">El beneficio clave</div></div></div>
+      <div class="card-keywords"><span class="kw kw-indigo">Unit Test puro</span><span class="kw kw-indigo">Sin BD</span><span class="kw kw-indigo">Sin Spring</span></div>
+      <div class="card-desc">El dominio puede testearse sin levantar Spring, sin BD real y sin red. Los adapters se sustituyen por fakes o mocks en los tests de aplicación.</div>
+      <div class="card-example">
+        <strong>Capa dominio:</strong> JUnit puro, sin @SpringBootTest.<br>
+        <strong>Capa aplicación:</strong> repositorio fake in-memory.<br>
+        <strong>Capa infra:</strong> @SpringBootTest + Testcontainers.
+      </div>
+      <div class="tip-box tip-indigo">Si tu test de dominio necesita Spring para arrancar, el dominio está acoplado a infraestructura. Ese es el primer síntoma de violación hexagonal.</div>
+    </div>
+  </div>
+
+  <!-- ── SECCIÓN 2 — DEPENDENCY INVERSION ── -->
+  <div class="section-header">
+    <span class="section-num sn-teal">02</span>
+    <span class="section-title-text">Dependency Inversion — desacoplar el core de los frameworks</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-rose">
+      <div class="card-header"><div class="card-icon icon-rose">❌</div><div><div class="card-num">SIN DIP</div><div class="card-title">El dominio depende de Spring/JPA</div></div></div>
+      <div class="card-desc">El Aggregate conoce la implementación de infraestructura. Cambiar de JPA a MongoDB, o de Spring a Quarkus, rompe el dominio.</div>
+      <div style="background:#080C17;border:1px solid #1A2236;border-radius:6px;padding:12px 14px;margin-top:8px;font-family:'DM Mono',monospace;font-size:10.5px;line-height:1.7;color:#64748B">
+        <span style="color:#D8B4FE">@Entity</span><br>
+        <span style="color:#A5B4FC">public class</span> <span style="color:#5EEAD4">Order</span> {<br>
+        &nbsp;&nbsp;<span style="color:#D8B4FE">@Id @GeneratedValue</span><br>
+        &nbsp;&nbsp;<span style="color:#A5B4FC">private</span> <span style="color:#5EEAD4">Long</span> id;<br>
+        &nbsp;&nbsp;<span style="color:#D8B4FE">@OneToMany(cascade=ALL)</span><br>
+        &nbsp;&nbsp;<span style="color:#A5B4FC">private</span> <span style="color:#5EEAD4">List</span>&lt;<span style="color:#5EEAD4">OrderItem</span>&gt; items;<br>
+        &nbsp;&nbsp;<span style="color:#2D3E5A;font-style:italic">// dominio contaminado por JPA</span><br>
+        }
+      </div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header"><div class="card-icon icon-green">✅</div><div><div class="card-num">CON DIP</div><div class="card-title">El dominio es POJO puro</div></div></div>
+      <div class="card-desc">El Aggregate es un POJO sin anotaciones de framework. JPA vive solo en el adapter de persistencia, que mapea a una entidad JPA separada.</div>
+      <div style="background:#080C17;border:1px solid #1A2236;border-radius:6px;padding:12px 14px;margin-top:8px;font-family:'DM Mono',monospace;font-size:10.5px;line-height:1.7;color:#64748B">
+        <span style="color:#2D3E5A;font-style:italic">// Dominio — sin imports de Spring/JPA</span><br>
+        <span style="color:#A5B4FC">public final class</span> <span style="color:#5EEAD4">Order</span> {<br>
+        &nbsp;&nbsp;<span style="color:#A5B4FC">private final</span> <span style="color:#5EEAD4">OrderId</span> id;<br>
+        &nbsp;&nbsp;<span style="color:#A5B4FC">private final</span> <span style="color:#5EEAD4">List</span>&lt;<span style="color:#5EEAD4">OrderItem</span>&gt; items;<br>
+        &nbsp;&nbsp;<span style="color:#A5B4FC">private</span> <span style="color:#5EEAD4">OrderStatus</span> status;<br>
+        &nbsp;&nbsp;<span style="color:#2D3E5A;font-style:italic">// solo lógica de negocio aquí</span><br>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-teal" style="margin-top:10px">
+    <span class="callout-icon">💡</span>
+    <div>
+      <div class="callout-title ct-teal">El truco del doble modelo (Domain Model + JPA Entity)</div>
+      <div class="callout-text">En proyectos con DDD estricto es común tener <strong>dos clases para el mismo concepto</strong>: <code style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10.5px">Order</code> (dominio, POJO puro) y <code style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10.5px">OrderJpaEntity</code> (infraestructura, @Entity). El adapter de persistencia traduce entre ambas. El coste es algo de código de mapping; el beneficio es que el dominio puede evolucionar independientemente del esquema de BD.</div>
+    </div>
+  </div>
+
+  <!-- ── SECCIÓN 3 — ESTRUCTURA EN SPRING BOOT ── -->
+  <div class="section-header">
+    <span class="section-num sn-indigo">03</span>
+    <span class="section-title-text">Estructura de paquetes en Spring Boot con DDD</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="code-panel">
+    <div class="code-header">
+      <span class="code-title">Estructura de paquetes recomendada — organizados por capa, no por feature</span>
+      <span class="code-lang">JAVA / SPRING BOOT</span>
+    </div>
+    <pre><span class="c-comment">// com.myapp.orders (un paquete por Bounded Context)</span>
+<span class="c-pkg">├── domain/</span>                          <span class="c-comment">// POJO puros — sin Spring, sin JPA</span>
+<span class="c-pkg">│   ├── model/</span>
+<span class="c-pkg">│   │   ├── </span><span class="c-type">Order.java</span>               <span class="c-comment">// Aggregate Root</span>
+<span class="c-pkg">│   │   ├── </span><span class="c-type">OrderItem.java</span>           <span class="c-comment">// Entity</span>
+<span class="c-pkg">│   │   ├── </span><span class="c-type">OrderId.java</span>             <span class="c-comment">// Value Object</span>
+<span class="c-pkg">│   │   └── </span><span class="c-type">Money.java</span>               <span class="c-comment">// Value Object</span>
+<span class="c-pkg">│   ├── event/</span>
+<span class="c-pkg">│   │   └── </span><span class="c-type">OrderPlaced.java</span>         <span class="c-comment">// Domain Event</span>
+<span class="c-pkg">│   └── port/</span>
+<span class="c-pkg">│       ├── </span><span class="c-type">OrderRepository.java</span>     <span class="c-comment">// Port (interfaz)</span>
+<span class="c-pkg">│       └── </span><span class="c-type">PaymentGateway.java</span>      <span class="c-comment">// Port (interfaz)</span>
+<span class="c-pkg">│</span>
+<span class="c-pkg">├── application/</span>                     <span class="c-comment">// Casos de uso — orquestan, no deciden</span>
+<span class="c-pkg">│   └── </span><span class="c-type">PlaceOrderUseCase.java</span>       <span class="c-comment">// @Service — llama domain + ports</span>
+<span class="c-pkg">│</span>
+<span class="c-pkg">└── infrastructure/</span>                  <span class="c-comment">// Adapters — hablan con el exterior</span>
+<span class="c-pkg">    ├── persistence/</span>
+<span class="c-pkg">    │   ├── </span><span class="c-type">JpaOrderRepository.java</span>  <span class="c-comment">// implements OrderRepository</span>
+<span class="c-pkg">    │   └── </span><span class="c-type">OrderJpaEntity.java</span>      <span class="c-comment">// @Entity — mapeada desde Order</span>
+<span class="c-pkg">    ├── payment/</span>
+<span class="c-pkg">    │   └── </span><span class="c-type">StripePaymentAdapter.java</span> <span class="c-comment">// implements PaymentGateway</span>
+<span class="c-pkg">    └── web/</span>
+<span class="c-pkg">        └── </span><span class="c-type">OrderController.java</span>      <span class="c-comment">// @RestController — llama UseCases</span></pre>
+  </div>
+
+  <div class="callout callout-indigo" style="margin-top:10px">
+    <span class="callout-icon">🎯</span>
+    <div>
+      <div class="callout-title ct-indigo">La regla de oro para detectar violaciones en Spring</div>
+      <div class="callout-text">Si ves un <strong>import de Spring o JPA dentro de la carpeta <code style="font-family:'DM Mono',monospace;font-size:10.5px;color:#A5B4FC">domain/</code></strong>, hay una violación de DIP. El dominio no debería conocer <code style="font-family:'DM Mono',monospace;color:#A5B4FC;font-size:10.5px">@Service</code>, <code style="font-family:'DM Mono',monospace;color:#A5B4FC;font-size:10.5px">@Repository</code>, <code style="font-family:'DM Mono',monospace;color:#A5B4FC;font-size:10.5px">@Entity</code> ni ninguna anotación de framework.</div>
+    </div>
+  </div>
+
+  <!-- ── SECCIÓN 4 — CUÁNDO NO USAR DDD ── -->
+  <div class="section-header">
+    <span class="section-num sn-green">04</span>
+    <span class="section-title-text">Cuándo NO usar DDD — la respuesta más valorada en entrevistas senior</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="callout callout-rose" style="margin-top:0">
+    <span class="callout-icon">⚠</span>
+    <div>
+      <div class="callout-title ct-rose">Saber cuándo NO aplicarlo es señal de madurez técnica</div>
+      <div class="callout-text">Un senior no aplica DDD a todo. La complejidad de Aggregates, Repositories separados y doble modelo solo paga la factura <strong>cuando el dominio tiene reglas de negocio complejas que evolucionan</strong>. Para sistemas simples, añade complejidad sin valor.</div>
+    </div>
+  </div>
+
+  <div class="dd-table" style="margin-top:12px">
+    <div class="dd-col">
+      <div class="dd-header ddh-do">✅ &nbsp; SÍ aplicar DDD</div>
+      <div class="dd-item"><strong>Dominio rico:</strong> reglas de negocio complejas, invariantes que proteger, estados y transiciones no triviales.</div>
+      <div class="dd-item"><strong>Alto acoplamiento negocio-código:</strong> los expertos del dominio cambian reglas con frecuencia y el código debe seguirlos.</div>
+      <div class="dd-item"><strong>Vida larga del sistema:</strong> se espera que el sistema evolucione durante años con múltiples equipos.</div>
+      <div class="dd-item"><strong>Múltiples subdominios:</strong> el sistema tiene áreas diferenciadas con semánticas distintas (Ventas, Logística, Facturación).</div>
+      <div class="dd-item"><strong>Necesidad de testabilidad:</strong> el negocio exige cobertura alta de reglas críticas sin depender de BD o externos.</div>
+    </div>
+    <div class="dd-col">
+      <div class="dd-header ddh-dont">❌ &nbsp; NO aplicar DDD</div>
+      <div class="dd-item"><strong>CRUD simple:</strong> si la lógica es "guardar en BD y devolver", DDD añade capas sin valor. Usa Spring Data directamente.</div>
+      <div class="dd-item"><strong>Dominio sin reglas:</strong> si no hay invariantes que proteger ni decisiones de negocio, no hay Aggregate que justifique el diseño.</div>
+      <div class="dd-item"><strong>Prototipo o MVP:</strong> cuando el objetivo es validar hipótesis rápido, DDD frena la velocidad sin añadir valor todavía.</div>
+      <div class="dd-item"><strong>Equipo pequeño sin experiencia en DDD:</strong> la curva de aprendizaje puede costar más que el problema que resuelve.</div>
+      <div class="dd-item"><strong>Dominio estable sin cambio:</strong> si las reglas no cambian y el sistema está maduro, el refactor a DDD no se amortiza.</div>
+    </div>
+  </div>
+
+  <!-- ── SECCIÓN 5 — TIPS DE ENTREVISTA ── -->
+  <div class="section-header">
+    <span class="section-num sn-amber">05</span>
+    <span class="section-title-text">Palabras clave y frases que elevan el nivel en entrevista</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tip-card">
+    <div class="tip-num">01</div>
+    <div class="tip-body">
+      <div class="tip-title">Habla de Invariantes, no de "validaciones"</div>
+      <div class="tip-text">La palabra más poderosa en DDD es <strong>invariante</strong>. En lugar de decir "el Aggregate valida los datos", di: <em>"el Aggregate protege las invariantes del negocio dentro de la frontera transaccional"</em>. Eso demuestra que entiendes el propósito real de un Aggregate Root.</div>
+      <div class="tip-phrase">«El Aggregate Root es el guardián de las invariantes de negocio»</div>
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <div class="tip-num">02</div>
+    <div class="tip-body">
+      <div class="tip-title">La Capa de Aplicación como "Director de Orquesta"</div>
+      <div class="tip-text">Describe tus Application Services como el <strong>director de orquesta</strong>: llaman al repositorio, recuperan el Aggregate, le delegan la decisión de negocio y publican los eventos resultantes. <em>No tienen lógica de negocio propia</em> — si la tienen, es un smell de diseño.</div>
+      <div class="tip-phrase">«El Application Service orquesta sin decidir. Decide el dominio»</div>
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <div class="tip-num">03</div>
+    <div class="tip-body">
+      <div class="tip-title">Menciona la Regla de la Raíz del Aggregate</div>
+      <div class="tip-text">Solo se accede a objetos del Aggregate a través de su Raíz (Aggregate Root). Nunca se guarda ni se carga un objeto interno directamente desde un repositorio externo. Mencionarlo activamente en una entrevista demuestra comprensión profunda del patrón.</div>
+      <div class="tip-phrase">«Solo el Aggregate Root tiene repositorio. Los internos son privados»</div>
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <div class="tip-num">04</div>
+    <div class="tip-body">
+      <div class="tip-title">Vincula DDD con Event Sourcing y CQRS con criterio</div>
+      <div class="tip-text">No los presentes como "siempre van juntos". El punto fuerte es saber que son <strong>decisiones independientes</strong>: puedes usar DDD táctico sin Event Sourcing, y puedes usar CQRS sin DDD. Si los combinas, hazlo porque el problema lo justifica, no por moda.</div>
+      <div class="tip-phrase">«DDD no requiere CQRS ni Event Sourcing — son decisiones ortogonales»</div>
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <div class="tip-num">05</div>
+    <div class="tip-body">
+      <div class="tip-title">Referencia a proyectos reales con lenguaje correcto</div>
+      <div class="tip-text">Cuando hables de SubScript-Core o FridgeFlow, usa el vocabulario: <em>"el Bounded Context de suscripciones tiene un Aggregate <code style="font-family:'DM Mono',monospace;color:#FCD34D;font-size:10.5px">Subscription</code> que protege las invariantes de renovación y cancelación"</em>. No digas "tengo una clase Order" — di <em>"tengo un Aggregate Root Order con identidad propia y frontera transaccional"</em>.</div>
+      <div class="tip-phrase">«Aggregate con identidad propia y frontera transaccional explícita»</div>
+    </div>
+  </div>
+
+  <!-- ── SECCIÓN 6 — RESUMEN VISUAL ── -->
+  <div class="section-header">
+    <span class="section-num sn-amber">06</span>
+    <span class="section-title-text">Mapa mental — DDD de punta a punta</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div style="background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:28px 32px">
+    <div style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:20px">Ruta de conceptos — de estratégico a táctico a arquitectural</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;align-items:start">
+      <div style="border-right:1px solid #1A2236;padding:0 20px 0 0">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#14B8A6;letter-spacing:0.1em;margin-bottom:12px">ESTRATÉGICO · P1</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Subdominios<br><span style="color:#14B8A6;font-size:9px;font-family:'DM Mono',monospace">Core / Supporting / Generic</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Bounded Contexts<br><span style="color:#14B8A6;font-size:9px;font-family:'DM Mono',monospace">Límite del modelo</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Ubiquitous Language<br><span style="color:#14B8A6;font-size:9px;font-family:'DM Mono',monospace">Lenguaje compartido</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Context Mapping<br><span style="color:#14B8A6;font-size:9px;font-family:'DM Mono',monospace">ACL · C/S · Shared Kernel</span></div>
+        </div>
+      </div>
+      <div style="border-right:1px solid #1A2236;padding:0 20px">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#A855F7;letter-spacing:0.1em;margin-bottom:12px">TÁCTICO · P2</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Entities<br><span style="color:#A855F7;font-size:9px;font-family:'DM Mono',monospace">Identidad propia</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Value Objects<br><span style="color:#A855F7;font-size:9px;font-family:'DM Mono',monospace">Inmutables por valor</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Aggregates<br><span style="color:#A855F7;font-size:9px;font-family:'DM Mono',monospace">Guardianes de invariantes</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Domain Services<br><span style="color:#A855F7;font-size:9px;font-family:'DM Mono',monospace">Sin estado propio</span></div>
+        </div>
+      </div>
+      <div style="border-right:1px solid #1A2236;padding:0 20px">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#EC4899;letter-spacing:0.1em;margin-bottom:12px">PERSISTENCIA · P3</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Repositories<br><span style="color:#EC4899;font-size:9px;font-family:'DM Mono',monospace">Colección en memoria</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Domain Events<br><span style="color:#EC4899;font-size:9px;font-family:'DM Mono',monospace">Hechos pasados</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Event Sourcing<br><span style="color:#EC4899;font-size:9px;font-family:'DM Mono',monospace">Estado desde eventos</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">CQRS<br><span style="color:#EC4899;font-size:9px;font-family:'DM Mono',monospace">Write vs. Read models</span></div>
+        </div>
+      </div>
+      <div style="padding:0 0 0 20px">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#FF9900;letter-spacing:0.1em;margin-bottom:12px">ARQUITECTURA · P4</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Hexagonal<br><span style="color:#FF9900;font-size:9px;font-family:'DM Mono',monospace">Ports &amp; Adapters</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">DIP<br><span style="color:#FF9900;font-size:9px;font-family:'DM Mono',monospace">POJO sin frameworks</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Spring Boot<br><span style="color:#FF9900;font-size:9px;font-family:'DM Mono',monospace">domain/ app/ infra/</span></div>
+          <div style="background:#0A0E1A;border:1px solid #1A2236;border-radius:5px;padding:7px 10px;font-size:11px;color:#64748B">Cuándo NO usarlo<br><span style="color:#FF9900;font-size:9px;font-family:'DM Mono',monospace">CRUD simple → skip DDD</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">DOMAIN-DRIVEN DESIGN · PARTE 4 DE 4 · ARQUITECTURA Y CASOS PRÁCTICOS</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="parte3.html">← Parte 3</a>
+    <span class="footer-count">Hexagonal · DIP · Spring Boot · Cuándo NO usar DDD</span>
+  </div>
+</div>
+
+</body>
+</html>

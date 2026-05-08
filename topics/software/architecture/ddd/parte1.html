@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  /* HEADER */
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(20,184,166,0.10) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #14B8A6; color: #0A0E1A; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #14B8A6; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #14B8A6; background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
+  .pill-b { color: #A5B4FC; border-color: rgba(165,180,252,0.3); background: rgba(165,180,252,0.07); }
+  .pill-c { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+  .pill-d { color: #F9A8D4; border-color: rgba(249,168,212,0.3); background: rgba(249,168,212,0.07); }
+
+  /* BODY */
+  .body { padding: 0 56px 56px; }
+
+  /* SECTION */
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-teal   { color: #14B8A6; }
+  .sn-indigo { color: #6366F1; }
+  .sn-amber  { color: #FF9900; }
+  .sn-purple { color: #A855F7; }
+  .sn-green  { color: #22C55E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  /* CARDS */
+  .cards-grid { display: grid; gap: 10px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-indigo::before { background: #6366F1; }
+  .card.c-amber::before  { background: #FF9900; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-pink::before   { background: #EC4899; }
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-indigo { background: rgba(99,102,241,0.12); }
+  .icon-amber  { background: rgba(255,153,0,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .kw-indigo { background: rgba(99,102,241,0.12); color: #A5B4FC; }
+  .kw-amber  { background: rgba(255,153,0,0.12);  color: #FCD34D; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-rose   { background: rgba(244,63,94,0.12);  color: #FDA4AF; }
+  .kw-blue   { background: rgba(59,130,246,0.12); color: #93C5FD; }
+  .kw-pink   { background: rgba(236,72,153,0.12); color: #F9A8D4; }
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-teal   { background: rgba(20,184,166,0.06); border: 1px solid rgba(20,184,166,0.18); color: #5EEAD4; }
+  .tip-indigo { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.18); color: #A5B4FC; }
+  .tip-amber  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.18);  color: #FCD34D; }
+  .tip-purple { background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.18); color: #D8B4FE; }
+  .tip-rose   { background: rgba(244,63,94,0.06);  border: 1px solid rgba(244,63,94,0.18);  color: #FDA4AF; }
+
+  /* UBIQUITOUS LANGUAGE TABLE */
+  .ul-table { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .ult-header { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; background: #080C17; border-bottom: 1px solid #1E2A40; }
+  .ult-cell { padding: 10px 16px; font-size: 10px; font-family: 'DM Mono', monospace; color: #3B4C68; border-right: 1px solid #1A2236; letter-spacing: 0.04em; }
+  .ult-cell:last-child { border-right: none; }
+  .ult-cell.head { color: #6B7FA3; font-weight: 500; }
+  .ult-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; border-bottom: 1px solid #1A2236; }
+  .ult-row:last-child { border-bottom: none; }
+  .ult-row:hover { background: rgba(255,255,255,0.012); }
+  .ult-context { padding: 11px 16px; display: flex; align-items: center; gap: 8px; border-right: 1px solid #1A2236; }
+  .ult-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .ud-teal   { background: #14B8A6; }
+  .ud-indigo { background: #6366F1; }
+  .ud-amber  { background: #FF9900; }
+  .ud-purple { background: #A855F7; }
+  .ult-ctx-name { font-size: 12px; font-weight: 600; color: #E2E8F0; }
+  .ult-val { padding: 11px 16px; font-size: 11.5px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.4; }
+  .ult-val:last-child { border-right: none; }
+  .ult-badge { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 6px; border-radius: 3px; }
+  .ub-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .ub-indigo { background: rgba(99,102,241,0.12); color: #A5B4FC; }
+  .ub-amber  { background: rgba(255,153,0,0.12);  color: #FCD34D; }
+  .ub-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+
+  /* CONTEXT MAP DIAGRAM */
+  .ctx-map { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 28px 32px; }
+  .ctx-map-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+  .ctx-diagram { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; align-items: center; }
+  .ctx-node {
+    border-radius: 10px; padding: 14px 16px; text-align: center;
+    position: relative;
+  }
+  .cn-teal   { background: rgba(20,184,166,0.07);  border: 1px solid rgba(20,184,166,0.3); }
+  .cn-indigo { background: rgba(99,102,241,0.07);  border: 1px solid rgba(99,102,241,0.3); }
+  .cn-amber  { background: rgba(255,153,0,0.07);   border: 1px solid rgba(255,153,0,0.3); }
+  .cn-purple { background: rgba(168,85,247,0.07);  border: 1px solid rgba(168,85,247,0.3); }
+  .cn-blue   { background: rgba(59,130,246,0.07);  border: 1px solid rgba(59,130,246,0.3); }
+  .cn-green  { background: rgba(34,197,94,0.07);   border: 1px solid rgba(34,197,94,0.3); }
+  .ctx-node-label { font-family: 'Space Mono', monospace; font-size: 8px; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .cnl-teal   { color: #14B8A6; }
+  .cnl-indigo { color: #6366F1; }
+  .cnl-amber  { color: #FF9900; }
+  .cnl-purple { color: #A855F7; }
+  .cnl-blue   { color: #3B82F6; }
+  .cnl-green  { color: #22C55E; }
+  .ctx-node-name { font-size: 13px; font-weight: 600; color: #E2E8F0; margin-bottom: 3px; }
+  .ctx-node-sub  { font-size: 10px; color: #3B4C68; font-family: 'DM Mono', monospace; }
+  .ctx-rel {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 0 8px;
+  }
+  .cr-line { width: 100%; height: 1px; background: #2D3E5A; }
+  .cr-label { font-size: 9px; color: #3B4C68; font-family: 'DM Mono', monospace; white-space: nowrap; }
+  .cr-type { font-size: 10px; font-weight: 600; }
+  .crt-teal   { color: #14B8A6; }
+  .crt-amber  { color: #FF9900; }
+  .crt-purple { color: #A855F7; }
+  .cr-arrow { font-size: 14px; color: #2D3E5A; }
+
+  /* CONTEXT MAPPING PATTERNS TABLE */
+  .cm-table { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .cmt-header { display: grid; grid-template-columns: 1.2fr 1fr 1.5fr 1.3fr; background: #080C17; border-bottom: 1px solid #1E2A40; }
+  .cmt-cell { padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace; color: #3B4C68; border-right: 1px solid #1A2236; letter-spacing: 0.04em; }
+  .cmt-cell:last-child { border-right: none; }
+  .cmt-cell.head { color: #6B7FA3; font-weight: 500; }
+  .cmt-row { display: grid; grid-template-columns: 1.2fr 1fr 1.5fr 1.3fr; border-bottom: 1px solid #1A2236; }
+  .cmt-row:last-child { border-bottom: none; }
+  .cmt-row:hover { background: rgba(255,255,255,0.012); }
+  .cmt-pattern { padding: 12px 14px; display: flex; align-items: center; gap: 8px; border-right: 1px solid #1A2236; }
+  .cmt-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .cmt-name { font-size: 12px; font-weight: 600; color: #E2E8F0; }
+  .cmt-val { padding: 12px 14px; font-size: 11.5px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.45; }
+  .cmt-val:last-child { border-right: none; }
+  .cmt-badge { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 6px; border-radius: 3px; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; margin-top: 10px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-teal   { background: rgba(20,184,166,0.05);  border: 1px solid rgba(20,184,166,0.2); }
+  .callout-amber  { background: rgba(255,153,0,0.05);   border: 1px solid rgba(255,153,0,0.2); }
+  .callout-purple { background: rgba(168,85,247,0.05);  border: 1px solid rgba(168,85,247,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-teal   { color: #5EEAD4; }
+  .ct-amber  { color: #FCD34D; }
+  .ct-purple { color: #D8B4FE; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  /* BACK LINK */
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; transition: color 0.15s; }
+  .back-link:hover { color: #6B7FA3; }
+
+  /* FOOTER */
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #14B8A6; letter-spacing: 0.06em; }
+  .footer-next { font-family: 'Space Mono', monospace; font-size: 10px; color: #14B8A6; background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.2); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+  .footer-next:hover { background: rgba(20,184,166,0.14); }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">DDD · PARTE 1 DE 4</div>
+        <h1>Diseño Estratégico<br><span>El Big Picture</span></h1>
+        <p class="header-sub">Ubiquitous Language, Bounded Contexts y Context Mapping — cómo segmentar un sistema antes de escribir código</p>
+      </div>
+    </div>
+    <div class="part-badge">DDD · P1</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🗣 Ubiquitous Language</span>
+    <span class="pill pill-b">⬡ Bounded Contexts</span>
+    <span class="pill pill-c">🗺 Context Mapping</span>
+    <span class="pill pill-d">🤝 Relaciones entre equipos</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN 1 — POR QUÉ EMPEZAR POR EL DISEÑO ESTRATÉGICO -->
+  <div class="section-header">
+    <span class="section-num sn-teal">01</span>
+    <span class="section-title-text">Por qué el diseño estratégico va primero</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="callout callout-amber" style="margin-top:0">
+    <span class="callout-icon">🎯</span>
+    <div>
+      <div class="callout-title ct-amber">El error más común en una entrevista senior de DDD</div>
+      <div class="callout-text">Empezar hablando de <strong>Entidades, Value Objects o Aggregates</strong> antes de haber definido los contextos es una señal inmediata de nivel junior. En una entrevista senior, la primera pregunta es siempre: <strong>"¿Cómo dividirías este sistema en subdominios?"</strong> El diseño estratégico responde eso. El táctico viene después.</div>
+    </div>
+  </div>
+
+  <div class="cards-grid g3" style="margin-top:10px">
+    <div class="card c-teal">
+      <div class="card-header"><div class="card-icon icon-teal">🗺</div><div><div class="card-num">CONCEPTO</div><div class="card-title">Domain</div></div></div>
+      <div class="card-keywords"><span class="kw kw-teal">Core Domain</span><span class="kw kw-teal">Supporting</span><span class="kw kw-teal">Generic</span></div>
+      <div class="card-desc">El espacio del problema. Un Domain se divide en subdominios según su valor estratégico para el negocio.</div>
+      <div class="card-example">
+        <strong>Core Domain:</strong> Lo que te diferencia (el algoritmo de recomendaciones de Netflix).<br>
+        <strong>Supporting:</strong> Necesario pero no diferenciador (gestión de usuarios).<br>
+        <strong>Generic:</strong> Resuelto por software existente (facturación, autenticación).
+      </div>
+      <div class="tip-box tip-teal">Solo en el Core Domain vale la pena aplicar DDD completo. Para Generic Subdomains, compra o usa open-source.</div>
+    </div>
+    <div class="card c-indigo">
+      <div class="card-header"><div class="card-icon icon-indigo">⬡</div><div><div class="card-num">CONCEPTO</div><div class="card-title">Bounded Context</div></div></div>
+      <div class="card-keywords"><span class="kw kw-indigo">Límite explícito</span><span class="kw kw-indigo">Modelo propio</span><span class="kw kw-indigo">Autonomía</span></div>
+      <div class="card-desc">Límite explícito dentro del cual un modelo de dominio es válido y consistente. Cada Bounded Context tiene su propio modelo, su propia BD y su propio equipo.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> "Pedido" en el contexto de <em>Ventas</em> tiene precio, descuentos y cliente. El mismo "Pedido" en <em>Logística</em> tiene peso, dimensiones y ruta. Son modelos distintos, aunque el concepto parezca igual.</div>
+      <div class="tip-box tip-indigo">1 Bounded Context ≈ 1 microservicio (en muchos casos). Pero un BC puede ser un módulo dentro de un monolito modular.</div>
+    </div>
+    <div class="card c-amber">
+      <div class="card-header"><div class="card-icon icon-amber">🗣</div><div><div class="card-num">CONCEPTO</div><div class="card-title">Ubiquitous Language</div></div></div>
+      <div class="card-keywords"><span class="kw kw-amber">Lenguaje común</span><span class="kw kw-amber">Negocio = Código</span><span class="kw kw-amber">Glosario vivo</span></div>
+      <div class="card-desc">Lenguaje compartido y preciso que usan tanto el equipo técnico como los expertos del negocio. El mismo término tiene el mismo significado en conversaciones, diagramas, código y tests.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Si el negocio llama "Suscripción" a lo que el código llama <span style="font-family:'DM Mono',monospace;color:#FCD34D;font-size:10px">UserPlan</span>, hay una brecha. Con UL, la clase se llama <span style="font-family:'DM Mono',monospace;color:#FCD34D;font-size:10px">Subscription</span> exactamente como el negocio lo llama.</div>
+      <div class="tip-box tip-amber">El Ubiquitous Language es local al Bounded Context. "Cliente" puede significar cosas distintas en Ventas y en Soporte — y eso está bien.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2 — UBIQUITOUS LANGUAGE EN ACCIÓN -->
+  <div class="section-header">
+    <span class="section-num sn-amber">02</span>
+    <span class="section-title-text">Ubiquitous Language — mismo término, distinto modelo por contexto</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="ul-table">
+    <div class="ult-header">
+      <div class="ult-cell head">Término de negocio</div>
+      <div class="ult-cell head">Contexto: Ventas</div>
+      <div class="ult-cell head">Contexto: Logística</div>
+      <div class="ult-cell head">Contexto: Facturación</div>
+    </div>
+    <div class="ult-row">
+      <div class="ult-context"><span class="ult-dot ud-teal"></span><span class="ult-ctx-name" style="color:#E2E8F0">Cliente</span></div>
+      <div class="ult-val"><span class="ult-badge ub-teal">Ventas</span> Persona con historial de compras, descuentos acumulados, segmento de valor.</div>
+      <div class="ult-val"><span class="ult-badge ub-indigo">Logística</span> Dirección de entrega, zona geográfica, preferencia de horario.</div>
+      <div class="ult-val"><span class="ult-badge ub-amber">Facturación</span> RUT, datos fiscales, método de pago, saldo pendiente.</div>
+    </div>
+    <div class="ult-row">
+      <div class="ult-context"><span class="ult-dot ud-indigo"></span><span class="ult-ctx-name" style="color:#E2E8F0">Pedido</span></div>
+      <div class="ult-val">Líneas de producto, totales, cupones aplicados, estado comercial.</div>
+      <div class="ult-val">Bultos, peso total, ruta asignada, estado de envío.</div>
+      <div class="ult-val">Monto facturado, impuestos, número de documento tributario.</div>
+    </div>
+    <div class="ult-row">
+      <div class="ult-context"><span class="ult-dot ud-amber"></span><span class="ult-ctx-name" style="color:#E2E8F0">Producto</span></div>
+      <div class="ult-val">Nombre, descripción de venta, precio de lista, categoría comercial.</div>
+      <div class="ult-val">SKU, dimensiones, peso, unidad de almacenamiento.</div>
+      <div class="ult-val">Código tributario, tasa de IVA aplicable, exención fiscal.</div>
+    </div>
+    <div class="ult-row">
+      <div class="ult-context"><span class="ult-dot ud-purple"></span><span class="ult-ctx-name" style="color:#E2E8F0">Cuenta</span></div>
+      <div class="ult-val">Suscripción activa, plan contratado, fecha de renovación.</div>
+      <div class="ult-val">No existe en este contexto.</div>
+      <div class="ult-val">Cuenta corriente, límite de crédito, estado de deuda.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-teal" style="margin-top:10px">
+    <span class="callout-icon">💡</span>
+    <div>
+      <div class="callout-title ct-teal">La clave: traducción explícita en las fronteras</div>
+      <div class="callout-text">Cuando un Pedido de Ventas necesita convertirse en un Pedido de Logística, <strong>existe código explícito de traducción</strong> (un mapper, un anti-corruption layer o un evento de dominio). No se comparte el mismo objeto — cada contexto tiene su propio modelo y son intencionalmente distintos.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3 — BOUNDED CONTEXTS EN DETALLE -->
+  <div class="section-header">
+    <span class="section-num sn-indigo">03</span>
+    <span class="section-title-text">Bounded Contexts — qué contiene cada uno</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-indigo">
+      <div class="card-header"><div class="card-icon icon-indigo">📦</div><div><div class="card-num">CONTENIDO</div><div class="card-title">¿Qué vive dentro de un Bounded Context?</div></div></div>
+      <div class="card-desc">Un BC es una unidad autónoma que contiene todo lo necesario para que su modelo sea consistente e independiente.</div>
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px">
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px; display:flex; gap:8px; align-items:center">
+          <span style="font-size:14px">🧱</span>
+          <div><div style="font-size:11px; font-weight:600; color:#A5B4FC">Modelo de dominio propio</div><div style="font-size:11px; color:#4A5E7A">Entities, Value Objects, Aggregates con semántica del contexto</div></div>
+        </div>
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px; display:flex; gap:8px; align-items:center">
+          <span style="font-size:14px">🗄</span>
+          <div><div style="font-size:11px; font-weight:600; color:#A5B4FC">Persistencia aislada</div><div style="font-size:11px; color:#4A5E7A">Ningún otro contexto accede a su BD directamente</div></div>
+        </div>
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px; display:flex; gap:8px; align-items:center">
+          <span style="font-size:14px">📡</span>
+          <div><div style="font-size:11px; font-weight:600; color:#A5B4FC">API o contrato de integración</div><div style="font-size:11px; color:#4A5E7A">La única forma válida de comunicarse con el exterior</div></div>
+        </div>
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px; display:flex; gap:8px; align-items:center">
+          <span style="font-size:14px">🗣</span>
+          <div><div style="font-size:11px; font-weight:600; color:#A5B4FC">Ubiquitous Language propio</div><div style="font-size:11px; color:#4A5E7A">Los términos tienen significado específico y preciso dentro del límite</div></div>
+        </div>
+      </div>
+      <div class="tip-box tip-indigo">Cuando dos equipos comparten una BD, no hay Bounded Contexts reales. Es el anti-pattern más común en arquitecturas legacy.</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-header"><div class="card-icon icon-teal">🔬</div><div><div class="card-num">CÓMO IDENTIFICAR</div><div class="card-title">¿Cómo encontrar los Bounded Contexts?</div></div></div>
+      <div class="card-desc">No hay una fórmula exacta, pero estas técnicas te ayudan a trazar los límites con el equipo de negocio.</div>
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px">
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px">
+          <div style="font-size:10px; font-family:'Space Mono',monospace; color:#14B8A6; margin-bottom:3px">EVENT STORMING</div>
+          <div style="font-size:11px; color:#64748B; line-height:1.5">Taller colaborativo con post-its. Se mapean eventos de dominio en una línea de tiempo hasta que emergen las fronteras naturales entre contextos.</div>
+        </div>
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px">
+          <div style="font-size:10px; font-family:'Space Mono',monospace; color:#14B8A6; margin-bottom:3px">AMBIGÜEDAD SEMÁNTICA</div>
+          <div style="font-size:11px; color:#64748B; line-height:1.5">Cuando el mismo término necesita distintos atributos según quién habla, ya hay un límite de contexto. El cambio de significado marca la frontera.</div>
+        </div>
+        <div style="background:#0A0E1A; border:1px solid #1A2236; border-radius:6px; padding:9px 12px">
+          <div style="font-size:10px; font-family:'Space Mono',monospace; color:#14B8A6; margin-bottom:3px">AUTONOMÍA ORGANIZACIONAL</div>
+          <div style="font-size:11px; color:#64748B; line-height:1.5">Conway's Law: el equipo que puede hacer deploy independiente suele corresponder a un BC. Los límites de equipo y los de contexto tienden a coincidir.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4 — CONTEXT MAP -->
+  <div class="section-header">
+    <span class="section-num sn-purple">04</span>
+    <span class="section-title-text">Context Map — el mapa de relaciones entre contextos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="ctx-map">
+    <div class="ctx-map-title">Ejemplo — sistema de e-commerce con 5 bounded contexts</div>
+    <div style="display:grid; grid-template-columns:1fr 60px 1fr 60px 1fr; gap:0; align-items:center; margin-bottom:24px">
+      <div class="ctx-node cn-teal">
+        <div class="ctx-node-label cnl-teal">UPSTREAM</div>
+        <div class="ctx-node-name">Catálogo</div>
+        <div class="ctx-node-sub">Products · Prices</div>
+      </div>
+      <div class="ctx-rel">
+        <div class="cr-line"></div>
+        <div class="cr-label">Customer / Supplier</div>
+        <div class="cr-type crt-teal">→</div>
+      </div>
+      <div class="ctx-node cn-indigo">
+        <div class="ctx-node-label cnl-indigo">CORE</div>
+        <div class="ctx-node-name">Ventas</div>
+        <div class="ctx-node-sub">Orders · Discounts</div>
+      </div>
+      <div class="ctx-rel">
+        <div class="cr-line"></div>
+        <div class="cr-label">ACL</div>
+        <div class="cr-type crt-amber">→</div>
+      </div>
+      <div class="ctx-node cn-amber">
+        <div class="ctx-node-label cnl-amber">DOWNSTREAM</div>
+        <div class="ctx-node-name">Logística</div>
+        <div class="ctx-node-sub">Shipments · Routes</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 60px 1fr; gap:0; align-items:center; margin-top:12px; max-width:680px; margin-left:auto; margin-right:auto">
+      <div class="ctx-node cn-purple">
+        <div class="ctx-node-label cnl-purple">GENERIC</div>
+        <div class="ctx-node-name">Identidad</div>
+        <div class="ctx-node-sub">Auth · Users</div>
+      </div>
+      <div class="ctx-rel">
+        <div class="cr-line"></div>
+        <div class="cr-label">Shared Kernel</div>
+        <div class="cr-type crt-purple">↔</div>
+      </div>
+      <div class="ctx-node cn-green">
+        <div class="ctx-node-label cnl-green">SUPPORTING</div>
+        <div class="ctx-node-name">Notificaciones</div>
+        <div class="ctx-node-sub">Email · SMS · Push</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 5 — CONTEXT MAPPING PATTERNS -->
+  <div class="section-header">
+    <span class="section-num sn-purple">05</span>
+    <span class="section-title-text">Patrones de Context Mapping — cómo se relacionan los equipos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cm-table">
+    <div class="cmt-header">
+      <div class="cmt-cell head">Patrón</div>
+      <div class="cmt-cell head">Relación de poder</div>
+      <div class="cmt-cell head">Qué significa</div>
+      <div class="cmt-cell head">Cuándo usarlo</div>
+    </div>
+    <div class="cmt-row">
+      <div class="cmt-pattern"><span class="cmt-dot" style="background:#14B8A6"></span><span class="cmt-name">Customer / Supplier</span></div>
+      <div class="cmt-val"><span class="cmt-badge" style="background:rgba(20,184,166,0.12);color:#5EEAD4">Upstream / Downstream</span></div>
+      <div class="cmt-val">El equipo Upstream (proveedor) expone una API. El Downstream (cliente) se adapta. Si el Upstream cambia, el Downstream puede verse afectado.</div>
+      <div class="cmt-val">La relación más común. Un BC depende del contrato que otro publica (REST API, eventos).</div>
+    </div>
+    <div class="cmt-row">
+      <div class="cmt-pattern"><span class="cmt-dot" style="background:#6366F1"></span><span class="cmt-name">Anti-Corruption Layer</span></div>
+      <div class="cmt-val"><span class="cmt-badge" style="background:rgba(99,102,241,0.12);color:#A5B4FC">Downstream protegido</span></div>
+      <div class="cmt-val">El Downstream crea una capa de traducción que aísla su modelo del modelo del Upstream. Los cambios del proveedor no contaminan el dominio propio.</div>
+      <div class="cmt-val">Integración con sistemas legacy o APIs externas (terceros, ERPs). Fundamental para proteger el Core Domain.</div>
+    </div>
+    <div class="cmt-row">
+      <div class="cmt-pattern"><span class="cmt-dot" style="background:#FF9900"></span><span class="cmt-name">Shared Kernel</span></div>
+      <div class="cmt-val"><span class="cmt-badge" style="background:rgba(255,153,0,0.12);color:#FCD34D">Acuerdo mutuo</span></div>
+      <div class="cmt-val">Dos contextos comparten un subconjunto del modelo (una librería común). Cualquier cambio requiere coordinación y acuerdo de ambos equipos.</div>
+      <div class="cmt-val">Cuando dos contextos comparten conceptos muy estables (IDs, tipos de evento base). Evitarlo si los equipos tienen ciclos de release distintos.</div>
+    </div>
+    <div class="cmt-row">
+      <div class="cmt-pattern"><span class="cmt-dot" style="background:#A855F7"></span><span class="cmt-name">Conformist</span></div>
+      <div class="cmt-val"><span class="cmt-badge" style="background:rgba(168,85,247,0.12);color:#D8B4FE">Sumisión total</span></div>
+      <div class="cmt-val">El Downstream adopta completamente el modelo del Upstream sin crear una capa de traducción. El poder está totalmente del lado del proveedor.</div>
+      <div class="cmt-val">Cuando integras con un sistema externo que no puedes controlar y cuyo modelo es suficientemente simple para adoptarlo tal cual.</div>
+    </div>
+    <div class="cmt-row">
+      <div class="cmt-pattern"><span class="cmt-dot" style="background:#22C55E"></span><span class="cmt-name">Open Host Service</span></div>
+      <div class="cmt-val"><span class="cmt-badge" style="background:rgba(34,197,94,0.12);color:#86EFAC">Upstream abierto</span></div>
+      <div class="cmt-val">El Upstream expone un protocolo bien documentado y estable (API pública, eventos estándar) para que múltiples Downstream lo consuman sin customización.</div>
+      <div class="cmt-val">Plataformas con muchos consumidores. El equipo Upstream invierte en mantener un contrato estable y versionado.</div>
+    </div>
+    <div class="cmt-row">
+      <div class="cmt-pattern"><span class="cmt-dot" style="background:#F43F5E"></span><span class="cmt-name">Separate Ways</span></div>
+      <div class="cmt-val"><span class="cmt-badge" style="background:rgba(244,63,94,0.12);color:#FDA4AF">Sin integración</span></div>
+      <div class="cmt-val">Dos contextos no tienen integración directa. Cada uno resuelve el problema a su manera, duplicando si es necesario.</div>
+      <div class="cmt-val">Cuando el costo de integración supera el beneficio. Duplicación controlada es mejor que acoplamiento accidental.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-purple" style="margin-top:10px">
+    <span class="callout-icon">🧠</span>
+    <div>
+      <div class="callout-title ct-purple">El patrón que más aparece en entrevistas: Anti-Corruption Layer</div>
+      <div class="callout-text">El ACL es la respuesta correcta cuando te preguntan <em>"¿cómo integras tu nuevo sistema con el ERP legacy de la empresa?"</em> La respuesta incorrecta es "llamo directo a la API del ERP desde mi dominio". La correcta es: <strong>creo un ACL que traduce el modelo del ERP al lenguaje de mi dominio</strong>, así cualquier cambio del proveedor solo impacta el Adapter, no el core.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">DOMAIN-DRIVEN DESIGN · PARTE 1 DE 4 · DISEÑO ESTRATÉGICO</span>
+  <div class="footer-nav">
+    <span class="footer-count">3 patrones estratégicos · 6 patrones de mapping</span>
+    <a class="footer-next" href="parte2.html">Parte 2: Diseño Táctico →</a>
+  </div>
+</div>
+</body>
+</html>

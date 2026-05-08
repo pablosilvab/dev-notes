@@ -13,7 +13,7 @@
   --text-dim: #3B4C68;
   --accent-home: #6366F1;
   --aws-orange: #FF9900;
-  --shell-max: 1400px;
+  --shell-max: 1200px;
   --pad-x: clamp(20px, 4vw, 56px);
   --pad-x-home: clamp(24px, 5vw, 64px);
 }
@@ -270,6 +270,7 @@ body.dn-home .status-pill {
 body.dn-home .sp-active { background: rgba(255,153,0,0.1); color: #FCD34D; border: 1px solid rgba(255,153,0,0.22); }
 body.dn-home .sp-done   { background: rgba(34,197,94,0.1); color: #86EFAC; border: 1px solid rgba(34,197,94,0.22); }
 body.dn-home .sp-soon   { background: rgba(45,62,90,0.4); color: var(--text-dim); border: 1px solid var(--border-subtle); }
+body.dn-home .sp-wip    { background: rgba(20,184,166,0.1); color: #5EEAD4; border: 1px solid rgba(20,184,166,0.28); }
 body.dn-home .tg-desc {
   font-size: 13px;
   color: var(--text-muted);
@@ -336,7 +337,10 @@ body.dn-home .tg-count { font-size: 11px; color: var(--text-dim); font-family: '
 body.dn-home .tg-progress { display: flex; align-items: center; gap: 8px; }
 body.dn-home .tg-bar-track { width: 64px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
 body.dn-home .tg-bar-fill  { height: 100%; border-radius: 2px; background: #FF9900; }
-body.dn-home .tg-bar-fill--0 { width: 0%; }
+body.dn-home .tg-bar-fill--0   { width: 0%; }
+body.dn-home .tg-bar-fill--25  { width: 25%; }
+body.dn-home .tg-bar-fill--50  { width: 50%; }
+body.dn-home .tg-bar-fill--75  { width: 75%; background: #14B8A6; }
 body.dn-home .tg-bar-fill--100 { width: 100%; }
 body.dn-home .tg-pct { font-family: 'Space Mono', monospace; font-size: 9px; color: #FF9900; }
 body.dn-home .tg-pct-muted { color: #3B4C68; }

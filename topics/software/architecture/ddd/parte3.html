@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(236,72,153,0.09) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #EC4899; color: #fff; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #EC4899; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #EC4899; background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #F9A8D4; border-color: rgba(249,168,212,0.3); background: rgba(249,168,212,0.07); }
+  .pill-b { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+  .pill-c { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-d { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-pink   { color: #EC4899; }
+  .sn-blue   { color: #3B82F6; }
+  .sn-green  { color: #22C55E; }
+  .sn-amber  { color: #FF9900; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .cards-grid { display: grid; gap: 10px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.c-pink::before   { background: #EC4899; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-amber::before  { background: #FF9900; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-indigo::before { background: #6366F1; }
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-amber  { background: rgba(255,153,0,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-indigo { background: rgba(99,102,241,0.12); }
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-pink   { background: rgba(236,72,153,0.12); color: #F9A8D4; }
+  .kw-blue   { background: rgba(59,130,246,0.12); color: #93C5FD; }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-amber  { background: rgba(255,153,0,0.12);  color: #FCD34D; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .kw-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .kw-rose   { background: rgba(244,63,94,0.12);  color: #FDA4AF; }
+  .kw-indigo { background: rgba(99,102,241,0.12); color: #A5B4FC; }
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-pink   { background: rgba(236,72,153,0.06); border: 1px solid rgba(236,72,153,0.18); color: #F9A8D4; }
+  .tip-blue   { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.18); color: #93C5FD; }
+  .tip-green  { background: rgba(34,197,94,0.06);  border: 1px solid rgba(34,197,94,0.18);  color: #86EFAC; }
+  .tip-amber  { background: rgba(255,153,0,0.06);  border: 1px solid rgba(255,153,0,0.18);  color: #FCD34D; }
+  .tip-rose   { background: rgba(244,63,94,0.06);  border: 1px solid rgba(244,63,94,0.18);  color: #FDA4AF; }
+
+  /* CODE PANEL */
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; letter-spacing: 0.05em; }
+  .code-lang { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; background: #0F1625; border: 1px solid #1A2236; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.06em; }
+  pre { padding: 16px 20px; font-family: 'DM Mono', monospace; font-size: 11.5px; line-height: 1.7; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-deco    { color: #D8B4FE; }
+  .c-error   { color: #FDA4AF; }
+
+  /* CQRS DIAGRAM */
+  .cqrs-diagram { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 28px 32px; }
+  .cqrs-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+  .cqrs-flow { display: grid; grid-template-columns: 1fr 48px 1fr; gap: 0; align-items: start; }
+  .cqrs-side { border-radius: 10px; padding: 18px 20px; }
+  .cs-write { background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.2); }
+  .cs-read  { background: rgba(34,197,94,0.05);  border: 1px solid rgba(34,197,94,0.2); }
+  .cqrs-side-label { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .csl-write { color: #3B82F6; }
+  .csl-read  { color: #22C55E; }
+  .cqrs-side-name { font-size: 14px; font-weight: 600; color: #E2E8F0; margin-bottom: 12px; }
+  .cqrs-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; font-size: 11.5px; color: #64748B; line-height: 1.45; }
+  .cqrs-item::before { content: ''; width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .ci-blue::before  { background: #3B82F6; }
+  .ci-green::before { background: #22C55E; }
+  .cqrs-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding-top: 40px; }
+  .ca-line { width: 1px; height: 24px; background: #2D3E5A; }
+  .ca-label { font-size: 9px; color: #3B4C68; font-family: 'DM Mono', monospace; text-align: center; line-height: 1.3; }
+  .cqrs-event-bridge { margin-top: 16px; background: rgba(236,72,153,0.05); border: 1px solid rgba(236,72,153,0.2); border-radius: 8px; padding: 12px 16px; }
+  .ceb-label { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #EC4899; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .ceb-text { font-size: 11px; color: #64748B; line-height: 1.5; }
+
+  /* EVENT FLOW */
+  .event-flow { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 24px; }
+  .ef-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+  .ef-steps { display: flex; align-items: center; gap: 0; overflow-x: auto; }
+  .ef-step { background: #0A0E1A; border: 1px solid #1A2236; border-radius: 8px; padding: 12px 14px; text-align: center; flex-shrink: 0; min-width: 130px; }
+  .ef-step-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-bottom: 4px; }
+  .ef-step-icon { font-size: 18px; margin-bottom: 4px; display: block; }
+  .ef-step-name { font-size: 11px; font-weight: 600; color: #E2E8F0; margin-bottom: 2px; }
+  .ef-step-sub { font-size: 9px; color: #3B4C68; font-family: 'DM Mono', monospace; }
+  .ef-arrow { color: #2D3E5A; font-size: 18px; padding: 0 6px; flex-shrink: 0; }
+  .ef-arrow-label { display: flex; flex-direction: column; align-items: center; padding: 0 4px; }
+  .eal-text { font-size: 9px; color: #3B4C68; font-family: 'DM Mono', monospace; white-space: nowrap; margin-bottom: 2px; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; margin-top: 10px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-pink   { background: rgba(236,72,153,0.05);  border: 1px solid rgba(236,72,153,0.2); }
+  .callout-blue   { background: rgba(59,130,246,0.05);  border: 1px solid rgba(59,130,246,0.2); }
+  .callout-amber  { background: rgba(255,153,0,0.05);   border: 1px solid rgba(255,153,0,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-pink  { color: #F9A8D4; }
+  .ct-blue  { color: #93C5FD; }
+  .ct-amber { color: #FCD34D; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #EC4899; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #EC4899; background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.2); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">DDD · PARTE 3 DE 4</div>
+        <h1>Persistencia<br><span>& Patrones Avanzados</span></h1>
+        <p class="header-sub">Repositories, Domain Events, Event Sourcing y CQRS — cómo el dominio sobrevive fuera de la memoria</p>
+      </div>
+    </div>
+    <div class="part-badge">DDD · P3</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🗄 Repositories</span>
+    <span class="pill pill-b">📢 Domain Events</span>
+    <span class="pill pill-c">⚡ Event Sourcing</span>
+    <span class="pill pill-d">↔ CQRS</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN 1: REPOSITORIES -->
+  <div class="section-header">
+    <span class="section-num sn-pink">01</span>
+    <span class="section-title-text">Repositories — la abstracción de persistencia del dominio</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-pink">
+      <div class="card-header"><div class="card-icon icon-pink">🗄</div><div><div class="card-num">PATRÓN</div><div class="card-title">Repository</div></div></div>
+      <div class="card-keywords"><span class="kw kw-pink">Abstracción de BD</span><span class="kw kw-pink">Colección en memoria</span><span class="kw kw-pink">Agnóstico</span></div>
+      <div class="card-desc">Abstrae el mecanismo de persistencia detrás de una interfaz que semánticamente parece una colección de objetos de dominio en memoria. El dominio no sabe si detrás hay Postgres, MongoDB o un array.</div>
+      <div class="card-example">
+        <strong>Regla fundamental:</strong> Solo existen Repositories para <strong>Aggregate Roots</strong>, nunca para entidades internas. No existe <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">OrderItemRepository</span> — si necesitas un OrderItem, lo obtienes a través del <span style="font-family:'DM Mono',monospace;color:#F9A8D4;font-size:10px">OrderRepository</span>.
+      </div>
+      <div class="tip-box tip-pink">La interfaz del Repository vive en el dominio. La implementación (JPA, MongoDB) vive en infraestructura. Esto es la Inversión de Dependencias aplicada a la persistencia.</div>
+    </div>
+    <div class="cards-grid" style="gap:10px">
+      <div class="code-panel">
+        <div class="code-header"><span class="code-title">domain/port/out/OrderRepository.java — interfaz en el dominio</span><span class="code-lang">JAVA</span></div>
+        <pre><span class="c-comment">// Vive en domain/ — sin imports de JPA, JDBC ni Spring</span>
+<span class="c-keyword">public interface</span> <span class="c-type">OrderRepository</span> {
+    <span class="c-type">Order</span>          <span class="c-method">save</span>(<span class="c-type">Order</span> order);
+    <span class="c-type">Optional</span>&lt;<span class="c-type">Order</span>&gt; <span class="c-method">findById</span>(<span class="c-type">OrderId</span> id);
+    <span class="c-type">List</span>&lt;<span class="c-type">Order</span>&gt;    <span class="c-method">findByCustomer</span>(<span class="c-type">CustomerId</span> id);
+    <span class="c-keyword">void</span>           <span class="c-method">delete</span>(<span class="c-type">OrderId</span> id);
+}
+
+<span class="c-comment">// NO existe: OrderItemRepository ← anti-pattern</span></pre>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+        <div style="background:#0F1625; border:1px solid rgba(236,72,153,0.2); border-radius:8px; padding:12px 14px">
+          <div style="font-family:'Space Mono',monospace; font-size:9px; color:#EC4899; font-weight:700; margin-bottom:6px">✅ CORRECTO</div>
+          <div style="font-size:11px; color:#64748B; line-height:1.5;font-family:'DM Mono',monospace">orderRepo.findById(id)<br>.addItem(item)<br>orderRepo.save(order)</div>
+        </div>
+        <div style="background:#0F1625; border:1px solid rgba(244,63,94,0.2); border-radius:8px; padding:12px 14px">
+          <div style="font-family:'Space Mono',monospace; font-size:9px; color:#F43F5E; font-weight:700; margin-bottom:6px">❌ INCORRECTO</div>
+          <div style="font-size:11px; color:#64748B; line-height:1.5;font-family:'DM Mono',monospace">orderItemRepo<br>.findById(itemId)<br>.setQuantity(3) ← ¡NO!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: DOMAIN EVENTS -->
+  <div class="section-header">
+    <span class="section-num sn-blue">02</span>
+    <span class="section-title-text">Domain Events — comunicación asíncrona entre contextos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="event-flow">
+    <div class="ef-title">Flujo completo de un Domain Event — desde el Aggregate hasta el consumidor</div>
+    <div class="ef-steps">
+      <div class="ef-step" style="border-color:rgba(255,153,0,0.3)">
+        <div class="ef-step-num">01</div>
+        <span class="ef-step-icon">🌳</span>
+        <div class="ef-step-name">Aggregate</div>
+        <div class="ef-step-sub">order.confirm()</div>
+      </div>
+      <div class="ef-arrow-label">
+        <div class="eal-text">registra</div>
+        <div style="color:#2D3E5A;font-size:16px">→</div>
+      </div>
+      <div class="ef-step" style="border-color:rgba(236,72,153,0.3)">
+        <div class="ef-step-num">02</div>
+        <span class="ef-step-icon">📢</span>
+        <div class="ef-step-name">Domain Event</div>
+        <div class="ef-step-sub">OrderConfirmed</div>
+      </div>
+      <div class="ef-arrow-label">
+        <div class="eal-text">Application</div>
+        <div style="color:#2D3E5A;font-size:16px">→</div>
+        <div class="eal-text">Service publica</div>
+      </div>
+      <div class="ef-step" style="border-color:rgba(59,130,246,0.3)">
+        <div class="ef-step-num">03</div>
+        <span class="ef-step-icon">📡</span>
+        <div class="ef-step-name">Event Bus</div>
+        <div class="ef-step-sub">Kafka / SQS</div>
+      </div>
+      <div class="ef-arrow-label">
+        <div class="eal-text">consume</div>
+        <div style="color:#2D3E5A;font-size:16px">→</div>
+      </div>
+      <div class="ef-step" style="border-color:rgba(20,184,166,0.3)">
+        <div class="ef-step-num">04</div>
+        <span class="ef-step-icon">📧</span>
+        <div class="ef-step-name">Notificaciones</div>
+        <div class="ef-step-sub">BC consumidor</div>
+      </div>
+      <div class="ef-arrow-label">
+        <div class="eal-text">consume</div>
+        <div style="color:#2D3E5A;font-size:16px">→</div>
+      </div>
+      <div class="ef-step" style="border-color:rgba(168,85,247,0.3)">
+        <div class="ef-step-num">04</div>
+        <span class="ef-step-icon">🚚</span>
+        <div class="ef-step-name">Logística</div>
+        <div class="ef-step-sub">BC consumidor</div>
+      </div>
+      <div class="ef-arrow-label">
+        <div class="eal-text">consume</div>
+        <div style="color:#2D3E5A;font-size:16px">→</div>
+      </div>
+      <div class="ef-step" style="border-color:rgba(255,153,0,0.3)">
+        <div class="ef-step-num">04</div>
+        <span class="ef-step-icon">📊</span>
+        <div class="ef-step-name">Analytics</div>
+        <div class="ef-step-sub">BC consumidor</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards-grid g3" style="margin-top:10px">
+    <div class="card c-blue">
+      <div class="card-header"><div class="card-icon icon-blue">📢</div><div><div class="card-num">CONCEPTO</div><div class="card-title">Domain Event</div></div></div>
+      <div class="card-keywords"><span class="kw kw-blue">Pasado</span><span class="kw kw-blue">Inmutable</span><span class="kw kw-blue">Desacoplamiento</span></div>
+      <div class="card-desc">Algo que ocurrió en el dominio y que otros pueden querer saber. Siempre en tiempo pasado. Inmutable. El Aggregate que lo generó no conoce a sus suscriptores.</div>
+      <div class="card-example"><strong>Convención de nombres:</strong> <span style="font-family:'DM Mono',monospace;color:#93C5FD;font-size:10px">OrderConfirmed</span>, <span style="font-family:'DM Mono',monospace;color:#93C5FD;font-size:10px">PaymentProcessed</span>, <span style="font-family:'DM Mono',monospace;color:#93C5FD;font-size:10px">UserRegistered</span>. Verbo en participio pasado. Siempre en el lenguaje del dominio, nunca técnico.</div>
+      <div class="tip-box tip-blue">Los eventos viajan entre Bounded Contexts. Cada BC define su propio modelo de cómo interpreta el evento — gracias al Anti-Corruption Layer.</div>
+    </div>
+    <div class="code-panel" style="background:#0F1625; border:1px solid #1E2A40; border-radius:12px; overflow:hidden">
+      <div class="code-header"><span class="code-title">Domain Event + registro en el Aggregate</span><span class="code-lang">JAVA</span></div>
+      <pre><span class="c-comment">// Evento — inmutable, en pasado</span>
+<span class="c-keyword">public record</span> <span class="c-type">OrderConfirmed</span>(
+    <span class="c-type">OrderId</span> orderId,
+    <span class="c-type">CustomerId</span> customerId,
+    <span class="c-type">Money</span> total,
+    <span class="c-type">Instant</span> occurredAt
+) <span class="c-keyword">implements</span> <span class="c-type">DomainEvent</span> {}
+
+<span class="c-comment">// En el Aggregate — registra, no publica</span>
+<span class="c-keyword">public void</span> <span class="c-method">confirm</span>() {
+    <span class="c-keyword">this</span>.status = <span class="c-type">CONFIRMED</span>;
+    <span class="c-method">registerEvent</span>(<span class="c-keyword">new</span> <span class="c-type">OrderConfirmed</span>(
+        id, customerId, total, <span class="c-type">Instant</span>.<span class="c-method">now</span>()
+    ));
+}
+<span class="c-comment">// El App Service lo publica después de save()</span></pre>
+    </div>
+    <div class="card c-pink">
+      <div class="card-header"><div class="card-icon icon-pink">⚠️</div><div><div class="card-num">PATRÓN</div><div class="card-title">Transactional Outbox</div></div></div>
+      <div class="card-keywords"><span class="kw kw-pink">Garantía</span><span class="kw kw-pink">At-least-once</span><span class="kw kw-pink">Consistencia</span></div>
+      <div class="card-desc">El problema: si persistes el Aggregate y luego publicas el evento, pueden fallar por separado y perder el evento. Solución: guardar el evento en la misma transacción BD, en una tabla "outbox". Un proceso aparte lo publica al broker.</div>
+      <div class="card-example"><strong>Flujo:</strong> <code style="font-family:'DM Mono',monospace;color:#F9A8D4;font-size:10px">save(aggregate)</code> + <code style="font-family:'DM Mono',monospace;color:#F9A8D4;font-size:10px">insert(event en outbox)</code> → misma TX → publicador lee outbox → publica a Kafka → marca como publicado.</div>
+      <div class="tip-box tip-pink">Patrón que demuestra conocimiento senior. Si el entrevistador pregunta "¿qué pasa si falla entre save() y publish()?", esta es la respuesta.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3: EVENT SOURCING -->
+  <div class="section-header">
+    <span class="section-num sn-green">03</span>
+    <span class="section-title-text">Event Sourcing — el estado como secuencia de eventos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-green">
+      <div class="card-header"><div class="card-icon icon-green">📜</div><div><div class="card-num">PATRÓN AVANZADO</div><div class="card-title">Event Sourcing</div></div></div>
+      <div class="card-keywords"><span class="kw kw-green">Append-only</span><span class="kw kw-green">Event Store</span><span class="kw kw-green">Replayable</span><span class="kw kw-green">Audit log</span></div>
+      <div class="card-desc">En lugar de guardar el <em>estado actual</em> del Aggregate en la BD, guardas la <strong>secuencia de eventos</strong> que lo llevaron a ese estado. El estado actual se reconstruye reproduciendo los eventos desde el inicio (o desde un snapshot).</div>
+      <div class="card-example">
+        <strong>BD convencional:</strong> tabla <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">orders</span> con columna <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">status = "SHIPPED"</span><br><br>
+        <strong>Event Sourcing:</strong> Event Store con <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">OrderCreated → ItemAdded → OrderConfirmed → OrderShipped</span>. El estado es la suma de esos eventos.
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px">
+      <div style="background:#0F1625; border:1px solid #1E2A40; border-radius:12px; padding:18px 20px">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+          <div>
+            <div style="font-family:'Space Mono',monospace; font-size:9px; color:#22C55E; font-weight:700; margin-bottom:8px">VENTAJAS</div>
+            <div style="font-size:11px; color:#64748B; line-height:1.7">
+              ✅ Audit log completo gratis<br>
+              ✅ Puedes reconstruir estado en cualquier punto del tiempo<br>
+              ✅ Los Domain Events son ciudadanos de primera clase<br>
+              ✅ Fácil integración con CQRS
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Space Mono',monospace; font-size:9px; color:#F43F5E; font-weight:700; margin-bottom:8px">DESVENTAJAS</div>
+            <div style="font-size:11px; color:#64748B; line-height:1.7">
+              ❌ Complejidad operacional alta<br>
+              ❌ Las queries directas se complican (necesitas proyecciones)<br>
+              ❌ Evolución del schema de eventos es delicada<br>
+              ❌ No usar para dominios simples
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="callout callout-amber" style="margin-top:0">
+        <span class="callout-icon">⚠️</span>
+        <div>
+          <div class="callout-title ct-amber">Cuándo NO usar Event Sourcing</div>
+          <div class="callout-text">Event Sourcing agrega complejidad significativa. Solo justifica en dominios donde el historial de cambios es un requerimiento de negocio (finanzas, auditoría médica, sistemas legales) o donde necesitas replayability. Para la mayoría de los sistemas, <strong>Domain Events sin Event Sourcing es suficiente</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4: CQRS -->
+  <div class="section-header">
+    <span class="section-num sn-amber">04</span>
+    <span class="section-title-text">CQRS — separar el modelo de escritura del de lectura</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cqrs-diagram">
+    <div class="cqrs-title">Command Query Responsibility Segregation — flujo completo</div>
+    <div class="cqrs-flow">
+      <div class="cqrs-side cs-write">
+        <div class="cqrs-side-label csl-write">WRITE SIDE — Commands</div>
+        <div class="cqrs-side-name">Modelo de escritura</div>
+        <div class="cqrs-item ci-blue">Recibe <strong style="color:#94A3B8">Commands</strong>: intenciones de cambiar el estado (<span style="font-family:'DM Mono',monospace;color:#93C5FD;font-size:10px">CreateOrder</span>, <span style="font-family:'DM Mono',monospace;color:#93C5FD;font-size:10px">ConfirmPayment</span>)</div>
+        <div class="cqrs-item ci-blue">Valida el comando, ejecuta la lógica en los <strong style="color:#94A3B8">Aggregates</strong></div>
+        <div class="cqrs-item ci-blue">Persiste el Aggregate via <strong style="color:#94A3B8">Repository</strong> y publica Domain Events</div>
+        <div class="cqrs-item ci-blue">No retorna datos (o solo el ID del recurso creado)</div>
+        <div style="margin-top:10px; padding:8px 12px; background:#0A0E1A; border:1px solid rgba(59,130,246,0.2); border-radius:6px">
+          <div style="font-size:10px; font-family:'DM Mono',monospace; color:#3B82F6; margin-bottom:3px">Write DB</div>
+          <div style="font-size:11px; color:#4A5E7A">Normalizada, optimizada para escritura consistente (ACID). PostgreSQL, MySQL.</div>
+        </div>
+      </div>
+      <div class="cqrs-arrow">
+        <div class="ca-line"></div>
+        <div style="font-size:18px;color:#2D3E5A">⟷</div>
+        <div class="ca-label">Domain<br>Events<br>sincronizan</div>
+        <div class="ca-line"></div>
+      </div>
+      <div class="cqrs-side cs-read">
+        <div class="cqrs-side-label csl-read">READ SIDE — Queries</div>
+        <div class="cqrs-side-name">Modelo de lectura</div>
+        <div class="cqrs-item ci-green">Recibe <strong style="color:#94A3B8">Queries</strong>: peticiones de datos (<span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">GetOrderSummary</span>, <span style="font-family:'DM Mono',monospace;color:#86EFAC;font-size:10px">ListOrdersByCustomer</span>)</div>
+        <div class="cqrs-item ci-green">Lee desde un modelo <strong style="color:#94A3B8">desnormalizado</strong> optimizado para la pantalla (Read Model)</div>
+        <div class="cqrs-item ci-green">No pasa por el Aggregate ni el Repository de escritura</div>
+        <div class="cqrs-item ci-green">Retorna DTOs / ViewModels directamente a la capa de presentación</div>
+        <div style="margin-top:10px; padding:8px 12px; background:#0A0E1A; border:1px solid rgba(34,197,94,0.2); border-radius:6px">
+          <div style="font-size:10px; font-family:'DM Mono',monospace; color:#22C55E; margin-bottom:3px">Read DB</div>
+          <div style="font-size:11px; color:#4A5E7A">Desnormalizada, vistas materializadas o proyecciones. Redis, Elasticsearch, MongoDB.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cqrs-event-bridge">
+      <div class="ceb-label">¿CÓMO SE SINCRONIZAN? — Event Handlers / Projectors</div>
+      <div class="ceb-text">Cuando el Write Side persiste un Aggregate y publica un <span style="font-family:'DM Mono',monospace;color:#F9A8D4;font-size:10px">OrderConfirmed</span> event, un <strong style="color:#94A3B8">Projector</strong> escucha ese evento y actualiza el Read Model. El Read Model siempre es eventualmente consistente con el Write Model. Este delay suele ser de milisegundos.</div>
+    </div>
+  </div>
+
+  <div class="cards-grid g3" style="margin-top:10px">
+    <div class="card c-blue">
+      <div class="card-header"><div class="card-icon icon-blue">📤</div><div><div class="card-num">WRITE SIDE</div><div class="card-title">Commands</div></div></div>
+      <div class="card-keywords"><span class="kw kw-blue">Intención</span><span class="kw kw-blue">Imperativo</span><span class="kw kw-blue">Puede fallar</span></div>
+      <div class="card-desc">Un Command es una intención de cambiar el estado del sistema. Puede ser rechazado si viola invariantes. Su nombre es imperativo.</div>
+      <div class="card-example"><strong>Ejemplos:</strong> <span style="font-family:'DM Mono',monospace;color:#93C5FD;font-size:10px">CreateOrderCommand</span>, <span style="font-family:'DM Mono',monospace;color:#93C5FD;font-size:10px">ConfirmPaymentCommand</span>, <span style="font-family:'DM Mono',monospace;color:#93C5FD;font-size:10px">CancelOrderCommand</span><br><strong>Diferencia con evento:</strong> El Command puede ser rechazado. El Event ya ocurrió y es un hecho inmutable.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-header"><div class="card-icon icon-green">📥</div><div><div class="card-num">READ SIDE</div><div class="card-title">Queries & Read Models</div></div></div>
+      <div class="card-keywords"><span class="kw kw-green">Sin side effects</span><span class="kw kw-green">Desnormalizado</span><span class="kw kw-green">ViewModel</span></div>
+      <div class="card-desc">Una Query nunca muta el estado. El Read Model es una proyección optimizada para lo que la UI necesita mostrar — no para la consistencia transaccional.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> La pantalla de "detalle de pedido" necesita datos del Order, Customer y Product juntos. El Read Model tiene esa vista ya ensamblada, sin joins en runtime.</div>
+    </div>
+    <div class="card c-amber">
+      <div class="card-header"><div class="card-icon icon-amber">⚖️</div><div><div class="card-num">CUÁNDO USAR</div><div class="card-title">¿CQRS siempre?</div></div></div>
+      <div class="card-keywords"><span class="kw kw-amber">Complejidad</span><span class="kw kw-amber">Escalabilidad</span><span class="kw kw-amber">Trade-off</span></div>
+      <div class="card-desc">CQRS agrega complejidad de sincronización y consistencia eventual. No es gratis.</div>
+      <div class="card-example">
+        <strong>Usa CQRS si:</strong> Tienes alta diferencia entre carga de lectura y escritura. Los modelos de lectura son muy distintos al de escritura. Escalas read y write de forma independiente.<br><br>
+        <strong>No uses si:</strong> El dominio es simple. El modelo de lectura es casi igual al de escritura. No tienes equipo para mantenerlo.
+      </div>
+      <div class="tip-box tip-amber">Puedes aplicar CQRS sin Event Sourcing. Son patrones independientes que se complementan bien pero no se requieren mutuamente.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">DOMAIN-DRIVEN DESIGN · PARTE 3 DE 4 · PERSISTENCIA Y PATRONES AVANZADOS</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="parte2.html">← Parte 2</a>
+    <span class="footer-count">Repositories · Events · CQRS</span>
+    <a class="footer-btn" href="parte4.html">Parte 4 →</a>
+  </div>
+</div>
+</body>
+</html>
