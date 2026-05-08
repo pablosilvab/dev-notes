@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  /* HEADER */
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(29,78,216,0.12) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(147,197,253,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #1D4ED8; color: #DBEAFE; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #93C5FD; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #3B82F6; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+  .pill-b { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-c { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+  .pill-d { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+  .pill-e { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+
+  /* BODY */
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-blue   { color: #3B82F6; }
+  .sn-yellow { color: #EAB308; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-purple { color: #A855F7; }
+  .sn-green  { color: #22C55E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+  .section-kicker { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; letter-spacing: 0.1em; white-space: nowrap; }
+
+  /* CONCEPTO CARD */
+  .concept { background: #0F1625; border: 1px solid #1E2A40; border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  .concept-top { height: 4px; }
+  .ct-blue   { background: linear-gradient(90deg, #1D4ED8, #93C5FD); }
+  .ct-yellow { background: linear-gradient(90deg, #A16207, #FDE68A); }
+  .ct-rose   { background: linear-gradient(90deg, #BE123C, #F43F5E); }
+  .ct-purple { background: linear-gradient(90deg, #6D28D9, #C4B5FD); }
+  .ct-green  { background: linear-gradient(90deg, #15803D, #86EFAC); }
+  .concept-body { padding: 24px 28px; }
+  .concept-grid { display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; }
+  .concept-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.12em; margin-bottom: 6px; }
+  .concept-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+  .concept-name { font-size: 20px; font-weight: 700; color: #E2E8F0; margin-bottom: 10px; line-height: 1.2; }
+  .concept-def { font-size: 13px; color: #8899B8; line-height: 1.65; margin-bottom: 14px; }
+  .concept-def strong { color: #94A3B8; }
+  .concept-tag { display: inline-flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 4px; margin-bottom: 6px; margin-right: 4px; }
+  .tag-blue   { color: #93C5FD; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); }
+  .tag-yellow { color: #FDE68A; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); }
+  .tag-rose   { color: #FDA4AF; background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.2); }
+  .tag-purple { color: #D8B4FE; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); }
+  .tag-green  { color: #86EFAC; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+
+  .insight { margin-top: 12px; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.18); border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #93C5FD; line-height: 1.55; }
+  .insight::before { content: '💡 Clave: '; font-weight: 600; }
+  .warn { margin-top: 10px; background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.18); border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #FDA4AF; line-height: 1.55; }
+  .warn::before { content: '⚠ Error común: '; font-weight: 600; }
+
+  /* CAP TRIANGLE VISUAL */
+  .cap-visual { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .cap-vertex { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; padding: 16px; text-align: center; }
+  .cap-letter { font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700; margin-bottom: 6px; }
+  .cap-label { font-size: 12px; font-weight: 600; color: #94A3B8; margin-bottom: 6px; }
+  .cap-desc { font-size: 11px; color: #64748B; line-height: 1.5; }
+
+  /* CAP SYSTEMS TABLE */
+  .sys-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .sys-table th { background: #080C17; padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; text-align: left; border-bottom: 1px solid #1E2A40; }
+  .sys-table td { padding: 11px 14px; font-size: 12px; color: #8899B8; border-bottom: 1px solid #0F1625; vertical-align: middle; }
+  .sys-table tr:last-child td { border-bottom: none; }
+  .sys-table tr:hover td { background: rgba(255,255,255,0.01); }
+  .badge-cp { color: #93C5FD; background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2); font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; }
+  .badge-ap { color: #86EFAC; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; }
+  .badge-ca { color: #FDE68A; background: rgba(234,179,8,0.12); border: 1px solid rgba(234,179,8,0.2); font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; }
+
+  /* CONSISTENCY SPECTRUM */
+  .spectrum { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 16px; }
+  .spec-item { background: #080C17; border: 1px solid #1E2A40; border-radius: 8px; padding: 14px 12px; }
+  .spec-level { font-family: 'Space Mono', monospace; font-size: 8px; color: #3B4C68; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .spec-name { font-size: 12px; font-weight: 700; color: #E2E8F0; margin-bottom: 6px; }
+  .spec-desc { font-size: 10.5px; color: #64748B; line-height: 1.5; }
+  .spec-ex { font-size: 10px; font-family: 'DM Mono', monospace; margin-top: 6px; padding-top: 6px; border-top: 1px solid #1E2A40; }
+
+  /* ACID vs BASE */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .compare-col { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .compare-head { padding: 12px 16px; border-bottom: 1px solid #1E2A40; }
+  .compare-title { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; }
+  .compare-sub { font-size: 11px; color: #64748B; margin-top: 3px; }
+  .compare-body { padding: 16px; }
+  .compare-item { display: flex; gap: 10px; margin-bottom: 12px; }
+  .compare-item:last-child { margin-bottom: 0; }
+  .ci-letter { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; width: 22px; flex-shrink: 0; margin-top: 1px; }
+  .ci-content { }
+  .ci-name { font-size: 12px; font-weight: 600; color: #94A3B8; margin-bottom: 2px; }
+  .ci-def { font-size: 11.5px; color: #64748B; line-height: 1.5; }
+
+  /* FAILURE MODES */
+  .failure-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .failure-card { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; padding: 16px; }
+  .failure-icon { font-size: 22px; margin-bottom: 8px; }
+  .failure-name { font-size: 13px; font-weight: 700; color: #E2E8F0; margin-bottom: 6px; }
+  .failure-desc { font-size: 11.5px; color: #64748B; line-height: 1.55; }
+  .failure-ex { margin-top: 8px; font-size: 10.5px; font-family: 'DM Mono', monospace; color: #3B4C68; }
+
+  /* CODE PANEL */
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; margin-top: 16px; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; }
+  .code-badge { font-family: 'Space Mono', monospace; font-size: 9px; color: #93C5FD; }
+  pre { padding: 12px 16px; font-family: 'DM Mono', monospace; font-size: 10.5px; line-height: 1.65; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-num     { color: #FB923C; }
+  .c-blue    { color: #93C5FD; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; margin-top: 12px; }
+  .callout-blue   { background: rgba(29,78,216,0.06); border: 1px solid rgba(59,130,246,0.2); }
+  .callout-yellow { background: rgba(234,179,8,0.05); border: 1px solid rgba(234,179,8,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.2); }
+  .callout-green  { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-blue   { color: #93C5FD; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-rose   { color: #FDA4AF; }
+  .ct-green  { color: #86EFAC; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #3B82F6; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; text-decoration: none; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 4px; }
+  .footer-btn-home { color: #6B7FA3; background: rgba(107,127,163,0.08); border: 1px solid rgba(107,127,163,0.2); }
+  .footer-btn-next { color: #FCD34D; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.25); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">DIST · PARTE 1 DE 2</div>
+        <h1>CAP, Consistencia<br><span>y Modelos de Fallo</span></h1>
+        <p class="header-sub">El trilema que define toda decisión en sistemas distribuidos — qué sacrificas y cuándo</p>
+      </div>
+    </div>
+    <div class="part-badge">DIST · P1</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">⚖ CAP Theorem</span>
+    <span class="pill pill-b">📐 PACELC</span>
+    <span class="pill pill-c">🔄 Modelos de consistencia</span>
+    <span class="pill pill-d">🧪 BASE vs ACID</span>
+    <span class="pill pill-e">💥 Modos de fallo</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- 01 — CAP THEOREM -->
+  <div class="section-header">
+    <span class="section-num sn-blue">01</span>
+    <span class="section-title-text">CAP Theorem</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">BREWER 2000 · EL TRILEMA FUNDAMENTAL</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-blue"></div>
+    <div class="concept-body">
+      <div class="concept-num">TEOREMA 01</div>
+      <div class="concept-def" style="margin-bottom:20px">En presencia de una <strong>partición de red</strong> (P), un sistema distribuido solo puede garantizar <strong>Consistencia (C)</strong> o <strong>Disponibilidad (A)</strong>, nunca ambas simultáneamente. Formulado por Eric Brewer (2000) y probado formalmente por Gilbert y Lynch (2002).</div>
+
+      <div class="cap-visual">
+        <div class="cap-vertex">
+          <div class="cap-letter" style="color:#93C5FD">C</div>
+          <div class="cap-label">Consistency</div>
+          <div class="cap-desc">Todos los nodos ven los mismos datos al mismo tiempo. Cada lectura devuelve la escritura más reciente o un error.</div>
+        </div>
+        <div class="cap-vertex">
+          <div class="cap-letter" style="color:#86EFAC">A</div>
+          <div class="cap-label">Availability</div>
+          <div class="cap-desc">Todo request recibe una respuesta (sin garantía de que sea la más reciente). El sistema no retorna errores.</div>
+        </div>
+        <div class="cap-vertex">
+          <div class="cap-letter" style="color:#FDE68A">P</div>
+          <div class="cap-label">Partition Tolerance</div>
+          <div class="cap-desc">El sistema continúa operando aunque se pierdan mensajes o falle la comunicación entre nodos.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-yellow" style="margin-bottom:16px">
+        <span class="callout-icon">⚠</span>
+        <div>
+          <div class="callout-title ct-yellow">P no es opcional en producción</div>
+          <div class="callout-text">La partición de red <strong>siempre puede ocurrir</strong> en un sistema distribuido real. Elegir "CA" (sin P) solo es posible en sistemas monolíticos con una sola copia de datos — lo que no es un sistema distribuido. En la práctica la pregunta es: ante una partición, ¿sacrifico C o A?</div>
+        </div>
+      </div>
+
+      <table class="sys-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Garantías</th>
+            <th>Ante partición</th>
+            <th>Ejemplos</th>
+            <th>Cuándo elegirlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge-cp">CP</span></td>
+            <td>Consistencia + Tolerancia a partición</td>
+            <td>Retorna error o bloquea en lugar de devolver dato desactualizado</td>
+            <td>ZooKeeper, etcd, HBase, CockroachDB</td>
+            <td>Coordinación, locks distribuidos, configuración crítica</td>
+          </tr>
+          <tr>
+            <td><span class="badge-ap">AP</span></td>
+            <td>Disponibilidad + Tolerancia a partición</td>
+            <td>Responde con dato potencialmente desactualizado</td>
+            <td>Cassandra, DynamoDB, CouchDB, Riak</td>
+            <td>Carritos de compra, contadores, feeds, alta disponibilidad prioritaria</td>
+          </tr>
+          <tr>
+            <td><span class="badge-ca">CA</span></td>
+            <td>Consistencia + Disponibilidad</td>
+            <td>No aplica — asume red sin particiones</td>
+            <td>RDBMS tradicional (MySQL, PostgreSQL sin replicación)</td>
+            <td>Sistema single-node; inaplicable en distribución real</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 02 — PACELC -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">02</span>
+    <span class="section-title-text">PACELC — el modelo extendido</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">ABADI 2012 · LA PREGUNTA QUE CAP NO RESPONDE</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-yellow"></div>
+    <div class="concept-body">
+      <div class="concept-num">EXTENSIÓN DE CAP</div>
+      <div class="concept-name">PACELC</div>
+      <div class="concept-def">CAP solo describe el comportamiento <em>durante</em> una partición. PACELC (Daniel Abadi, 2012) completa el cuadro: incluso cuando <strong>no hay partición</strong>, existe un trade-off entre <strong>Latencia (L)</strong> y <strong>Consistencia (C)</strong>.</div>
+      <div style="background:#080C17;border:1px solid #1E2A40;border-radius:10px;padding:18px 22px;margin:16px 0;font-family:'Space Mono',monospace;font-size:12px;color:#64748B;line-height:1.9">
+        <span style="color:#93C5FD">if</span> <span style="color:#FDE68A">Partition</span> → <span style="color:#FDA4AF">choose</span> C or A<br>
+        <span style="color:#93C5FD">else</span> <span style="color:#FDE68A">Latency</span> vs <span style="color:#FDE68A">Consistency</span>
+        <div style="margin-top:16px;font-size:10px;color:#3B4C68">
+          PA/EL — Cassandra: AP en partición, baja latencia en operación normal<br>
+          PC/EC — HBase, ZooKeeper: CP en partición, consistencia fuerte siempre<br>
+          PA/EC — MongoDB: AP en partición, pero consistencia fuerte cuando hay quórum<br>
+          PC/EL — DynamoDB DAX: CP en partición, pero baja latencia via cache
+        </div>
+      </div>
+      <div class="insight">El insight de PACELC: la consistencia siempre tiene un costo. En sistemas de baja latencia, incluso sin fallo de red, forzar consistencia fuerte requiere coordinación que añade latencia.</div>
+    </div>
+  </div>
+
+  <!-- 03 — MODELOS DE CONSISTENCIA -->
+  <div class="section-header">
+    <span class="section-num sn-rose">03</span>
+    <span class="section-title-text">Modelos de consistencia</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">DEL MÁS FUERTE AL MÁS DÉBIL</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-rose"></div>
+    <div class="concept-body">
+      <div class="concept-num">ESPECTRO DE CONSISTENCIA</div>
+      <div class="concept-def" style="margin-bottom:16px">No existe solo "consistente" o "eventual". Hay un espectro: <strong>más fuerte = más costoso en latencia y disponibilidad</strong>. Conocer estos modelos permite diseñar sistemas con las garantías exactas que el negocio necesita — ni más ni menos.</div>
+      <div class="spectrum">
+        <div class="spec-item">
+          <div class="spec-level">NIVEL 5 · MÁS FUERTE</div>
+          <div class="spec-name" style="color:#93C5FD">Linearizabilidad</div>
+          <div class="spec-desc">El sistema se comporta como si tuviera <em>una sola copia</em>. Las operaciones son instantáneas y globalmente ordenadas. Máximo costo en latencia.</div>
+          <div class="spec-ex" style="color:#3B82F6">ZooKeeper, etcd, Spanner</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-level">NIVEL 4</div>
+          <div class="spec-name" style="color:#6EE7B7">Consistencia secuencial</div>
+          <div class="spec-desc">Todos los nodos ven el mismo orden de operaciones, pero no necesariamente en tiempo real. El orden global existe, pero puede haber lag.</div>
+          <div class="spec-ex" style="color:#3B4C68">Algunos RDBMS replicados</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-level">NIVEL 3</div>
+          <div class="spec-name" style="color:#FDE68A">Consistencia causal</div>
+          <div class="spec-desc">Las operaciones causalmente relacionadas son vistas en orden. Operaciones independientes pueden verse en cualquier orden. Equilibrio entre consistencia y latencia.</div>
+          <div class="spec-ex" style="color:#3B4C68">MongoDB causal sessions, COPS</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-level">NIVEL 2</div>
+          <div class="spec-name" style="color:#FCA5A5">Read-your-writes</div>
+          <div class="spec-desc">Garantía mínima de sesión: después de escribir, siempre ves tu propia escritura. No implica nada sobre lo que ven otros nodos.</div>
+          <div class="spec-ex" style="color:#3B4C68">DynamoDB strongly consistent reads</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-level">NIVEL 1 · MÁS DÉBIL</div>
+          <div class="spec-name" style="color:#FDA4AF">Consistencia eventual</div>
+          <div class="spec-desc">Dadas suficientes actualizaciones, <em>eventualmente</em> todas las réplicas convergen al mismo valor. No hay garantía de cuándo.</div>
+          <div class="spec-ex" style="color:#3B4C68">Cassandra, DynamoDB (default), Redis replicado</div>
+        </div>
+      </div>
+      <div class="warn">Confundir "eventual consistency" con "sin consistencia". Eventual consistency sigue siendo un contrato — solo dice que la convergencia ocurre, no cuándo. Un sistema sin ninguna garantía es simplemente incorrecto.</div>
+    </div>
+  </div>
+
+  <!-- 04 — BASE vs ACID -->
+  <div class="section-header">
+    <span class="section-num sn-purple">04</span>
+    <span class="section-title-text">BASE vs ACID en sistemas distribuidos</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">EL CAMBIO DE CONTRATO AL ESCALAR</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-purple"></div>
+    <div class="concept-body">
+      <div class="concept-def" style="margin-bottom:20px">ACID es el contrato de las bases de datos relacionales clásicas. Cuando escalamos horizontalmente, mantener ACID completo se vuelve prohibitivamente costoso. BASE es el contrato alternativo que adoptan la mayoría de sistemas distribuidos de alta escala.</div>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <div class="compare-head" style="border-bottom-color:#1D4ED8">
+            <div class="compare-title" style="color:#93C5FD">ACID</div>
+            <div class="compare-sub">Bases de datos relacionales · Transacciones locales</div>
+          </div>
+          <div class="compare-body">
+            <div class="compare-item">
+              <div class="ci-letter" style="color:#93C5FD">A</div>
+              <div class="ci-content">
+                <div class="ci-name">Atomicity (Atomicidad)</div>
+                <div class="ci-def">Todo o nada. La transacción se completa entera o se revierte completamente. No hay estados intermedios.</div>
+              </div>
+            </div>
+            <div class="compare-item">
+              <div class="ci-letter" style="color:#93C5FD">C</div>
+              <div class="ci-content">
+                <div class="ci-name">Consistency (Consistencia)</div>
+                <div class="ci-def">La BD pasa de un estado válido a otro estado válido. Las restricciones y reglas siempre se cumplen.</div>
+              </div>
+            </div>
+            <div class="compare-item">
+              <div class="ci-letter" style="color:#93C5FD">I</div>
+              <div class="ci-content">
+                <div class="ci-name">Isolation (Aislamiento)</div>
+                <div class="ci-def">Las transacciones concurrentes no se interfieren. El resultado es el mismo que si hubieran corrido en serie.</div>
+              </div>
+            </div>
+            <div class="compare-item">
+              <div class="ci-letter" style="color:#93C5FD">D</div>
+              <div class="ci-content">
+                <div class="ci-name">Durability (Durabilidad)</div>
+                <div class="ci-def">Una vez commitida, la transacción persiste aunque falle el sistema. Garantizada por WAL y fsync.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="compare-col">
+          <div class="compare-head" style="border-bottom-color:#22C55E">
+            <div class="compare-title" style="color:#86EFAC">BASE</div>
+            <div class="compare-sub">Sistemas distribuidos · Alta disponibilidad</div>
+          </div>
+          <div class="compare-body">
+            <div class="compare-item">
+              <div class="ci-letter" style="color:#86EFAC">B</div>
+              <div class="ci-content">
+                <div class="ci-name">Basically Available</div>
+                <div class="ci-def">El sistema siempre responde, aunque algunos nodos fallen o los datos no sean los más recientes. Disponibilidad sobre correctitud instantánea.</div>
+              </div>
+            </div>
+            <div class="compare-item">
+              <div class="ci-letter" style="color:#86EFAC">S</div>
+              <div class="ci-content">
+                <div class="ci-name">Soft State</div>
+                <div class="ci-def">El estado del sistema puede cambiar con el tiempo incluso sin input externo, debido a la propagación eventual entre réplicas.</div>
+              </div>
+            </div>
+            <div class="compare-item">
+              <div class="ci-letter" style="color:#86EFAC">E</div>
+              <div class="ci-content">
+                <div class="ci-name">Eventually Consistent</div>
+                <div class="ci-def">Si no hay nuevas escrituras, eventualmente todas las réplicas convergen al mismo valor. No se garantiza cuándo — solo que ocurrirá.</div>
+              </div>
+            </div>
+            <div class="compare-item" style="margin-bottom:0">
+              <div class="ci-letter" style="color:#FDE68A">→</div>
+              <div class="ci-content">
+                <div class="ci-name" style="color:#FDE68A">Implicación práctica</div>
+                <div class="ci-def">El código de aplicación debe manejar lecturas potencialmente stale, idempotencia en escrituras y conflictos de versiones.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 — MODOS DE FALLO -->
+  <div class="section-header">
+    <span class="section-num sn-green">05</span>
+    <span class="section-title-text">Modos de fallo en sistemas distribuidos</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">LO QUE PUEDE SALIR MAL · Y SALE</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-green"></div>
+    <div class="concept-body">
+      <div class="concept-def" style="margin-bottom:20px">Un sistema distribuido falla de formas imposibles en un monolito. Entender los modos de fallo es prerequisito para diseñar con resiliencia.</div>
+      <div class="failure-grid">
+        <div class="failure-card">
+          <div class="failure-icon">🔌</div>
+          <div class="failure-name">Partición de red</div>
+          <div class="failure-desc">Dos grupos de nodos no pueden comunicarse entre sí. Cada grupo puede seguir operando localmente — pero sus estados divergen. Es el escenario que CAP modela.</div>
+          <div class="failure-ex">→ Cassandra: ambos lados siguen aceptando escrituras. Luego reconcilia con anti-entropy.</div>
+        </div>
+        <div class="failure-card">
+          <div class="failure-icon">🧠</div>
+          <div class="failure-name">Split Brain</div>
+          <div class="failure-desc">Dos nodos creen ambos ser el líder / primary simultáneamente. Pueden aceptar escrituras inconsistentes. Causa corrupción si no hay protocolo de desempate.</div>
+          <div class="failure-ex">→ Solución: quórum, fencing tokens, STONITH en clusters.</div>
+        </div>
+        <div class="failure-card">
+          <div class="failure-icon">⏱</div>
+          <div class="failure-name">Fallo silencioso (Crash-stop)</div>
+          <div class="failure-desc">Un nodo deja de responder sin enviar ningún mensaje de error. El resto no sabe si está lento o muerto. Timeout + heartbeat son la única forma de detectarlo.</div>
+          <div class="failure-ex">→ Comportamiento default de la mayoría de sistemas. Manejado con timeouts y health checks.</div>
+        </div>
+        <div class="failure-card">
+          <div class="failure-icon">🎭</div>
+          <div class="failure-name">Fallo Bizantino</div>
+          <div class="failure-desc">Un nodo se comporta de forma arbitraria y maliciosa: envía mensajes incorrectos, contradictorios o selectivos a diferentes nodos. Es el caso más difícil.</div>
+          <div class="failure-ex">→ Requiere BFT (Byzantine Fault Tolerance). Solo necesario en contextos adversariales (blockchain, finanzas críticas).</div>
+        </div>
+        <div class="failure-card">
+          <div class="failure-icon">🕰</div>
+          <div class="failure-name">Clock Skew</div>
+          <div class="failure-desc">Los relojes de distintos nodos no están perfectamente sincronizados. Usar timestamps para ordenar eventos es inherentemente inseguro. NTP solo reduce — no elimina — el skew.</div>
+          <div class="failure-ex">→ Solución: relojes lógicos (Lamport) o TrueTime (Google Spanner). Ver Parte 2.</div>
+        </div>
+        <div class="failure-card">
+          <div class="failure-icon">📦</div>
+          <div class="failure-name">Mensajes duplicados / reordenados</div>
+          <div class="failure-desc">TCP garantiza entrega en orden dentro de una conexión, pero no entre múltiples nodos o tras reconexión. Los sistemas de mensajería (Kafka, RabbitMQ) pueden duplicar mensajes ante fallos.</div>
+          <div class="failure-ex">→ Solución: idempotencia en consumidores + sequence numbers o deduplication IDs.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-blue" style="margin-top:20px">
+        <span class="callout-icon">🔗</span>
+        <div>
+          <div class="callout-title ct-blue">Conexión con el código Java/Spring</div>
+          <div class="callout-text">Cada uno de estos fallos tiene una respuesta en código: <strong>Circuit Breaker</strong> (crash-stop), <strong>idempotency keys</strong> (mensajes duplicados), <strong>distributed locks con fencing</strong> (split brain), <strong>relojes lógicos</strong> (clock skew). Los patrones de resiliencia de la tarjeta siguiente son la respuesta práctica a estos fallos teóricos.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">DIST · PARTE 1 DE 2 · CAP, CONSISTENCIA Y FALLOS</span>
+  <div class="footer-nav">
+    <a class="footer-btn footer-btn-home" href="../../../index.html">← índice</a>
+    <span class="footer-count">5 CONCEPTOS CLAVE</span>
+    <a class="footer-btn footer-btn-next" href="parte2.html">Parte 2: Consenso, quórum y relojes lógicos →</a>
+  </div>
+</div>
+</body>
+</html>

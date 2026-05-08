@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(29,78,216,0.12) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(147,197,253,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #1D4ED8; color: #DBEAFE; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #93C5FD; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #3B82F6; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+  .pill-b { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-c { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+  .pill-d { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+  .pill-e { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-blue   { color: #3B82F6; }
+  .sn-yellow { color: #EAB308; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-purple { color: #A855F7; }
+  .sn-green  { color: #22C55E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+  .section-kicker { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; letter-spacing: 0.1em; white-space: nowrap; }
+
+  .concept { background: #0F1625; border: 1px solid #1E2A40; border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  .concept-top { height: 4px; }
+  .ct-blue   { background: linear-gradient(90deg, #1D4ED8, #93C5FD); }
+  .ct-yellow { background: linear-gradient(90deg, #A16207, #FDE68A); }
+  .ct-rose   { background: linear-gradient(90deg, #BE123C, #F43F5E); }
+  .ct-purple { background: linear-gradient(90deg, #6D28D9, #C4B5FD); }
+  .ct-green  { background: linear-gradient(90deg, #15803D, #86EFAC); }
+  .concept-body { padding: 24px 28px; }
+  .concept-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.12em; margin-bottom: 6px; }
+  .concept-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+  .concept-name { font-size: 20px; font-weight: 700; color: #E2E8F0; margin-bottom: 10px; line-height: 1.2; }
+  .concept-def { font-size: 13px; color: #8899B8; line-height: 1.65; margin-bottom: 14px; }
+  .concept-def strong { color: #94A3B8; }
+  .concept-tag { display: inline-flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 4px; margin-bottom: 6px; margin-right: 4px; }
+  .tag-blue   { color: #93C5FD; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); }
+  .tag-yellow { color: #FDE68A; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); }
+  .tag-rose   { color: #FDA4AF; background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.2); }
+  .tag-green  { color: #86EFAC; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+  .tag-purple { color: #D8B4FE; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); }
+  .insight { margin-top: 12px; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.18); border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #93C5FD; line-height: 1.55; }
+  .insight::before { content: '💡 Clave: '; font-weight: 600; }
+  .warn { margin-top: 10px; background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.18); border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #FDA4AF; line-height: 1.55; }
+  .warn::before { content: '⚠ Trampa: '; font-weight: 600; }
+
+  /* CODE PANEL */
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; margin-top: 12px; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; }
+  .code-badge { font-family: 'Space Mono', monospace; font-size: 9px; }
+  pre { padding: 12px 16px; font-family: 'DM Mono', monospace; font-size: 10.5px; line-height: 1.65; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-num     { color: #FB923C; }
+  .c-blue    { color: #93C5FD; }
+  .c-good    { color: #86EFAC; }
+  .c-bad     { color: #FDA4AF; }
+
+  /* CLOCK DIAGRAM */
+  .clock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .clock-card { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; padding: 18px; }
+  .clock-title { font-size: 14px; font-weight: 700; color: #E2E8F0; margin-bottom: 8px; }
+  .clock-sub { font-size: 11px; color: #64748B; line-height: 1.55; margin-bottom: 14px; }
+  .clock-rule { background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.15); border-radius: 6px; padding: 10px 14px; font-size: 11px; color: #93C5FD; font-family: 'DM Mono', monospace; line-height: 1.7; }
+  .clock-limit { margin-top: 10px; font-size: 11px; color: #64748B; }
+  .clock-limit strong { color: #FDA4AF; }
+
+  /* QUORUM VISUAL */
+  .quorum-box { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; padding: 20px 24px; margin-top: 16px; }
+  .quorum-formula { display: flex; gap: 16px; align-items: center; justify-content: center; margin: 16px 0; flex-wrap: wrap; }
+  .qf-item { text-align: center; }
+  .qf-val { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; }
+  .qf-label { font-size: 10px; color: #64748B; margin-top: 4px; font-family: 'DM Mono', monospace; }
+  .qf-op { font-family: 'Space Mono', monospace; font-size: 24px; color: #3B4C68; padding: 0 4px; }
+  .quorum-examples { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+  .qe-item { background: #0A0E1A; border: 1px solid #1A2236; border-radius: 8px; padding: 12px; text-align: center; }
+  .qe-system { font-size: 12px; font-weight: 600; color: #94A3B8; margin-bottom: 6px; }
+  .qe-config { font-family: 'DM Mono', monospace; font-size: 11px; color: #64748B; }
+  .qe-badge { display: inline-block; margin-top: 6px; font-size: 10px; font-family: 'DM Mono', monospace; padding: 2px 8px; border-radius: 3px; }
+
+  /* CONSENSUS VISUAL */
+  .consensus-phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+  .phase-card { background: #080C17; border: 1px solid #1E2A40; border-radius: 8px; padding: 14px; }
+  .phase-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; color: #3B4C68; margin-bottom: 6px; }
+  .phase-name { font-size: 13px; font-weight: 700; color: #E2E8F0; margin-bottom: 6px; }
+  .phase-desc { font-size: 11px; color: #64748B; line-height: 1.55; }
+
+  /* REAL SYSTEMS TABLE */
+  .sys-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .sys-table th { background: #080C17; padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; text-align: left; border-bottom: 1px solid #1E2A40; }
+  .sys-table td { padding: 11px 14px; font-size: 12px; color: #8899B8; border-bottom: 1px solid #0F1625; vertical-align: top; }
+  .sys-table tr:last-child td { border-bottom: none; }
+  .badge-cp { color: #93C5FD; background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2); font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; display: inline-block; }
+  .badge-ap { color: #86EFAC; background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; display: inline-block; }
+
+  /* INTERVIEW SECTION */
+  .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .tip-card { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; padding: 16px; }
+  .tip-q { font-size: 12px; font-weight: 600; color: #FDE68A; margin-bottom: 8px; font-family: 'DM Mono', monospace; }
+  .tip-a { font-size: 11.5px; color: #64748B; line-height: 1.6; }
+  .tip-a strong { color: #94A3B8; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; margin-top: 12px; }
+  .callout-blue   { background: rgba(29,78,216,0.06); border: 1px solid rgba(59,130,246,0.2); }
+  .callout-yellow { background: rgba(234,179,8,0.05); border: 1px solid rgba(234,179,8,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.2); }
+  .callout-green  { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-blue   { color: #93C5FD; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-rose   { color: #FDA4AF; }
+  .ct-green  { color: #86EFAC; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #3B82F6; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; text-decoration: none; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 4px; }
+  .footer-btn-prev { color: #93C5FD; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); }
+  .footer-btn-home { color: #6B7FA3; background: rgba(107,127,163,0.08); border: 1px solid rgba(107,127,163,0.2); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">DIST · PARTE 2 DE 2</div>
+        <h1>Consenso, Quórum<br><span>y Relojes Lógicos</span></h1>
+        <p class="header-sub">Cómo los nodos se ponen de acuerdo — la maquinaria detrás de Kafka, etcd y ZooKeeper</p>
+      </div>
+    </div>
+    <div class="part-badge">DIST · P2</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🕰 Relojes de Lamport</span>
+    <span class="pill pill-b">🗳 Quórum R+W>N</span>
+    <span class="pill pill-c">🤝 Consenso Raft</span>
+    <span class="pill pill-d">🔒 Locks distribuidos</span>
+    <span class="pill pill-e">🏗 Sistemas reales</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- 01 — PROBLEMA DE LOS DOS GENERALES -->
+  <div class="section-header">
+    <span class="section-num sn-blue">01</span>
+    <span class="section-title-text">Por qué el consenso es difícil</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">EL PROBLEMA DE LOS DOS GENERALES · 1975</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-blue"></div>
+    <div class="concept-body">
+      <div class="concept-num">FUNDAMENTO TEÓRICO</div>
+      <span class="concept-icon">⚔</span>
+      <div class="concept-name">El Problema de los Dos Generales</div>
+      <div class="concept-def">Dos ejércitos necesitan coordinarse para atacar simultáneamente. El único canal de comunicación es un mensajero que puede ser capturado. <strong>Es imposible lograr consenso garantizado con un canal poco confiable</strong> — y toda red real es un canal poco confiable.</div>
+
+      <div style="background:#080C17;border:1px solid #1E2A40;border-radius:10px;padding:18px;margin:16px 0">
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;text-align:center">
+          <div style="background:#0A0E1A;border:1px solid #1E2A40;border-radius:8px;padding:14px">
+            <div style="font-size:22px;margin-bottom:6px">🏰</div>
+            <div style="font-size:12px;font-weight:600;color:#93C5FD">General A</div>
+            <div style="font-size:10px;color:#64748B;margin-top:4px">Envía: "Ataca a las 6am"</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px;color:#3B4C68">→?→</div>
+            <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;margin-top:4px">red no confiable<br>mensaje puede perderse</div>
+          </div>
+          <div style="background:#0A0E1A;border:1px solid #1E2A40;border-radius:8px;padding:14px">
+            <div style="font-size:22px;margin-bottom:6px">🏰</div>
+            <div style="font-size:12px;font-weight:600;color:#86EFAC">General B</div>
+            <div style="font-size:10px;color:#64748B;margin-top:4px">¿Recibió el mensaje?</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(244,63,94,0.05);border:1px solid rgba(244,63,94,0.15);border-radius:6px;font-size:11px;color:#FDA4AF;text-align:center">
+          Si B confirma recepción, A necesita saber si B recibió la confirmación.<br>Si A confirma que recibió la confirmación… B necesita saber que A recibió su confirmación.<br>
+          <strong style="color:#F43F5E">El ciclo de confirmaciones es infinito. No hay solución perfecta.</strong>
+        </div>
+      </div>
+
+      <div class="callout callout-blue">
+        <span class="callout-icon">🔗</span>
+        <div>
+          <div class="callout-title ct-blue">Implicación práctica: por qué TCP no basta</div>
+          <div class="callout-text">TCP garantiza entrega en una conexión estable, pero no resuelve el problema de consenso entre múltiples nodos independientes. Si el nodo A hace commit y muere antes de notificar a B, ¿B hizo commit o no? Los algoritmos de consenso (Paxos, Raft) son la respuesta — con mayorías en lugar de unanimidad, reducen el problema a algo manejable.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 — RELOJES LÓGICOS -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">02</span>
+    <span class="section-title-text">Relojes lógicos</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">ORDENAR EVENTOS SIN RELOJ FÍSICO</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-yellow"></div>
+    <div class="concept-body">
+      <div class="concept-def" style="margin-bottom:20px">En sistemas distribuidos, los relojes físicos tienen skew inevitable (NTP solo lo reduce, no lo elimina). Para ordenar eventos de forma correcta se usan <strong>relojes lógicos</strong>: contadores que capturan relaciones causales, no tiempo real.</div>
+      <div class="clock-grid">
+        <div class="clock-card">
+          <div class="clock-title">⏱ Relojes de Lamport (1978)</div>
+          <div class="clock-sub">Capturan la relación <em>happened-before</em> (→). Si A → B entonces timestamp(A) &lt; timestamp(B). Si no hay relación causal, el orden es arbitrario pero consistente.</div>
+          <div class="clock-rule">
+            Regla 1: Al enviar un mensaje,<br>
+            &nbsp;&nbsp;timestamp += 1<br>
+            Regla 2: Al recibir un mensaje,<br>
+            &nbsp;&nbsp;timestamp = max(local, recibido) + 1<br>
+            Regla 3: Para cualquier evento interno,<br>
+            &nbsp;&nbsp;timestamp += 1
+          </div>
+          <div class="clock-limit" style="margin-top:10px;font-size:11px;color:#64748B">
+            <strong>Limitación:</strong> si ts(A) &lt; ts(B), A pudo haber ocurrido antes — pero no necesariamente. No captura concurrencia.
+          </div>
+        </div>
+        <div class="clock-card">
+          <div class="clock-title">📐 Vector Clocks (1988)</div>
+          <div class="clock-sub">Cada nodo mantiene un vector de contadores, uno por nodo. Permiten detectar si dos eventos son <strong>causalmente relacionados</strong> o <strong>concurrentes</strong>.</div>
+          <div class="clock-rule">
+            Nodo A: [A:1, B:0, C:0]<br>
+            Nodo B recibe de A: [A:1, B:1, C:0]<br>
+            Nodo C (independiente): [A:0, B:0, C:1]<br><br>
+            V1 ≤ V2 si todo V1[i] ≤ V2[i]<br>
+            → causal. Si no: eventos concurrentes.
+          </div>
+          <div class="clock-limit" style="margin-top:10px;font-size:11px;color:#64748B">
+            <strong>Usado por:</strong> DynamoDB (para detectar conflictos), Riak, sistemas CRDTs. Costo: O(N) por mensaje.
+          </div>
+        </div>
+      </div>
+      <div class="warn">Usar System.currentTimeMillis() para ordenar eventos distribuidos. Dos nodos pueden tener el mismo timestamp o un nodo lento puede tener un timestamp anterior al de un evento que ocurrió después. Siempre usa relojes lógicos o IDs ordenados (UUID v7, Snowflake IDs).</div>
+
+      <div class="code-panel" style="margin-top:20px">
+        <div class="code-header">
+          <span class="code-title">Snowflake ID — timestamp + nodo + secuencia → orden total</span>
+          <span class="code-badge" style="color:#93C5FD">PATRÓN PRÁCTICO</span>
+        </div>
+        <pre><span class="c-comment">// Twitter Snowflake (2010) — ID de 64 bits ordenable</span>
+<span class="c-comment">// | 41 bits timestamp ms | 10 bits node ID | 12 bits sequence |</span>
+<span class="c-comment">// → ~4100 años · 1024 nodos · 4096 IDs/ms/nodo</span>
+
+<span class="c-keyword">long</span> snowflakeId = ((<span class="c-keyword">long</span>) timestampMs &lt;&lt; <span class="c-num">22</span>)
+                  | ((<span class="c-keyword">long</span>) nodeId     &lt;&lt; <span class="c-num">12</span>)
+                  | sequence;
+
+<span class="c-comment">// UUID v7 (2022, RFC 9562) — equivalente estándar moderno</span>
+<span class="c-comment">// | 48 bits unix_ts_ms | 4 bits version | 12 bits rand | 62 bits rand |</span>
+<span class="c-comment">// → lexicográficamente ordenable + incluye timestamp</span>
+
+<span class="c-comment">// En Java: use UUID7 via com.fasterxml.uuid</span>
+<span class="c-type">UUID</span> id = <span class="c-type">Generators</span>.<span class="c-method">timeBasedEpochGenerator</span>().<span class="c-method">generate</span>();
+<span class="c-comment">// Ordenable en BD: INSERT ORDER ≈ CHRONOLOGICAL ORDER → menos fragmentación</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 — QUÓRUM -->
+  <div class="section-header">
+    <span class="section-num sn-rose">03</span>
+    <span class="section-title-text">Quórum — R + W &gt; N</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">GARANTIZAR CONSISTENCIA SIN COORDINACIÓN TOTAL</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-rose"></div>
+    <div class="concept-body">
+      <div class="concept-def" style="margin-bottom:16px">En lugar de exigir que <em>todos</em> los nodos confirmen una operación (costoso), se exige que una <strong>mayoría</strong> (quórum) lo haga. Si el quórum de lecturas y el de escrituras se solapan, siempre habrá al menos un nodo que tiene el dato más reciente.</div>
+
+      <div class="quorum-box">
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-family:'Space Mono',monospace;font-size:11px;color:#6B7FA3;margin-bottom:8px">LA FÓRMULA</div>
+          <div class="quorum-formula">
+            <div class="qf-item">
+              <div class="qf-val" style="color:#93C5FD">R</div>
+              <div class="qf-label">réplicas leídas</div>
+            </div>
+            <div class="qf-op">+</div>
+            <div class="qf-item">
+              <div class="qf-val" style="color:#86EFAC">W</div>
+              <div class="qf-label">réplicas escritas</div>
+            </div>
+            <div class="qf-op">&gt;</div>
+            <div class="qf-item">
+              <div class="qf-val" style="color:#FDE68A">N</div>
+              <div class="qf-label">réplicas totales</div>
+            </div>
+            <div style="font-size:11px;color:#64748B;align-self:center;padding-left:12px">→ siempre hay solapamiento<br>→ lecturas siempre ven la escritura más reciente</div>
+          </div>
+        </div>
+        <div class="quorum-examples">
+          <div class="qe-item">
+            <div class="qe-system">N=3, R=2, W=2</div>
+            <div class="qe-config">R+W = 4 &gt; 3 ✓</div>
+            <div class="qe-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Strong consistency</div>
+            <div style="font-size:10px;color:#3B4C68;margin-top:6px">Cassandra QUORUM<br>DynamoDB strongly consistent</div>
+          </div>
+          <div class="qe-item">
+            <div class="qe-system">N=3, R=1, W=3</div>
+            <div class="qe-config">R+W = 4 &gt; 3 ✓</div>
+            <div class="qe-badge" style="background:rgba(34,197,94,0.12);color:#86EFAC">Write-heavy</div>
+            <div style="font-size:10px;color:#3B4C68;margin-top:6px">Lecturas rápidas<br>Escrituras lentas (all)</div>
+          </div>
+          <div class="qe-item">
+            <div class="qe-system">N=3, R=1, W=1</div>
+            <div class="qe-config">R+W = 2 ≤ 3 ✗</div>
+            <div class="qe-badge" style="background:rgba(244,63,94,0.12);color:#FDA4AF">Eventual only</div>
+            <div style="font-size:10px;color:#3B4C68;margin-top:6px">Cassandra ONE<br>Sin garantía de consistencia</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight" style="margin-top:16px">Cassandra permite configurar R y W por operación (ONE, QUORUM, ALL). DynamoDB tiene lecturas eventualmente consistentes (R=1) y fuertemente consistentes (R=mayoría). Kafka usa quórum de ISR (In-Sync Replicas) para decidir qué tan durable es un mensaje.</div>
+    </div>
+  </div>
+
+  <!-- 04 — CONSENSO DISTRIBUIDO (RAFT) -->
+  <div class="section-header">
+    <span class="section-num sn-purple">04</span>
+    <span class="section-title-text">Consenso distribuido — Raft</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">CÓMO LOS NODOS ELIGEN UN LÍDER Y REPLICAN LOG</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-purple"></div>
+    <div class="concept-body">
+      <div class="concept-def" style="margin-bottom:16px"><strong>Paxos</strong> (1989) fue el primer algoritmo de consenso práctico pero es notoriamente difícil de implementar. <strong>Raft</strong> (2014, Diego Ongaro) fue diseñado para ser equivalente a Paxos pero comprensible. Es el algoritmo detrás de etcd (Kubernetes), CockroachDB y TiKV.</div>
+
+      <div class="consensus-phases">
+        <div class="phase-card">
+          <div class="phase-num">FASE 01</div>
+          <div class="phase-name" style="color:#93C5FD">Leader Election</div>
+          <div class="phase-desc">Cada nodo empieza como <em>Follower</em>. Si no recibe heartbeat del líder en un timeout aleatorio, se convierte en <em>Candidate</em> y pide votos. El que obtiene mayoría gana.</div>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">FASE 02</div>
+          <div class="phase-name" style="color:#FDE68A">Log Replication</div>
+          <div class="phase-desc">El líder recibe todas las escrituras, las añade a su log y las replica a los followers. Un entry está <em>committed</em> cuando la mayoría (quórum) lo confirma.</div>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">FASE 03</div>
+          <div class="phase-name" style="color:#86EFAC">Safety</div>
+          <div class="phase-desc">Solo se puede elegir líder un nodo cuyo log está al menos tan actualizado como la mayoría. Garantiza que ningún entry committed se pierde al cambiar de líder.</div>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">FASE 04</div>
+          <div class="phase-name" style="color:#D8B4FE">Fencing</div>
+          <div class="phase-desc">Cada elección incrementa el <em>term</em>. Mensajes de términos anteriores son ignorados. Previene split-brain: el líder antiguo es automáticamente descartado.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-yellow" style="margin-top:16px">
+        <span class="callout-icon">📌</span>
+        <div>
+          <div class="callout-title ct-yellow">Raft en Kafka (KRaft mode desde 2.8)</div>
+          <div class="callout-text">Kafka reemplazó ZooKeeper (que usa ZAB, similar a Raft) por KRaft — su propia implementación de consenso. El Controller elige un líder de partición; los ISR (In-Sync Replicas) actúan como quórum. <strong>min.insync.replicas</strong> define cuántas réplicas deben confirmar para que un mensaje se considere committed — exactamente el W del quórum.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 — LOCKS DISTRIBUIDOS Y SISTEMAS REALES -->
+  <div class="section-header">
+    <span class="section-num sn-green">05</span>
+    <span class="section-title-text">Locks distribuidos y sistemas reales</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">APLICACIÓN PRÁCTICA · JAVA Y SPRING</span>
+  </div>
+
+  <div class="concept">
+    <div class="concept-top ct-green"></div>
+    <div class="concept-body">
+      <div class="concept-def" style="margin-bottom:20px">Los conceptos anteriores se materializan en herramientas concretas. Un arquitecto senior debe saber cuándo usar cada una y cuáles son sus garantías reales.</div>
+
+      <table class="sys-table">
+        <thead>
+          <tr>
+            <th>Sistema</th>
+            <th>Algoritmo/Modelo</th>
+            <th>Garantías</th>
+            <th>Cuándo usarlo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:#E2E8F0">ZooKeeper</strong></td>
+            <td>ZAB (Zookeeper Atomic Broadcast) ≈ Raft</td>
+            <td><span class="badge-cp">CP</span> · Linearizable · Quórum de mayoría</td>
+            <td>Configuración distribuida, leader election, service discovery (legado)</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#E2E8F0">etcd</strong></td>
+            <td>Raft</td>
+            <td><span class="badge-cp">CP</span> · Linearizable · MVCC</td>
+            <td>Config store de Kubernetes, distributed locks, feature flags críticos</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#E2E8F0">Redis (Redlock)</strong></td>
+            <td>Quórum sobre N instancias independientes</td>
+            <td>Eventual · No linearizable bajo fallo asimétrico</td>
+            <td>Locks de baja criticidad, idempotency keys, rate limiting. <em>No usar para casos donde la correctitud es crítica.</em></td>
+          </tr>
+          <tr>
+            <td><strong style="color:#E2E8F0">Kafka</strong></td>
+            <td>KRaft (Raft) · ISR quórum</td>
+            <td><span class="badge-cp">CP</span> por partición · At-least-once por defecto · Exactly-once con transacciones</td>
+            <td>Log de eventos, streaming, event sourcing. Orden garantizado dentro de partición.</td>
+          </tr>
+          <tr>
+            <td><strong style="color:#E2E8F0">Cassandra</strong></td>
+            <td>Gossip + Dynamo-style quórum</td>
+            <td><span class="badge-ap">AP</span> por defecto · Tunable (ONE/QUORUM/ALL)</td>
+            <td>Escrituras masivas, series de tiempo, disponibilidad &gt; consistencia</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-panel" style="margin-top:20px">
+        <div class="code-header">
+          <span class="code-title">Distributed lock con Redisson (Spring Boot) — fencing token implícito</span>
+          <span class="code-badge" style="color:#86EFAC">JAVA EJEMPLO</span>
+        </div>
+        <pre><span class="c-comment">// Redlock sobre Redis — útil para secciones críticas de baja duración</span>
+<span class="c-comment">// No usar para decisiones de alta integridad (ej: pagos) → usar etcd/ZooKeeper</span>
+
+<span class="c-keyword">@Service</span>
+<span class="c-keyword">public class</span> <span class="c-type">InventoryService</span> {
+    <span class="c-keyword">private final</span> <span class="c-type">RedissonClient</span> redisson;
+
+    <span class="c-keyword">public void</span> <span class="c-method">reserveItem</span>(<span class="c-type">String</span> itemId) {
+        <span class="c-type">RLock</span> lock = redisson.<span class="c-method">getLock</span>(<span class="c-string">"inventory:lock:"</span> + itemId);
+        <span class="c-keyword">boolean</span> acquired = lock.<span class="c-method">tryLock</span>(<span class="c-num">3</span>, <span class="c-num">10</span>, <span class="c-type">TimeUnit</span>.SECONDS);
+        <span class="c-comment">// waitTime=3s, leaseTime=10s (auto-release ante crash)</span>
+        <span class="c-keyword">if</span> (!acquired) <span class="c-keyword">throw new</span> <span class="c-type">ConcurrentModificationException</span>();
+        <span class="c-keyword">try</span> {
+            <span class="c-method">updateInventory</span>(itemId); <span class="c-comment">// sección crítica</span>
+        } <span class="c-keyword">finally</span> {
+            <span class="c-keyword">if</span> (lock.<span class="c-method">isHeldByCurrentThread</span>()) lock.<span class="c-method">unlock</span>();
+        }
+    }
+}
+<span class="c-comment">// leaseTime previene deadlock si el proceso muere sin hacer unlock</span>
+<span class="c-comment">// isHeldByCurrentThread() previene unlock de lock expirado (race condition)</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 — INTERVIEW TIPS -->
+  <div class="section-header">
+    <span class="section-num sn-blue">↗</span>
+    <span class="section-title-text">Preguntas frecuentes en entrevistas de arquitecto</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-q">¿Cuándo elegirías CP sobre AP?</div>
+      <div class="tip-a">Cuando la <strong>correctitud es más importante que la disponibilidad</strong>: inventario financiero, contadores de licencias, locks de exclusión mutua, configuración crítica. Si mostrar un dato viejo puede causar pérdida de dinero o inconsistencia irreparable → CP. Si mostrar un tweet desactualizado por 100ms es aceptable → AP.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-q">¿Qué pasa si configuras W=1 en Kafka?</div>
+      <div class="tip-a"><strong>acks=1</strong>: el broker líder confirma pero no espera replicas. Si el líder muere antes de replicar, el mensaje se pierde. <strong>acks=all con min.insync.replicas=2</strong>: al menos 2 ISR deben confirmar → mensaje no se pierde mientras haya quórum. El costo es latencia adicional de replicación.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-q">¿Por qué Redlock no es seguro para locks críticos?</div>
+      <div class="tip-a">Martin Kleppmann (2016) demostró que bajo fallo asimétrico (un nodo lento que responde tarde) dos clientes pueden adquirir el lock simultáneamente. La solución: usar <strong>fencing tokens</strong> (número monotónico del lock) que el recurso protegido valida. Si el token es inferior al visto, la operación es rechazada.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-q">¿Cuál es la diferencia entre Paxos y Raft?</div>
+      <div class="tip-a">Ambos logran el mismo objetivo. Paxos es más flexible (multi-master posible) pero extremadamente difícil de implementar correctamente. Raft fue diseñado explícitamente para ser <strong>entendible</strong> — tiene un líder único, separación clara de elección y replicación. En producción casi todo usa Raft o variantes (Zab, Multi-Paxos).</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-q">¿Qué es "split brain" y cómo lo previene etcd?</div>
+      <div class="tip-a">Split brain: dos nodos creen ser el líder. etcd previene con Raft: un candidato solo gana si obtiene votos de la <strong>mayoría absoluta</strong> (N/2+1). Es imposible que dos candidatos ganen la mayoría en el mismo term. El <em>term</em> actúa como fencing token — mensajes de términos anteriores son descartados.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-q">¿Qué modelo de consistencia usa DynamoDB?</div>
+      <div class="tip-a">Por defecto: <strong>eventual consistency</strong> (R=1 de 3 réplicas). Con <code>ConsistentRead=true</code>: <strong>strongly consistent</strong> (R=mayoría, doble costo de lectura). Para transacciones multi-item: serializable via 2-phase commit interno. Ninguna es linearizable — DynamoDB prioriza latencia baja.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:20px">
+    <span class="callout-icon">🗺</span>
+    <div>
+      <div class="callout-title ct-blue">El mapa completo — dónde encaja todo esto</div>
+      <div class="callout-text">
+        <strong>CAP + PACELC</strong> → marco de decisión al elegir base de datos o broker.<br>
+        <strong>Modelos de consistencia</strong> → qué garantías puedes ofrecer en tu API.<br>
+        <strong>Relojes lógicos</strong> → cómo ordenar eventos en Kafka, audit logs, CQRS.<br>
+        <strong>Quórum</strong> → cómo configurar Kafka (acks, min.insync.replicas), Cassandra (CL), DynamoDB (ConsistentRead).<br>
+        <strong>Raft/consenso</strong> → cómo funciona etcd detrás de Kubernetes y por qué ZooKeeper era el cuello de botella de Kafka.<br>
+        <strong>Locks distribuidos</strong> → Redisson para baja criticidad, etcd para alta. Siempre con leaseTime y fencing.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">DIST · PARTE 2 DE 2 · CONSENSO, QUÓRUM Y RELOJES LÓGICOS</span>
+  <div class="footer-nav">
+    <a class="footer-btn footer-btn-prev" href="parte1.html">← Parte 1: CAP y Consistencia</a>
+    <span class="footer-count">5 CONCEPTOS · JAVA EXAMPLES</span>
+    <a class="footer-btn footer-btn-home" href="../../../index.html">← índice</a>
+  </div>
+</div>
+</body>
+</html>

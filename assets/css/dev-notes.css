@@ -204,7 +204,13 @@ body.dn-home .bar-docker { background: linear-gradient(90deg, #0EA5E9, #38BDF8);
 body.dn-home .bar-cicd   { background: linear-gradient(90deg, #A16207, #EAB308); }
 body.dn-home .bar-k8s    { background: linear-gradient(90deg, #326CE5, #93C5FD); }
 body.dn-home .bar-ed     { background: linear-gradient(90deg, #A21CAF, #E879F9); }
-body.dn-home .bar-saga   { background: linear-gradient(90deg, #831843, #F472B6); }
+body.dn-home .bar-saga     { background: linear-gradient(90deg, #831843, #F472B6); }
+body.dn-home .bar-poo      { background: linear-gradient(90deg, #0F766E, #5EEAD4); }
+body.dn-home .bar-refactor { background: linear-gradient(90deg, #4D7C0F, #BEF264); }
+body.dn-home .bar-reactive { background: linear-gradient(90deg, #0E7490, #22D3EE); }
+body.dn-home .bar-nosql    { background: linear-gradient(90deg, #B91C1C, #F87171); }
+body.dn-home .bar-eip      { background: linear-gradient(90deg, #5B21B6, #C4B5FD); }
+body.dn-home .bar-kafka    { background: linear-gradient(90deg, #C2410C, #FB923C); }
 body.dn-home .tg-inner { padding: 22px 24px 20px; }
 body.dn-home .tg-head {
   display: flex;
@@ -243,7 +249,17 @@ body.dn-home .icon-docker  { background: rgba(14,165,233,0.12); }
 body.dn-home .icon-cicd    { background: rgba(234,179,8,0.14); }
 body.dn-home .icon-k8s     { background: rgba(50,108,229,0.12); }
 body.dn-home .icon-ed      { background: rgba(232,121,249,0.12); }
-body.dn-home .icon-saga    { background: rgba(244,114,182,0.12); }
+body.dn-home .icon-saga     { background: rgba(244,114,182,0.12); }
+body.dn-home .icon-poo      { background: rgba(15,118,110,0.14); }
+body.dn-home .icon-refactor { background: rgba(77,124,15,0.14); }
+body.dn-home .icon-reactive { background: rgba(14,116,144,0.12); }
+body.dn-home .icon-nosql    { background: rgba(185,28,28,0.12); }
+body.dn-home .icon-eip      { background: rgba(91,33,182,0.12); }
+body.dn-home .icon-kafka    { background: rgba(194,65,12,0.14); }
+body.dn-home .bar-jvm       { background: linear-gradient(90deg, #B45309, #FCD34D); }
+body.dn-home .icon-jvm      { background: rgba(180,83,9,0.14); }
+body.dn-home .bar-dist      { background: linear-gradient(90deg, #1D4ED8, #93C5FD); }
+body.dn-home .icon-dist     { background: rgba(29,78,216,0.12); }
 body.dn-home .tg-label {
   font-family: 'Space Mono', monospace;
   font-size: 9px;
@@ -1896,6 +1912,18 @@ body.dn-solid .pill-c { color: #E9D5FF; border-color: rgba(233,213,255,0.3); bac
   tab-size: 4;
 }
 .dn-java-block code { font-family: inherit; }
+
+/* ── Syntax highlighting — compartido por infografías ── */
+.c-keyword    { color: #A5B4FC; }
+.c-type       { color: #5EEAD4; }
+.c-string     { color: #86EFAC; }
+.c-comment    { color: #3D5273; font-style: italic; }
+.c-method     { color: #FCD34D; }
+.c-num        { color: #FB923C; }
+.c-annotation { color: #C084FC; }
+.c-bad        { color: #FDA4AF; }
+.c-good       { color: #86EFAC; }
+.c-blue       { color: #93C5FD; }
 
 .solid-compare {
   display: grid;

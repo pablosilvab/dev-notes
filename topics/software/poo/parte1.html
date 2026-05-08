@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  /* HEADER */
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(20,184,166,0.10) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(94,234,212,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #14B8A6; color: #0A0E1A; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #5EEAD4; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #14B8A6; background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
+  .pill-b { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-c { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+  .pill-d { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+
+  /* BODY */
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-teal   { color: #14B8A6; }
+  .sn-yellow { color: #EAB308; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-purple { color: #A855F7; }
+  .sn-blue   { color: #3B82F6; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+  .section-kicker { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; letter-spacing: 0.1em; white-space: nowrap; }
+
+  /* PILAR CARD — layout visual rico */
+  .pilar { background: #0F1625; border: 1px solid #1E2A40; border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  .pilar-top { height: 4px; }
+  .pt-teal   { background: linear-gradient(90deg, #0F766E, #5EEAD4); }
+  .pt-yellow { background: linear-gradient(90deg, #A16207, #FDE68A); }
+  .pt-rose   { background: linear-gradient(90deg, #BE123C, #F43F5E); }
+  .pt-purple { background: linear-gradient(90deg, #6D28D9, #C4B5FD); }
+  .pilar-body { padding: 24px 28px; display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: start; }
+  .pilar-info { }
+  .pilar-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.12em; margin-bottom: 6px; }
+  .pilar-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+  .pilar-name { font-size: 20px; font-weight: 700; color: #E2E8F0; margin-bottom: 10px; line-height: 1.2; }
+  .pilar-def { font-size: 13px; color: #8899B8; line-height: 1.65; margin-bottom: 14px; }
+  .pilar-def strong { color: #94A3B8; }
+  .pilar-tag { display: inline-flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 4px; margin-bottom: 6px; margin-right: 4px; }
+  .tag-teal   { color: #5EEAD4; background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.2); }
+  .tag-yellow { color: #FDE68A; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); }
+  .tag-rose   { color: #FDA4AF; background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.2); }
+  .tag-purple { color: #D8B4FE; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); }
+  .pilar-trap { margin-top: 12px; background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.18); border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #FDA4AF; line-height: 1.55; }
+  .pilar-trap::before { content: '⚠ Trampa: '; font-weight: 600; }
+  .pilar-solid { margin-top: 10px; background: rgba(168,85,247,0.05); border: 1px solid rgba(168,85,247,0.18); border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #D8B4FE; line-height: 1.55; }
+  .pilar-solid::before { content: '→ SOLID: '; font-weight: 600; font-family: 'Space Mono', monospace; font-size: 9px; }
+
+  /* CODE PANEL */
+  .code-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; }
+  .code-label-bad  { font-family: 'Space Mono', monospace; font-size: 9px; color: #FDA4AF; }
+  .code-label-good { font-family: 'Space Mono', monospace; font-size: 9px; color: #86EFAC; }
+  pre { padding: 12px 16px; font-family: 'DM Mono', monospace; font-size: 10.5px; line-height: 1.65; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-num     { color: #FB923C; }
+  .c-bad     { color: #FDA4AF; }
+  .c-good    { color: #86EFAC; }
+
+  /* OVERVIEW TABLE */
+  .overview { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .ov-header { display: grid; grid-template-columns: 1fr 1.2fr 1.5fr 1.2fr; background: #080C17; border-bottom: 1px solid #1E2A40; }
+  .ovc { padding: 10px 16px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; border-right: 1px solid #1A2236; }
+  .ovc:last-child { border-right: none; }
+  .ov-row { display: grid; grid-template-columns: 1fr 1.2fr 1.5fr 1.2fr; border-bottom: 1px solid #1A2236; }
+  .ov-row:last-child { border-bottom: none; }
+  .ov-row:hover { background: rgba(255,255,255,0.012); }
+  .ov-name { padding: 13px 16px; display: flex; align-items: center; gap: 10px; border-right: 1px solid #1A2236; }
+  .ov-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .ov-sname { font-size: 13px; font-weight: 600; color: #E2E8F0; }
+  .ov-val { padding: 13px 16px; font-size: 12px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.45; }
+  .ov-val:last-child { border-right: none; }
+  .ov-badge { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; margin-top: 12px; }
+  .callout-teal   { background: rgba(20,184,166,0.05);  border: 1px solid rgba(20,184,166,0.2); }
+  .callout-yellow { background: rgba(234,179,8,0.05);   border: 1px solid rgba(234,179,8,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05);   border: 1px solid rgba(244,63,94,0.2); }
+  .callout-purple { background: rgba(168,85,247,0.05);  border: 1px solid rgba(168,85,247,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-teal   { color: #5EEAD4; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-rose   { color: #FDA4AF; }
+  .ct-purple { color: #D8B4FE; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #14B8A6; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; text-decoration: none; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 4px; }
+  .footer-btn-next { color: #FCD34D; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.25); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">POO · PARTE 1 DE 2</div>
+        <h1>Los 4 Pilares de la<br><span>POO</span></h1>
+        <p class="header-sub">Encapsulamiento, herencia, polimorfismo y abstracción — herramientas y trampas de cada uno</p>
+      </div>
+    </div>
+    <div class="part-badge">POO · P1</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🔒 Encapsulamiento</span>
+    <span class="pill pill-b">🌳 Herencia</span>
+    <span class="pill pill-c">🔀 Polimorfismo</span>
+    <span class="pill pill-d">🎭 Abstracción</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- PILAR 1 — ENCAPSULAMIENTO -->
+  <div class="section-header">
+    <span class="section-num sn-teal">01</span>
+    <span class="section-title-text">Encapsulamiento</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">DATOS + COMPORTAMIENTO · ACCESO CONTROLADO</span>
+  </div>
+
+  <div class="pilar">
+    <div class="pilar-top pt-teal"></div>
+    <div class="pilar-body">
+      <div class="pilar-info">
+        <div class="pilar-num">PILAR 01 DE 04</div>
+        <span class="pilar-icon">🔒</span>
+        <div class="pilar-name">Encapsulamiento</div>
+        <div class="pilar-def">Agrupar datos y el comportamiento que los opera en una misma unidad (clase), y <strong>restringir el acceso directo</strong> a los datos internos. El objeto controla cómo se lee y modifica su estado — nadie más puede hacerlo directamente.</div>
+        <span class="pilar-tag tag-teal">private / protected</span>
+        <span class="pilar-tag tag-teal">getters / setters con lógica</span>
+        <div class="pilar-trap">Exponer getters y setters para cada campo es encapsulamiento roto. Un setter sin validación es un campo público con pasos extra.</div>
+        <div class="pilar-solid">SRP y OCP. Al encapsular, defines una frontera clara de responsabilidad. El estado solo cambia a través de métodos que imponen las reglas del negocio — exactamente lo que DDD llama invariante.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">sin encapsulamiento</span><span class="code-label-bad">❌ ROTO</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">BankAccount</span> {
+  <span class="c-keyword">public double</span> balance;
+  <span class="c-keyword">public</span> <span class="c-type">String</span> owner;
+}
+
+<span class="c-comment">// Cualquiera puede hacer:</span>
+account.balance = -<span class="c-num">5000</span>;
+account.owner = <span class="c-keyword">null</span>;
+<span class="c-comment">// No hay reglas de negocio posibles</span>
+<span class="c-comment">// El objeto no protege su integridad</span>
+<span class="c-comment">// → cualquier bug es un bug de estado</span></pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">con encapsulamiento</span><span class="code-label-good">✅ CORRECTO</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">BankAccount</span> {
+  <span class="c-keyword">private double</span> balance;
+  <span class="c-keyword">private final</span> <span class="c-type">String</span> owner;
+
+  <span class="c-keyword">public void</span> <span class="c-method">deposit</span>(<span class="c-keyword">double</span> amount) {
+    <span class="c-keyword">if</span> (amount <= <span class="c-num">0</span>)
+      <span class="c-keyword">throw new</span> IllegalArgumentException(
+        <span class="c-string">"Amount must be positive"</span>);
+    <span class="c-keyword">this</span>.balance += amount;
+  }
+  <span class="c-comment">// balance solo cambia por reglas del negocio</span>
+  <span class="c-comment">// owner es inmutable desde la creación</span>
+  <span class="c-keyword">public double</span> <span class="c-method">getBalance</span>() { <span class="c-keyword">return</span> balance; }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILAR 2 — HERENCIA -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">02</span>
+    <span class="section-title-text">Herencia</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">RELACIÓN IS-A · REUTILIZACIÓN DE COMPORTAMIENTO</span>
+  </div>
+
+  <div class="pilar">
+    <div class="pilar-top pt-yellow"></div>
+    <div class="pilar-body">
+      <div class="pilar-info">
+        <div class="pilar-num">PILAR 02 DE 04</div>
+        <span class="pilar-icon">🌳</span>
+        <div class="pilar-name">Herencia</div>
+        <div class="pilar-def">Una clase hija adquiere atributos y métodos de su clase padre. Válida cuando existe una relación semántica <strong>"ES-UN"</strong> (IS-A) real, no cuando se usa solo para reusar código. Es la raíz de la mayor parte del mal diseño OO.</div>
+        <span class="pilar-tag tag-yellow">extends</span>
+        <span class="pilar-tag tag-yellow">IS-A real</span>
+        <span class="pilar-tag tag-yellow">abstract class</span>
+        <div class="pilar-trap">Heredar para reutilizar código cuando no existe IS-A semántico. <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDBA74">Stack extends ArrayList</code> es el ejemplo clásico: Stack no ES un ArrayList. Resultado: la subclase hereda métodos que no debería tener (LSP roto).</div>
+        <div class="pilar-solid">LSP directamente. Toda subclase debe poder sustituir a su padre sin romper el comportamiento esperado. Si no es así, la herencia no es correcta — usa composición.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">herencia inapropiada</span><span class="code-label-bad">❌ LSP ROTO</span></div>
+          <pre><span class="c-comment">// Stack NO ES un ArrayList</span>
+<span class="c-comment">// Solo hereda para reutilizar lógica</span>
+<span class="c-keyword">class</span> <span class="c-type">Stack</span>&lt;<span class="c-type">T</span>&gt; <span class="c-keyword">extends</span> <span class="c-type">ArrayList</span>&lt;<span class="c-type">T</span>&gt; {
+  <span class="c-keyword">public</span> <span class="c-type">T</span> <span class="c-method">pop</span>() { <span class="c-comment">/* ... */</span> }
+  <span class="c-keyword">public void</span> <span class="c-method">push</span>(<span class="c-type">T</span> item) { <span class="c-comment">/* ... */</span> }
+}
+
+<span class="c-comment">// Ahora Stack tiene add(), remove(),</span>
+<span class="c-comment">// set(), get(index)… que NO son Stack.</span>
+<span class="c-comment">// Cualquier código que use ArrayList</span>
+<span class="c-comment">// puede romper Stack → LSP violado.</span></pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">herencia IS-A real</span><span class="code-label-good">✅ CORRECTO</span></div>
+          <pre><span class="c-keyword">abstract class</span> <span class="c-type">Shape</span> {
+  <span class="c-keyword">abstract double</span> <span class="c-method">area</span>();
+  <span class="c-keyword">void</span> <span class="c-method">describe</span>() {
+    System.out.<span class="c-method">println</span>(<span class="c-string">"Area: "</span> + <span class="c-method">area</span>());
+  }
+}
+
+<span class="c-comment">// Circle ES-UN Shape → IS-A real</span>
+<span class="c-keyword">class</span> <span class="c-type">Circle</span> <span class="c-keyword">extends</span> <span class="c-type">Shape</span> {
+  <span class="c-keyword">private final double</span> radius;
+  <span class="c-keyword">double</span> <span class="c-method">area</span>() {
+    <span class="c-keyword">return</span> Math.PI * radius * radius;
+  }
+}
+<span class="c-comment">// Circle puede sustituir a Shape siempre</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILAR 3 — POLIMORFISMO -->
+  <div class="section-header">
+    <span class="section-num sn-rose">03</span>
+    <span class="section-title-text">Polimorfismo</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">MISMO MENSAJE · COMPORTAMIENTO DIFERENTE</span>
+  </div>
+
+  <div class="pilar">
+    <div class="pilar-top pt-rose"></div>
+    <div class="pilar-body">
+      <div class="pilar-info">
+        <div class="pilar-num">PILAR 03 DE 04</div>
+        <span class="pilar-icon">🔀</span>
+        <div class="pilar-name">Polimorfismo</div>
+        <div class="pilar-def">La capacidad de un mensaje (llamada a método) de producir comportamientos distintos según el tipo concreto del objeto receptor. <strong>El emisor no sabe — ni necesita saber — qué tipo concreto recibe.</strong> Es el mecanismo que hace que "Replace Conditional with Polymorphism" funcione.</div>
+        <span class="pilar-tag tag-rose">@Override</span>
+        <span class="pilar-tag tag-rose">interface / abstract</span>
+        <span class="pilar-tag tag-rose">dynamic dispatch</span>
+        <div class="pilar-trap">Confundir polimorfismo con if/instanceof. Si tienes <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDA4AF">if (obj instanceof Circle)</code> para decidir comportamiento, estás negando el polimorfismo — el compilador ya lo puede resolver.</div>
+        <div class="pilar-solid">OCP directamente. El código que usa una interfaz polimórfica está cerrado a modificación cuando aparece un nuevo tipo — solo se añade una nueva implementación. También habilita DIP: depender de abstracciones, no de concretos.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">sin polimorfismo</span><span class="code-label-bad">❌ OCP ROTO</span></div>
+          <pre><span class="c-keyword">void</span> <span class="c-method">drawShape</span>(Object shape) {
+  <span class="c-keyword">if</span> (shape <span class="c-keyword">instanceof</span> <span class="c-type">Circle</span>) {
+    ((<span class="c-type">Circle</span>) shape).<span class="c-method">drawCircle</span>(canvas);
+  } <span class="c-keyword">else if</span> (shape <span class="c-keyword">instanceof</span> <span class="c-type">Rectangle</span>) {
+    ((<span class="c-type">Rectangle</span>) shape).<span class="c-method">drawRect</span>(canvas);
+  } <span class="c-keyword">else if</span> (shape <span class="c-keyword">instanceof</span> <span class="c-type">Triangle</span>) {
+    ((<span class="c-type">Triangle</span>) shape).<span class="c-method">drawTri</span>(canvas);
+  }
+  <span class="c-comment">// nueva figura → modificar aquí siempre</span>
+}</pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">con polimorfismo</span><span class="code-label-good">✅ OCP CORRECTO</span></div>
+          <pre><span class="c-keyword">interface</span> <span class="c-type">Drawable</span> {
+  <span class="c-keyword">void</span> <span class="c-method">draw</span>(<span class="c-type">Canvas</span> canvas);
+}
+<span class="c-keyword">class</span> <span class="c-type">Circle</span> <span class="c-keyword">implements</span> <span class="c-type">Drawable</span> {
+  <span class="c-keyword">public void</span> <span class="c-method">draw</span>(<span class="c-type">Canvas</span> c) { <span class="c-comment">/* círculo */</span> }
+}
+<span class="c-keyword">class</span> <span class="c-type">Triangle</span> <span class="c-keyword">implements</span> <span class="c-type">Drawable</span> {
+  <span class="c-keyword">public void</span> <span class="c-method">draw</span>(<span class="c-type">Canvas</span> c) { <span class="c-comment">/* triángulo */</span> }
+}
+
+<span class="c-keyword">void</span> <span class="c-method">drawShape</span>(<span class="c-type">Drawable</span> shape) {
+  shape.<span class="c-method">draw</span>(canvas); <span class="c-comment">// dispatch automático</span>
+}
+<span class="c-comment">// nueva figura = nueva clase, nada más</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILAR 4 — ABSTRACCIÓN -->
+  <div class="section-header">
+    <span class="section-num sn-purple">04</span>
+    <span class="section-title-text">Abstracción</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">OCULTAR COMPLEJIDAD · EXPONER INTENCIÓN</span>
+  </div>
+
+  <div class="pilar">
+    <div class="pilar-top pt-purple"></div>
+    <div class="pilar-body">
+      <div class="pilar-info">
+        <div class="pilar-num">PILAR 04 DE 04</div>
+        <span class="pilar-icon">🎭</span>
+        <div class="pilar-name">Abstracción</div>
+        <div class="pilar-def">Exponer solo lo relevante para el usuario del objeto, ocultando los detalles de implementación. <strong>El contrato público es la abstracción; la implementación es el detalle.</strong> Es lo que permite cambiar la implementación sin afectar a quien usa la interfaz.</div>
+        <span class="pilar-tag tag-purple">interface</span>
+        <span class="pilar-tag tag-purple">abstract class</span>
+        <span class="pilar-tag tag-purple">API surface</span>
+        <div class="pilar-trap">Filtrar detalles de implementación en la interfaz pública: tipos concretos como parámetros o retornos, excepciones propias del framework, métodos que solo tienen sentido para una implementación concreta.</div>
+        <div class="pilar-solid">DIP completo. Cuando dependes de una abstracción (interfaz), el módulo de alto nivel no sabe nada de la implementación. Es la base de la arquitectura Hexagonal: el dominio depende de puertos (abstracciones), nunca de adaptadores (implementaciones).</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">abstracción rota — implementación expuesta</span><span class="code-label-bad">❌ DIP ROTO</span></div>
+          <pre><span class="c-comment">// El servicio expone su implementación</span>
+<span class="c-keyword">class</span> <span class="c-type">NotificationService</span> {
+  <span class="c-keyword">public</span> <span class="c-type">JavaMailSenderImpl</span> mailSender;
+  <span class="c-keyword">public</span> <span class="c-type">Session</span> smtpSession;
+
+  <span class="c-keyword">public void</span> <span class="c-method">sendRawMime</span>(<span class="c-type">MimeMessage</span> msg) {
+    <span class="c-comment">/* detalles SMTP */</span>
+  }
+}
+<span class="c-comment">// el cliente necesita saber de SMTP,</span>
+<span class="c-comment">// MimeMessage y JavaMail → acoplado</span></pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">abstracción correcta — contrato limpio</span><span class="code-label-good">✅ DIP CORRECTO</span></div>
+          <pre><span class="c-comment">// Abstracción: solo expone intención</span>
+<span class="c-keyword">interface</span> <span class="c-type">NotificationPort</span> {
+  <span class="c-keyword">void</span> <span class="c-method">notify</span>(<span class="c-type">String</span> to, <span class="c-type">String</span> subject,
+               <span class="c-type">String</span> body);
+}
+
+<span class="c-comment">// Implementación: oculta los detalles</span>
+<span class="c-keyword">class</span> <span class="c-type">SmtpNotification</span>
+    <span class="c-keyword">implements</span> <span class="c-type">NotificationPort</span> {
+  <span class="c-keyword">public void</span> <span class="c-method">notify</span>(...) {
+    <span class="c-comment">// SMTP, MimeMessage, etc. aquí</span>
+    <span class="c-comment">// el cliente no sabe nada de esto</span>
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW TABLE -->
+  <div class="section-header">
+    <span class="section-num sn-teal">↗</span>
+    <span class="section-title-text">Los 4 pilares — visión de conjunto</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="overview">
+    <div class="ov-header">
+      <div class="ovc">Pilar</div>
+      <div class="ovc">Qué garantiza</div>
+      <div class="ovc">Trampa frecuente</div>
+      <div class="ovc">SOLID relacionado</div>
+    </div>
+    <div class="ov-row">
+      <div class="ov-name"><span class="ov-dot" style="background:#14B8A6"></span><span class="ov-sname">Encapsulamiento</span></div>
+      <div class="ov-val">Integridad del estado interno del objeto</div>
+      <div class="ov-val">Getters/setters sin lógica = campo público</div>
+      <div class="ov-val"><span class="ov-badge" style="background:rgba(139,92,246,0.12);color:#D8B4FE">SRP · OCP</span></div>
+    </div>
+    <div class="ov-row">
+      <div class="ov-name"><span class="ov-dot" style="background:#EAB308"></span><span class="ov-sname">Herencia</span></div>
+      <div class="ov-val">Reutilización cuando IS-A es real</div>
+      <div class="ov-val">Heredar para reusar código sin IS-A</div>
+      <div class="ov-val"><span class="ov-badge" style="background:rgba(139,92,246,0.12);color:#D8B4FE">LSP</span></div>
+    </div>
+    <div class="ov-row">
+      <div class="ov-name"><span class="ov-dot" style="background:#F43F5E"></span><span class="ov-sname">Polimorfismo</span></div>
+      <div class="ov-val">Extensibilidad sin modificar código existente</div>
+      <div class="ov-val">Usar instanceof en lugar de dispatch</div>
+      <div class="ov-val"><span class="ov-badge" style="background:rgba(139,92,246,0.12);color:#D8B4FE">OCP · DIP</span></div>
+    </div>
+    <div class="ov-row">
+      <div class="ov-name"><span class="ov-dot" style="background:#A855F7"></span><span class="ov-sname">Abstracción</span></div>
+      <div class="ov-val">Desacoplamiento de implementaciones concretas</div>
+      <div class="ov-val">Filtrar tipos concretos en la interfaz pública</div>
+      <div class="ov-val"><span class="ov-badge" style="background:rgba(139,92,246,0.12);color:#D8B4FE">DIP · ISP</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-teal">
+    <span class="callout-icon">🔗</span>
+    <div>
+      <div class="callout-title ct-teal">La relación con SOLID — por qué estudiar POO antes</div>
+      <div class="callout-text">SOLID no es una lista de reglas arbitrarias — es la respuesta a los problemas que genera <strong>mal uso de los 4 pilares</strong>. SRP corrige el encapsulamiento roto. LSP define cuándo la herencia es correcta. OCP y DIP explotan el polimorfismo y la abstracción correctamente. Sin entender los pilares, SOLID parece dogma. Con ellos, SOLID parece obvio.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">POO · PARTE 1 DE 2 · LOS 4 PILARES</span>
+  <div class="footer-nav">
+    <span class="footer-count">4 PILARES · JAVA EXAMPLES</span>
+    <a class="footer-btn footer-btn-next" href="parte2.html">Parte 2: Composición, cohesión y acoplamiento →</a>
+  </div>
+</div>
+</body>
+</html>

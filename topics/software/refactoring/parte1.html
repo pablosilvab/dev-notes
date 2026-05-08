@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(234,179,8,0.09) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(244,63,94,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #EAB308; color: #0A0E1A; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #EAB308; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #EAB308; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-b { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+  .pill-c { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-d { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-yellow { color: #EAB308; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-green  { color: #22C55E; }
+  .sn-blue   { color: #3B82F6; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .cards-grid { display: grid; gap: 10px; }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.c-yellow::before { background: #EAB308; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-orange::before { background: #F97316; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-pink::before   { background: #EC4899; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-yellow { background: rgba(234,179,8,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-orange { background: rgba(249,115,22,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-yellow { background: rgba(234,179,8,0.12);  color: #FDE68A; }
+  .kw-rose   { background: rgba(244,63,94,0.12);  color: #FDA4AF; }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-blue   { background: rgba(59,130,246,0.12); color: #93C5FD; }
+  .kw-orange { background: rgba(249,115,22,0.12); color: #FDBA74; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .kw-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .kw-pink   { background: rgba(236,72,153,0.12); color: #F9A8D4; }
+
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-yellow { background: rgba(234,179,8,0.06); border: 1px solid rgba(234,179,8,0.18); color: #FDE68A; }
+  .tip-rose   { background: rgba(244,63,94,0.06); border: 1px solid rgba(244,63,94,0.18); color: #FDA4AF; }
+  .tip-green  { background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.18); color: #86EFAC; }
+  .tip-blue   { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.18); color: #93C5FD; }
+
+  /* GOLDEN RULE */
+  .golden-rule {
+    background: rgba(234,179,8,0.04);
+    border: 1px solid rgba(234,179,8,0.25);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 0;
+  }
+  .gr-icon { font-size: 40px; flex-shrink: 0; }
+  .gr-label { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #EAB308; letter-spacing: 0.12em; margin-bottom: 8px; }
+  .gr-text { font-size: 17px; font-weight: 600; color: #E2E8F0; line-height: 1.4; margin-bottom: 10px; }
+  .gr-sub { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .gr-sub strong { color: #94A3B8; }
+
+  /* CYCLE DIAGRAM */
+  .cycle-diagram {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 24px;
+  }
+  .cycle-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+  .cycle-steps { display: flex; align-items: center; justify-content: center; gap: 0; }
+  .cycle-step {
+    background: #0A0E1A; border-radius: 10px; padding: 14px 16px;
+    text-align: center; flex: 1; position: relative;
+  }
+  .cs-red    { border: 1px solid rgba(244,63,94,0.3); }
+  .cs-green  { border: 1px solid rgba(34,197,94,0.3); }
+  .cs-yellow { border: 1px solid rgba(234,179,8,0.3); }
+  .cs-blue   { border: 1px solid rgba(59,130,246,0.3); }
+  .cycle-step-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+  .cycle-step-name { font-size: 12px; font-weight: 600; color: #E2E8F0; margin-bottom: 3px; }
+  .cycle-step-sub { font-size: 10px; color: #3B4C68; font-family: 'DM Mono', monospace; }
+  .cycle-arrow { color: #2D3E5A; font-size: 20px; padding: 0 8px; flex-shrink: 0; }
+  .cycle-note { margin-top: 16px; padding: 10px 14px; background: #0A0E1A; border: 1px solid #1A2236; border-radius: 8px; font-size: 11.5px; color: #64748B; line-height: 1.55; text-align: center; }
+
+  /* SMELL SEVERITY */
+  .smell-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .smell-card {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden;
+  }
+  .smell-top { height: 3px; }
+  .st-critical { background: #F43F5E; }
+  .st-high     { background: #F97316; }
+  .st-medium   { background: #EAB308; }
+  .st-low      { background: #3B82F6; }
+  .smell-body { padding: 16px 18px; }
+  .smell-severity {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em; margin-bottom: 6px;
+  }
+  .ss-critical { color: #F43F5E; }
+  .ss-high     { color: #F97316; }
+  .ss-medium   { color: #EAB308; }
+  .ss-low      { color: #3B82F6; }
+  .smell-name { font-size: 14px; font-weight: 600; color: #E2E8F0; margin-bottom: 6px; }
+  .smell-desc { font-size: 12px; color: #8899B8; line-height: 1.55; margin-bottom: 10px; }
+  .smell-before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .sba-panel { background: #0A0E1A; border-radius: 6px; padding: 8px 10px; }
+  .sba-label { font-size: 9px; font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+  .sba-bad  { color: #F43F5E; }
+  .sba-good { color: #22C55E; }
+  .sba-code { font-family: 'DM Mono', monospace; font-size: 10px; color: #64748B; line-height: 1.5; }
+  .smell-signal { font-size: 11px; color: #4A5E7A; line-height: 1.45; border-top: 1px solid #1A2236; padding-top: 8px; }
+  .smell-signal strong { color: #94A3B8; }
+
+  /* CODE BLOCK */
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; }
+  .code-lang { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; background: #0F1625; border: 1px solid #1A2236; padding: 2px 8px; border-radius: 3px; }
+  pre { padding: 14px 18px; font-family: 'DM Mono', monospace; font-size: 11px; line-height: 1.65; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-bad     { color: #FDA4AF; }
+  .c-good    { color: #86EFAC; }
+
+  /* ADDITIONAL SMELLS TABLE */
+  .smells-table { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .st-header { display: grid; grid-template-columns: 1.2fr 1fr 1.5fr 1.2fr; background: #080C17; border-bottom: 1px solid #1E2A40; }
+  .stc { padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace; color: #3B4C68; border-right: 1px solid #1A2236; }
+  .stc:last-child { border-right: none; }
+  .stc.head { color: #6B7FA3; font-weight: 500; }
+  .st-row { display: grid; grid-template-columns: 1.2fr 1fr 1.5fr 1.2fr; border-bottom: 1px solid #1A2236; }
+  .st-row:last-child { border-bottom: none; }
+  .st-row:hover { background: rgba(255,255,255,0.012); }
+  .st-name { padding: 11px 14px; display: flex; align-items: center; gap: 8px; border-right: 1px solid #1A2236; }
+  .st-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .std-rose   { background: #F43F5E; }
+  .std-orange { background: #F97316; }
+  .std-yellow { background: #EAB308; }
+  .std-blue   { background: #3B82F6; }
+  .std-purple { background: #A855F7; }
+  .std-teal   { background: #14B8A6; }
+  .st-sname { font-size: 12px; font-weight: 600; color: #E2E8F0; }
+  .st-val { padding: 11px 14px; font-size: 11.5px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.4; }
+  .st-val:last-child { border-right: none; }
+  .st-badge { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 6px; border-radius: 3px; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-yellow { background: rgba(234,179,8,0.05);  border: 1px solid rgba(234,179,8,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05);  border: 1px solid rgba(244,63,94,0.2); }
+  .callout-green  { background: rgba(34,197,94,0.05);  border: 1px solid rgba(34,197,94,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-rose   { color: #FDA4AF; }
+  .ct-green  { color: #86EFAC; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #EAB308; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #EAB308; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">REFACTORING · PARTE 1 DE 3</div>
+        <h1>El Ciclo y los<br><span>Code Smells</span></h1>
+        <p class="header-sub">La regla de oro, el ciclo del refactoring y los disparadores que te dicen cuándo actuar</p>
+      </div>
+    </div>
+    <div class="part-badge">REFACTORING · P1</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🔑 Regla de oro</span>
+    <span class="pill pill-b">🤢 Code Smells</span>
+    <span class="pill pill-c">🔄 Ciclo Red-Green-Refactor</span>
+    <span class="pill pill-d">🛡 La red de seguridad</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN 1 — LA REGLA DE ORO -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">01</span>
+    <span class="section-title-text">La regla de oro</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="golden-rule">
+    <span class="gr-icon">🔑</span>
+    <div>
+      <div class="gr-label">MARTIN FOWLER — REFACTORING (2ND ED.)</div>
+      <div class="gr-text">"No se añade funcionalidad mientras se refactoriza.<br>No se refactoriza mientras se añade funcionalidad."</div>
+      <div class="gr-sub">Esta separación es lo que convierte el refactoring en una práctica disciplinada. Mezclar ambas actividades lleva a bugs difíciles de rastrear: <strong>¿fue el cambio de lógica o el cambio estructural lo que lo rompió?</strong> Con la regla de oro, siempre lo sabes.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2 — EL CICLO -->
+  <div class="section-header">
+    <span class="section-num sn-green">02</span>
+    <span class="section-title-text">El ciclo — Red, Green, Refactor</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cycle-diagram">
+    <div class="cycle-title">El único orden correcto para refactorizar con seguridad</div>
+    <div class="cycle-steps">
+      <div class="cycle-step cs-red">
+        <span class="cycle-step-icon">🔴</span>
+        <div class="cycle-step-name">RED</div>
+        <div class="cycle-step-sub">Test en rojo</div>
+        <div style="font-size:11px; color:#64748B; margin-top:6px; line-height:1.4">Escribe el test que describe el comportamiento. Debe fallar — si no falla, el test es inútil.</div>
+      </div>
+      <div class="cycle-arrow">→</div>
+      <div class="cycle-step cs-green">
+        <span class="cycle-step-icon">🟢</span>
+        <div class="cycle-step-name">GREEN</div>
+        <div class="cycle-step-sub">Test en verde</div>
+        <div style="font-size:11px; color:#64748B; margin-top:6px; line-height:1.4">Escribe el código <em>mínimo</em> para que el test pase. No importa si es feo — lo arreglas en el siguiente paso.</div>
+      </div>
+      <div class="cycle-arrow">→</div>
+      <div class="cycle-step cs-yellow">
+        <span class="cycle-step-icon">🟡</span>
+        <div class="cycle-step-name">REFACTOR</div>
+        <div class="cycle-step-sub">Mejorar la estructura</div>
+        <div style="font-size:11px; color:#64748B; margin-top:6px; line-height:1.4">Mejora el diseño sin cambiar el comportamiento. Los tests siguen en verde. Aquí entra el catálogo de técnicas.</div>
+      </div>
+      <div class="cycle-arrow">→</div>
+      <div class="cycle-step cs-blue">
+        <span class="cycle-step-icon">🔵</span>
+        <div class="cycle-step-name">COMMIT</div>
+        <div class="cycle-step-sub">Pequeños pasos</div>
+        <div style="font-size:11px; color:#64748B; margin-top:6px; line-height:1.4">Haz commit frecuente. Si rompes algo, el rollback es a minutos atrás, no a horas. Pequeños pasos son la clave.</div>
+      </div>
+      <div class="cycle-arrow">↩</div>
+    </div>
+    <div class="cycle-note">
+      🛡 <strong style="color:#94A3B8">La red de seguridad:</strong> No existe refactoring sin tests. Si los tests no están en verde antes de empezar, lo que haces es <em>cambiar código a ciegas</em> — no refactorizar. La suite de tests es el contrato que te garantiza que el comportamiento no cambió.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3 — CODE SMELLS PRINCIPALES -->
+  <div class="section-header">
+    <span class="section-num sn-rose">03</span>
+    <span class="section-title-text">Code Smells — los 4 disparadores principales</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="smell-grid">
+    <!-- Mysterious Name -->
+    <div class="smell-card">
+      <div class="smell-top st-critical"></div>
+      <div class="smell-body">
+        <div class="smell-severity ss-critical">● CRÍTICO</div>
+        <div class="smell-name">🔤 Mysterious Name</div>
+        <div class="smell-desc">El nombre de una variable, función o clase no revela su intención. Obliga al lector a ejecutar el código mentalmente para entenderlo — la peor forma de gastar energía cognitiva.</div>
+        <div class="smell-before-after">
+          <div class="sba-panel">
+            <div class="sba-label sba-bad">❌ ANTES</div>
+            <div class="sba-code">calc(d, r)<br>int x = q * p<br>process(data)</div>
+          </div>
+          <div class="sba-panel">
+            <div class="sba-label sba-good">✅ DESPUÉS</div>
+            <div class="sba-code">calculateDiscount(days, rate)<br>int totalPrice = qty * price<br>validateAndSendEmail(user)</div>
+          </div>
+        </div>
+        <div class="smell-signal"><strong>Señal:</strong> Si necesitas un comentario para explicar qué hace una función, su nombre está mal. El código debería explicarse solo.</div>
+      </div>
+    </div>
+    <!-- Duplicated Code -->
+    <div class="smell-card">
+      <div class="smell-top st-critical"></div>
+      <div class="smell-body">
+        <div class="smell-severity ss-critical">● EL ENEMIGO Nº1</div>
+        <div class="smell-name">📋 Duplicated Code</div>
+        <div class="smell-desc">El mismo bloque de lógica aparece en dos o más lugares. Viola el principio DRY (Don't Repeat Yourself). Cuando hay que cambiar esa lógica, hay que hacerlo en todos los sitios — y siempre te olvidas uno.</div>
+        <div class="smell-before-after">
+          <div class="sba-panel">
+            <div class="sba-label sba-bad">❌ PROBLEMA</div>
+            <div class="sba-code">// en OrderService:<br>tax = price * 0.19<br><br>// en InvoiceService:<br>tax = price * 0.19</div>
+          </div>
+          <div class="sba-panel">
+            <div class="sba-label sba-good">✅ FIX</div>
+            <div class="sba-code">// TaxCalculator:<br>calculateTax(price) {<br>  return price * TAX_RATE<br>}</div>
+          </div>
+        </div>
+        <div class="smell-signal"><strong>Señal:</strong> Ctrl+F y encuentras el mismo bloque en más de un lugar. Técnica: Extract Method → extraer a un lugar canónico.</div>
+      </div>
+    </div>
+    <!-- Long Function / Large Class -->
+    <div class="smell-card">
+      <div class="smell-top st-high"></div>
+      <div class="smell-body">
+        <div class="smell-severity ss-high">● ALTO</div>
+        <div class="smell-name">📏 Long Function / Large Class</div>
+        <div class="smell-desc">Una función hace demasiadas cosas. Una clase tiene demasiadas responsabilidades. Síntoma de falta de cohesión — cada elemento debería tener una sola razón para cambiar (SRP).</div>
+        <div class="smell-before-after">
+          <div class="sba-panel">
+            <div class="sba-label sba-bad">❌ SEÑALES</div>
+            <div class="sba-code">// función de 80 líneas<br>// clase con 20 métodos<br>// comentarios-sección<br>// "... y luego también..."</div>
+          </div>
+          <div class="sba-panel">
+            <div class="sba-label sba-good">✅ GUÍA</div>
+            <div class="sba-code">// Función: ≤10-15 líneas<br>// Una función, un verbo<br>// Clase: ≤200 líneas<br>// Un sustantivo, una resp.</div>
+          </div>
+        </div>
+        <div class="smell-signal"><strong>Señal:</strong> Necesitas scroll para leer una función. Hay comentarios del tipo <span style="font-family:'DM Mono',monospace;color:#FDBA74;font-size:10px">// Paso 1: validar</span> — esos comentarios son nombres de métodos disfrazados.</div>
+      </div>
+    </div>
+    <!-- Primitive Obsession -->
+    <div class="smell-card">
+      <div class="smell-top st-medium"></div>
+      <div class="smell-body">
+        <div class="smell-severity ss-medium">● MEDIO</div>
+        <div class="smell-name">🔢 Primitive Obsession</div>
+        <div class="smell-desc">Usar tipos primitivos (<span style="font-family:'DM Mono',monospace;color:#FDE68A;font-size:10px">String</span>, <span style="font-family:'DM Mono',monospace;color:#FDE68A;font-size:10px">int</span>) para representar conceptos del dominio que tienen lógica, formato y validaciones propias. El remedio es el patrón Value Object de DDD.</div>
+        <div class="smell-before-after">
+          <div class="sba-panel">
+            <div class="sba-label sba-bad">❌ ANTES</div>
+            <div class="sba-code">String rut = "12.345.678-9"<br>String email = user.email<br>int age = 150 // válido?</div>
+          </div>
+          <div class="sba-panel">
+            <div class="sba-label sba-good">✅ DESPUÉS</div>
+            <div class="sba-code">Rut rut = new Rut("12345678-9")<br>Email email = new Email(raw)<br>Age age = Age.of(150) // lanza!</div>
+          </div>
+        </div>
+        <div class="smell-signal"><strong>Conexión DDD:</strong> Primitive Obsession se cura con Value Objects. La validación vive en el constructor — nunca llega un Email inválido al dominio.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4 — CATÁLOGO EXTENDIDO DE SMELLS -->
+  <div class="section-header">
+    <span class="section-num sn-blue">04</span>
+    <span class="section-title-text">Catálogo extendido — más smells que debes reconocer</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="smells-table">
+    <div class="st-header">
+      <div class="stc head">Code Smell</div>
+      <div class="stc head">Severidad</div>
+      <div class="stc head">Descripción</div>
+      <div class="stc head">Técnica de remedio</div>
+    </div>
+    <div class="st-row">
+      <div class="st-name"><span class="st-dot std-rose"></span><span class="st-sname">Long Parameter List</span></div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(244,63,94,0.12);color:#FDA4AF">Crítico</span></div>
+      <div class="st-val">Función con 5+ parámetros. Difícil de recordar, fácil de mezclar el orden. Señal de que falta cohesión o un objeto de parámetros.</div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Introduce Parameter Object</span></div>
+    </div>
+    <div class="st-row">
+      <div class="st-name"><span class="st-dot std-orange"></span><span class="st-sname">Feature Envy</span></div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(249,115,22,0.12);color:#FDBA74">Alto</span></div>
+      <div class="st-val">Un método de la clase A usa más datos de la clase B que los propios. El método está en el lugar equivocado — pertenece a B.</div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Move Method</span></div>
+    </div>
+    <div class="st-row">
+      <div class="st-name"><span class="st-dot std-orange"></span><span class="st-sname">Data Clumps</span></div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(249,115,22,0.12);color:#FDBA74">Alto</span></div>
+      <div class="st-val">El mismo grupo de parámetros aparece siempre junto (<span style="font-family:'DM Mono',monospace;font-size:10px;color:#FDBA74">street, city, zip</span>). Son un objeto disfrazado de variables sueltas.</div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Extract Class / Value Object</span></div>
+    </div>
+    <div class="st-row">
+      <div class="st-name"><span class="st-dot std-yellow"></span><span class="st-sname">Switch Statements</span></div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(234,179,8,0.12);color:#FDE68A">Medio</span></div>
+      <div class="st-val">Un <span style="font-family:'DM Mono',monospace;font-size:10px;color:#FDE68A">switch</span> o cadena de <span style="font-family:'DM Mono',monospace;font-size:10px;color:#FDE68A">if-else</span> que chequea el tipo de un objeto. Viola OCP — cada nuevo tipo requiere modificar el switch.</div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Replace with Polymorphism</span></div>
+    </div>
+    <div class="st-row">
+      <div class="st-name"><span class="st-dot std-yellow"></span><span class="st-sname">Dead Code</span></div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(234,179,8,0.12);color:#FDE68A">Medio</span></div>
+      <div class="st-val">Código comentado, variables nunca leídas, métodos nunca llamados, ramas <span style="font-family:'DM Mono',monospace;font-size:10px;color:#FDE68A">if (false)</span>. Genera ruido y confusión.</div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(244,63,94,0.12);color:#FDA4AF">Eliminar sin miedo</span></div>
+    </div>
+    <div class="st-row">
+      <div class="st-name"><span class="st-dot std-blue"></span><span class="st-sname">Comments as Explanation</span></div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Informativo</span></div>
+      <div class="st-val">Comentario que explica <em>qué</em> hace el código (no el <em>porqué</em>). Señal de que el código en sí debería ser más expresivo.</div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Extract Method con buen nombre</span></div>
+    </div>
+    <div class="st-row">
+      <div class="st-name"><span class="st-dot std-purple"></span><span class="st-sname">Divergent Change</span></div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(168,85,247,0.12);color:#D8B4FE">Diseño</span></div>
+      <div class="st-val">Una clase cambia por razones distintas (por el DB y por la API). Tiene más de una responsabilidad — violación directa de SRP.</div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Extract Class</span></div>
+    </div>
+    <div class="st-row">
+      <div class="st-name"><span class="st-dot std-teal"></span><span class="st-sname">Shotgun Surgery</span></div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(20,184,166,0.12);color:#5EEAD4">Diseño</span></div>
+      <div class="st-val">Un solo cambio lógico requiere tocar docenas de clases distintas. La responsabilidad está demasiado fragmentada — lo opuesto de Divergent Change.</div>
+      <div class="st-val"><span class="st-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Move Method / Inline Class</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-yellow" style="margin-top:10px">
+    <span class="callout-icon">📚</span>
+    <div>
+      <div class="callout-title ct-yellow">La fuente: Martin Fowler — Refactoring (2ª ed., 2018)</div>
+      <div class="callout-text">El catálogo completo de Fowler tiene más de 60 técnicas y decenas de smells documentados. Para el nivel senior, domina los smells más frecuentes y sus remedios directos. Lo que te hace senior no es memorizar el catálogo — es <strong>reconocer el olor y saber el camino hacia el diseño más limpio</strong>.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">REFACTORING · PARTE 1 DE 3 · CICLO Y CODE SMELLS</span>
+  <div class="footer-nav">
+    <span class="footer-count">4 smells principales · 8 smells extendidos</span>
+    <a class="footer-btn" href="parte2.html">Parte 2: Técnicas →</a>
+  </div>
+</div>
+</body>
+</html>

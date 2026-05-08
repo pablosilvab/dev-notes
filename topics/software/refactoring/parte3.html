@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(244,63,94,0.08) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(234,179,8,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #EAB308; color: #0A0E1A; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #F43F5E; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #F43F5E; background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-b { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+  .pill-c { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-d { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+  .pill-e { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-yellow { color: #EAB308; }
+  .sn-blue   { color: #3B82F6; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-green  { color: #22C55E; }
+  .sn-purple { color: #A855F7; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  /* QUADRANT */
+  .quadrant-wrap { display: grid; grid-template-columns: auto 1fr; gap: 0; }
+  .quadrant-y-label { writing-mode: vertical-rl; transform: rotate(180deg); font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; letter-spacing: 0.1em; text-align: center; padding: 0 10px; }
+  .quadrant-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
+  .quad-x-labels { display: grid; grid-template-columns: auto 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+  .quad-x-label { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; letter-spacing: 0.1em; text-align: center; }
+  .quad-card { border-radius: 12px; padding: 22px 24px; position: relative; }
+  .qc-reckless-deliberate   { background: rgba(244,63,94,0.07);   border: 1px solid rgba(244,63,94,0.25); }
+  .qc-prudent-deliberate    { background: rgba(249,115,22,0.07);  border: 1px solid rgba(249,115,22,0.25); }
+  .qc-reckless-inadvertent  { background: rgba(234,179,8,0.07);   border: 1px solid rgba(234,179,8,0.25); }
+  .qc-prudent-inadvertent   { background: rgba(34,197,94,0.07);   border: 1px solid rgba(34,197,94,0.25); }
+  .quad-badge { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 8px; display: inline-block; }
+  .qb-red    { color: #F43F5E; }
+  .qb-orange { color: #F97316; }
+  .qb-yellow { color: #EAB308; }
+  .qb-green  { color: #22C55E; }
+  .quad-title { font-size: 14px; font-weight: 700; color: #E2E8F0; margin-bottom: 8px; }
+  .quad-quote { font-size: 12px; font-style: italic; color: #64748B; margin-bottom: 10px; line-height: 1.5; border-left: 2px solid; padding-left: 10px; }
+  .qq-red    { border-color: #F43F5E; }
+  .qq-orange { border-color: #F97316; }
+  .qq-yellow { border-color: #EAB308; }
+  .qq-green  { border-color: #22C55E; }
+  .quad-desc { font-size: 11.5px; color: #8899B8; line-height: 1.6; }
+  .quad-action { display: inline-flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 10px; margin-top: 10px; padding: 3px 8px; border-radius: 3px; }
+  .qa-red    { color: #FDA4AF; background: rgba(244,63,94,0.1); }
+  .qa-orange { color: #FDBA74; background: rgba(249,115,22,0.1); }
+  .qa-yellow { color: #FDE68A; background: rgba(234,179,8,0.1); }
+  .qa-green  { color: #86EFAC; background: rgba(34,197,94,0.1); }
+
+  /* INFO CARDS */
+  .cards-grid { display: grid; gap: 10px; }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.c-yellow::before { background: #EAB308; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; margin-bottom: 10px; }
+  .icon-yellow { background: rgba(234,179,8,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .card-kicker { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-bottom: 4px; letter-spacing: 0.08em; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; margin-bottom: 8px; }
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; }
+  .card-desc strong { color: #94A3B8; }
+
+  /* CHECKLIST */
+  .checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .checklist-panel { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .checklist-head { padding: 14px 18px; border-bottom: 1px solid #1A2236; display: flex; align-items: center; gap: 10px; }
+  .chk-head-icon { font-size: 16px; }
+  .chk-head-title { font-size: 13px; font-weight: 600; }
+  .chk-head-do   { color: #86EFAC; }
+  .chk-head-dont { color: #FDA4AF; }
+  .checklist-items { padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; }
+  .chk-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; line-height: 1.5; color: #8899B8; }
+  .chk-icon { flex-shrink: 0; margin-top: 1px; font-size: 13px; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; margin-top: 12px; }
+  .callout-yellow { background: rgba(234,179,8,0.05);  border: 1px solid rgba(234,179,8,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05);  border: 1px solid rgba(244,63,94,0.2); }
+  .callout-green  { background: rgba(34,197,94,0.05);  border: 1px solid rgba(34,197,94,0.2); }
+  .callout-blue   { background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.2); }
+  .callout-purple { background: rgba(168,85,247,0.05); border: 1px solid rgba(168,85,247,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-rose   { color: #FDA4AF; }
+  .ct-green  { color: #86EFAC; }
+  .ct-blue   { color: #93C5FD; }
+  .ct-purple { color: #D8B4FE; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  /* INTERVIEW TIPS */
+  .tips-list { display: flex; flex-direction: column; gap: 10px; }
+  .tip-item { background: #0F1625; border: 1px solid #1E2A40; border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; }
+  .tip-num { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: #1E2A40; flex-shrink: 0; width: 32px; }
+  .tip-content { }
+  .tip-phrase { font-size: 13px; font-weight: 600; color: #E2E8F0; margin-bottom: 4px; font-style: italic; }
+  .tip-explain { font-size: 11.5px; color: #64748B; line-height: 1.55; }
+  .tip-explain strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #F43F5E; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; text-decoration: none; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 4px; }
+  .footer-btn-prev { color: #A5B4FC; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.25); }
+  .footer-btn-home { color: #FDE68A; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.25); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">REFACTORING · PARTE 3 DE 3</div>
+        <h1>Gestión de<br><span>Deuda Técnica</span></h1>
+        <p class="header-sub">Lo que separa a un programador de un Ingeniero de Software: reconocer, medir y pagar la deuda deliberadamente</p>
+      </div>
+    </div>
+    <div class="part-badge">REFACTORING · P3</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-b">📉 Cuadrante de Fowler</span>
+    <span class="pill pill-c">🧹 Boy Scout Rule</span>
+    <span class="pill pill-a">🛡 Red de seguridad</span>
+    <span class="pill pill-d">⚡ vs. Performance</span>
+    <span class="pill pill-e">📐 Refactoring to Patterns</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN 01 — CUADRANTE DE LA DEUDA TÉCNICA -->
+  <div class="section-header">
+    <span class="section-num sn-rose">01</span>
+    <span class="section-title-text">El cuadrante de la deuda técnica — Martin Fowler</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div style="margin-bottom:8px">
+    <div class="quad-x-labels">
+      <div style="width:180px"></div>
+      <div class="quad-x-label">DELIBERADA</div>
+      <div class="quad-x-label">INADVERTIDA</div>
+    </div>
+    <div class="quadrant-wrap">
+      <div class="quadrant-y-label">IMPRUDENTE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PRUDENTE</div>
+      <div class="quadrant-grid">
+
+        <!-- Prudente + Deliberada (top-left → orden visual: fila1-col1) -->
+        <div class="quad-card qc-prudent-deliberate">
+          <div class="quad-badge qb-orange">⚠ PRUDENTE + DELIBERADA</div>
+          <div class="quad-title">Deuda aceptable a corto plazo</div>
+          <div class="quad-quote qq-orange">"Debemos salir ya al mercado; después refactorizaremos."</div>
+          <div class="quad-desc">La decisión es consciente y documentada. El equipo conoce el coste. Es deuda legítima si existe un plan de pago real. <strong>El riesgo:</strong> el "después" raramente llega sin presión explícita.</div>
+          <div class="quad-action qa-orange">→ Documentar y planificar el pago</div>
+        </div>
+
+        <!-- Imprudente + Deliberada (top-right) -->
+        <div class="quad-card qc-reckless-deliberate">
+          <div class="quad-badge qb-red">🚨 IMPRUDENTE + DELIBERADA</div>
+          <div class="quad-title">La más peligrosa</div>
+          <div class="quad-quote qq-red">"No tenemos tiempo para tests ni para diseño."</div>
+          <div class="quad-desc">El equipo sabe que está haciendo mal y lo hace igual, sin plan de corrección. Genera deuda exponencial: el código futuro se construye sobre cimientos rotos.</div>
+          <div class="quad-action qa-red">→ No negociar: esto no es velocidad, es riesgo</div>
+        </div>
+
+        <!-- Prudente + Inadvertida (bottom-left) -->
+        <div class="quad-card qc-prudent-inadvertent">
+          <div class="quad-badge qb-green">✅ PRUDENTE + INADVERTIDA</div>
+          <div class="quad-title">La deuda inevitable del aprendizaje</div>
+          <div class="quad-quote qq-green">"Ahora que terminamos, vemos una mejor forma de haberlo hecho."</div>
+          <div class="quad-desc">El equipo es competente y reflexivo. Solo después de terminar aparece el mejor diseño. <strong>Es el resultado natural de la iteración.</strong> Aquí nace el refactoring como práctica continua.</div>
+          <div class="quad-action qa-green">→ Refactorizar en la próxima iteración</div>
+        </div>
+
+        <!-- Imprudente + Inadvertida (bottom-right) -->
+        <div class="quad-card qc-reckless-inadvertent">
+          <div class="quad-badge qb-yellow">⚡ IMPRUDENTE + INADVERTIDA</div>
+          <div class="quad-title">La brecha de conocimiento</div>
+          <div class="quad-quote qq-yellow">"¿Qué es un patrón de diseño? ¿SRP?"</div>
+          <div class="quad-desc">El equipo no sabe que está generando deuda. No es malicia — es falta de conocimiento. El remedio no es solo refactorizar: <strong>es invertir en formación y mentoring</strong>.</div>
+          <div class="quad-action qa-yellow">→ Formación + code review + pair programming</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-rose">
+    <span class="callout-icon">💡</span>
+    <div>
+      <div class="callout-title ct-rose">La metáfora financiera — Ward Cunningham</div>
+      <div class="callout-text">Cunningham acuñó el término "deuda técnica" en 1992. La analogía es precisa: <strong>puedes pedir prestado velocidad ahora tomando atajos, pero pagarás intereses</strong> en forma de tiempo extra para entender, modificar y testear ese código. Como toda deuda: a veces es racional, pero la tasa de interés crece con el tiempo.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 02 — ESTRATEGIA DE PAGO -->
+  <div class="section-header">
+    <span class="section-num sn-green">02</span>
+    <span class="section-title-text">Estrategia de refactoring progresivo — cómo pagar la deuda</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-green">
+      <div class="card-icon icon-green">🧹</div>
+      <div class="card-kicker">PRINCIPIO · R. MARTIN</div>
+      <div class="card-title">Boy Scout Rule</div>
+      <div class="card-desc">"Deja el código un poco mejor de como lo encontraste." No necesitas un sprint de refactoring. <strong>Cada vez que tocas un archivo, mejora algo pequeño:</strong> renombra una variable, extrae un método, elimina código muerto. El efecto acumulado es transformador.</div>
+    </div>
+    <div class="card c-yellow">
+      <div class="card-icon icon-yellow">🚫</div>
+      <div class="card-kicker">ANTI-PATRÓN</div>
+      <div class="card-title">Big Bang Refactoring</div>
+      <div class="card-desc">Intentar refactorizar todo el módulo de una vez. <strong>Es la causa número uno de refactorings fallidos.</strong> El código queda en un estado intermedio que no compila, los tests fallan en cascada y el equipo abandona. Siempre en pasos pequeños y verificables.</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-icon icon-blue">📅</div>
+      <div class="card-kicker">ESTRATEGIA</div>
+      <div class="card-title">Refactoring oportunista</div>
+      <div class="card-desc">Refactoriza <em>antes</em> de añadir una funcionalidad (preparar el terreno) o <em>después</em> de que funciona (limpiar lo que hiciste). <strong>Nunca en medio.</strong> El refactoring se paga con la siguiente tarea, no en un bloque aislado.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 03 — LA RED DE SEGURIDAD -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">03</span>
+    <span class="section-title-text">La red de seguridad — tests como prerequisito absoluto</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div style="background:#0F1625; border:1px solid #1E2A40; border-radius:12px; padding:28px 32px; display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start;">
+    <div>
+      <div style="font-family:'Space Mono',monospace; font-size:9px; color:#3B4C68; letter-spacing:0.1em; margin-bottom:12px;">AXIOMA DEL REFACTORING</div>
+      <div style="font-size:18px; font-weight:700; color:#E2E8F0; line-height:1.35; margin-bottom:14px;">No existe refactoring<br>sin tests en verde.</div>
+      <div style="font-size:13px; color:#64748B; line-height:1.65; margin-bottom:16px;">Si los tests no están en verde <em>antes de empezar</em>, lo que estás haciendo es <strong style="color:#94A3B8">cambiar código a ciegas</strong> — no refactorizar. La suite de tests es el contrato que garantiza que el comportamiento observable no cambió.</div>
+      <div style="font-family:'DM Mono',monospace; font-size:11px; color:#EAB308; background:rgba(234,179,8,0.06); border:1px solid rgba(234,179,8,0.2); border-radius:6px; padding:10px 14px; line-height:1.55;">⚡ Si no tienes tests: escríbelos primero. Characterization Tests → capturan el comportamiento actual, incluso si es incorrecto.</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="background:#080C17; border:1px solid #1A2236; border-radius:8px; padding:14px 16px;">
+        <div style="font-size:11px; font-weight:600; color:#86EFAC; margin-bottom:6px;">✅ Antes de refactorizar</div>
+        <div style="font-size:11.5px; color:#64748B; line-height:1.5;">Todos los tests en verde. Suite completa que cubre el comportamiento del código que vas a mover.</div>
+      </div>
+      <div style="background:#080C17; border:1px solid #1A2236; border-radius:8px; padding:14px 16px;">
+        <div style="font-size:11px; font-weight:600; color:#FDE68A; margin-bottom:6px;">🔄 Durante el refactoring</div>
+        <div style="font-size:11.5px; color:#64748B; line-height:1.5;">Ejecuta los tests después de cada paso. Si algo falla, revierte el último cambio — no sigas acumulando cambios rotos.</div>
+      </div>
+      <div style="background:#080C17; border:1px solid #1A2236; border-radius:8px; padding:14px 16px;">
+        <div style="font-size:11px; font-weight:600; color:#86EFAC; margin-bottom:6px;">✅ Después del refactoring</div>
+        <div style="font-size:11.5px; color:#64748B; line-height:1.5;">Todos los tests siguen en verde. El comportamiento externo es idéntico — solo el diseño interno cambió.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 04 — REFACTORING VS PERFORMANCE -->
+  <div class="section-header">
+    <span class="section-num sn-blue">04</span>
+    <span class="section-title-text">Refactoring vs. Performance — un falso dilema</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-rose">
+      <div class="card-icon icon-rose">🐢</div>
+      <div class="card-kicker">EL MITO</div>
+      <div class="card-title">"El refactoring hace el código más lento"</div>
+      <div class="card-desc">A veces el refactoring crea más objetos intermedios o llamadas a métodos adicionales. Esto puede introducir una micro-latencia. <strong>Esta preocupación es, en casi todos los casos, prematura.</strong></div>
+    </div>
+    <div class="card c-green">
+      <div class="card-icon icon-green">⚡</div>
+      <div class="card-kicker">LA REALIDAD SENIOR</div>
+      <div class="card-title">Legibilidad habilita la optimización real</div>
+      <div class="card-desc">Un código limpio y bien estructurado es <strong>más fácil de perfilar</strong> (profiling). Solo cuando mides y encuentras el cuello de botella real (con datos) optimizas ese punto específico — no antes. La optimización prematura es el origen de la mayoría de los bugs de rendimiento.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-yellow">
+    <span class="callout-icon">📏</span>
+    <div>
+      <div class="callout-title ct-yellow">Donald Knuth — la regla del 97%</div>
+      <div class="callout-text">"La optimización prematura es la raíz de todos los males. El 97% del tiempo, debemos olvidar las pequeñas eficiencias." Un senior <strong>no optimiza lo que no ha medido</strong>. El flujo correcto es: <strong>código claro → perfilar bajo carga real → identificar el cuello de botella → optimizar ese punto</strong>. En ese orden, nunca al revés.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 05 — REFACTORING TO PATTERNS -->
+  <div class="section-header">
+    <span class="section-num sn-purple">05</span>
+    <span class="section-title-text">Refactoring to Patterns — Joshua Kerievsky</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div style="background:#0F1625; border:1px solid #1E2A40; border-radius:12px; padding:24px 28px; margin-bottom:12px;">
+    <div style="font-family:'Space Mono',monospace; font-size:9px; color:#3B4C68; letter-spacing:0.1em; margin-bottom:10px;">CONCEPTO CLAVE · KERIEVSKY 2004</div>
+    <div style="font-size:15px; color:#E2E8F0; font-weight:600; margin-bottom:10px; line-height:1.4;">A veces el destino del refactoring no es solo código más limpio — es la emergencia natural de un patrón GoF completo.</div>
+    <div style="font-size:13px; color:#64748B; line-height:1.65;">Los patrones no se diseñan desde el principio: <strong style="color:#94A3B8">evolucionan</strong> a partir del código existente cuando la presión del cambio los hace necesarios. El catálogo de Fowler es el camino; los patrones GoF son algunos de los destinos.</div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-purple">
+      <div class="card-icon icon-purple">🔀</div>
+      <div class="card-kicker">TÉCNICA → PATRÓN</div>
+      <div class="card-title">Replace Conditional → Strategy</div>
+      <div class="card-desc">El <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDBA74">switch</code> sobre tipos evoluciona hacia una jerarquía de implementaciones de una interfaz. <strong>El patrón Strategy emerge del refactoring</strong>, no de un diseño top-down.</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-icon icon-teal">🧅</div>
+      <div class="card-kicker">TÉCNICA → PATRÓN</div>
+      <div class="card-title">Wrap method → Decorator</div>
+      <div class="card-desc">Envolver un método para añadir comportamiento antes/después — logging, auditoría, métricas — puede evolucionar al patrón <strong>Decorator</strong> cuando hay múltiples aspectos ortogonales.</div>
+    </div>
+    <div class="card c-yellow">
+      <div class="card-icon icon-yellow">🏭</div>
+      <div class="card-kicker">TÉCNICA → PATRÓN</div>
+      <div class="card-title">Extract Class → Factory</div>
+      <div class="card-desc">Cuando la creación de objetos se complica (múltiples ramas condicionales para instanciar), Extract Class sobre la lógica de creación puede revelar el patrón <strong>Factory Method</strong>.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 06 — CHECKLIST -->
+  <div class="section-header">
+    <span class="section-num sn-green">06</span>
+    <span class="section-title-text">Checklist — cuándo refactorizar y cuándo no</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="checklist-grid">
+    <div class="checklist-panel">
+      <div class="checklist-head">
+        <span class="chk-head-icon">✅</span>
+        <span class="chk-head-title chk-head-do">Refactoriza cuando...</span>
+      </div>
+      <div class="checklist-items">
+        <div class="chk-item"><span class="chk-icon">🟢</span><span>Vas a añadir una funcionalidad y el código actual la hace difícil de insertar.</span></div>
+        <div class="chk-item"><span class="chk-icon">🟢</span><span>Durante una code review identificas un smell claro y tienes los tests que lo respaldan.</span></div>
+        <div class="chk-item"><span class="chk-icon">🟢</span><span>Encuentras código duplicado al añadir la misma lógica por segunda vez.</span></div>
+        <div class="chk-item"><span class="chk-icon">🟢</span><span>Los tests tardan mucho en ejecutarse porque el código está muy acoplado.</span></div>
+        <div class="chk-item"><span class="chk-icon">🟢</span><span>Acabas de terminar y ves claramente un diseño mejor — iteración normal, deuda inadvertida prudente.</span></div>
+        <div class="chk-item"><span class="chk-icon">🟢</span><span>Aplicas Boy Scout Rule: mejoras algo pequeño cada vez que tocas el archivo.</span></div>
+      </div>
+    </div>
+    <div class="checklist-panel">
+      <div class="checklist-head">
+        <span class="chk-head-icon">🚫</span>
+        <span class="chk-head-title chk-head-dont">No refactorices cuando...</span>
+      </div>
+      <div class="checklist-items">
+        <div class="chk-item"><span class="chk-icon">🔴</span><span>Los tests no están en verde. Primero haz pasar los tests, luego refactoriza.</span></div>
+        <div class="chk-item"><span class="chk-icon">🔴</span><span>Estás añadiendo funcionalidad simultáneamente. Viola la regla de oro de Fowler.</span></div>
+        <div class="chk-item"><span class="chk-icon">🔴</span><span>El código está cerca de un deadline crítico sin plan de testing. El riesgo supera el beneficio.</span></div>
+        <div class="chk-item"><span class="chk-icon">🔴</span><span>Planeas reescribir ese módulo completo en las próximas semanas. Refactorizar código condenado es desperdicio.</span></div>
+        <div class="chk-item"><span class="chk-icon">🔴</span><span>Es un Big Bang Refactoring de todo el módulo sin pasos verificables intermedios.</span></div>
+        <div class="chk-item"><span class="chk-icon">🔴</span><span>Solo porque "no te gusta estéticamente" sin smell claro ni problema de mantenibilidad demostrable.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 07 — TIPS DE ENTREVISTA -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">07</span>
+    <span class="section-title-text">Tips de entrevista senior — frases que marcan la diferencia</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tips-list">
+    <div class="tip-item">
+      <div class="tip-num">01</div>
+      <div class="tip-content">
+        <div class="tip-phrase">"Refactorizo cuando el código me dificulta añadir la siguiente funcionalidad — no por estética."</div>
+        <div class="tip-explain">Demuestra pragmatismo. El refactoring al servicio del producto, no de la perfección abstracta. <strong>Los entrevistadores buscan esto en perfiles senior.</strong></div>
+      </div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-num">02</div>
+      <div class="tip-content">
+        <div class="tip-phrase">"Nunca refactorizo sin tener los tests en verde primero. Si no existen, los escribo como Characterization Tests."</div>
+        <div class="tip-explain">Demuestra disciplina de ingeniería y conocimiento del concepto de Characterization Tests (capturar el comportamiento actual antes de tocarlo).</div>
+      </div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-num">03</div>
+      <div class="tip-content">
+        <div class="tip-phrase">"Aplico la regla del Boy Scout: cada vez que toco un archivo, lo dejo un poco mejor. Refactoring continuo, no sprints de deuda."</div>
+        <div class="tip-explain">Demuestra que entiendes la deuda técnica como algo que se gestiona continuamente, no con grandes intervenciones traumáticas.</div>
+      </div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-num">04</div>
+      <div class="tip-content">
+        <div class="tip-phrase">"Cuando veo un switch sobre tipos que crece, no añado otro case — refactorizo a Strategy. El patrón emerge del código, no del diseño inicial."</div>
+        <div class="tip-explain">Conecta Refactoring to Patterns (Kerievsky), OCP (SOLID) y Strategy (GoF) en una sola respuesta. <strong>Esto diferencia a un senior de un mid.</strong></div>
+      </div>
+    </div>
+    <div class="tip-item">
+      <div class="tip-num">05</div>
+      <div class="tip-content">
+        <div class="tip-phrase">"La deuda técnica más peligrosa es la imprudente-deliberada. Sé identificarla y defenderme de ella con argumentos de coste, no de elegancia."</div>
+        <div class="tip-explain">Demuestra que conoces el Cuadrante de Fowler y que puedes hablar de deuda técnica en términos de negocio — velocidad, riesgo, coste — no solo de código limpio.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-green" style="margin-top:16px">
+    <span class="callout-icon">🗺</span>
+    <div>
+      <div class="callout-title ct-green">Mapa de las 3 partes de Refactoring</div>
+      <div class="callout-text"><strong>Parte 1 — El ciclo y los Code Smells:</strong> La regla de oro, Red-Green-Refactor, y los disparadores (Mysterious Name, Duplicated Code, Long Function, Primitive Obsession).<br><strong>Parte 2 — El Catálogo de Técnicas:</strong> 7 maniobras en 3 grupos: Componer (Extract, Inline, Replace Temp), Mover (Move Method, Extract Class), Simplificar condicionales (Decompose, Replace with Polymorphism).<br><strong>Parte 3 — Deuda Técnica:</strong> El Cuadrante de Fowler, Boy Scout Rule, la red de seguridad, Refactoring vs Performance y Refactoring to Patterns (Kerievsky).</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">REFACTORING · PARTE 3 DE 3 · DEUDA TÉCNICA</span>
+  <div class="footer-nav">
+    <span class="footer-count">5 TIPS · CUADRANTE FOWLER</span>
+    <a class="footer-btn footer-btn-prev" href="parte2.html">← Parte 2: Técnicas</a>
+    <a class="footer-btn footer-btn-home" href="../../../index.html">↩ dev-notes</a>
+  </div>
+</div>
+</body>
+</html>

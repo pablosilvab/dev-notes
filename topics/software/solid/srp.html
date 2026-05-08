@@ -68,28 +68,28 @@
   <p class="solid-compare-title" style="margin-top:0">Servicio de pedidos que también envía el correo y escribe métricas: tres razones para cambiar (dominio, canal de notificación, observabilidad).</p>
   <div class="dn-java-block">
     <div class="dn-java-block__cap">ROMPE SRP — TODO EN UNA CLASE</div>
-    <pre><code>public class OrderService {
+    <pre><span class="c-keyword">public class</span> <span class="c-type">OrderService</span> {
 
-    private final OrderRepository orders;
+    <span class="c-keyword">private final</span> <span class="c-type">OrderRepository</span> orders;
 
-    public OrderService(OrderRepository orders) {
-        this.orders = orders;
+    <span class="c-keyword">public</span> <span class="c-type">OrderService</span>(<span class="c-type">OrderRepository</span> orders) {
+        <span class="c-keyword">this</span>.orders = orders;
     }
 
-    public void placeOrder(OrderId id, Money total) {
-        var order = new Order(id, total, Instant.now());
-        orders.save(order);                    // persistencia
+    <span class="c-keyword">public void</span> <span class="c-method">placeOrder</span>(<span class="c-type">OrderId</span> id, <span class="c-type">Money</span> total) {
+        <span class="c-keyword">var</span> order = <span class="c-keyword">new</span> <span class="c-type">Order</span>(id, total, <span class="c-type">Instant</span>.<span class="c-method">now</span>());
+        orders.<span class="c-method">save</span>(order);                    <span class="c-comment">// persistencia</span>
 
-        SmtpEmailClient.sendMime(             // infraestructura de correo (detalle)
-            order.customerEmail(),
-            buildOrderConfirmationMime(order));
+        <span class="c-type">SmtpEmailClient</span>.<span class="c-method">sendMime</span>(             <span class="c-comment">// infraestructura de correo (detalle)</span>
+            order.<span class="c-method">customerEmail</span>(),
+            <span class="c-method">buildOrderConfirmationMime</span>(order));
 
-        Files.writeString(                   // otro eje (formato/ruta de logs)
-            Path.of("/var/log/orders.log"),
-            order.id() + "," + total + "\n",
-            StandardOpenOption.APPEND);
+        <span class="c-type">Files</span>.<span class="c-method">writeString</span>(                   <span class="c-comment">// otro eje (formato/ruta de logs)</span>
+            <span class="c-type">Path</span>.<span class="c-method">of</span>(<span class="c-string">"/var/log/orders.log"</span>),
+            order.<span class="c-method">id</span>() + <span class="c-string">","</span> + total + <span class="c-string">"\n"</span>,
+            <span class="c-type">StandardOpenOption</span>.APPEND);
     }
-}</code></pre>
+}</pre>
   </div>
 
   <div class="section-header">
@@ -100,27 +100,27 @@
   <p class="solid-compare-title" style="margin-top:0">El caso de uso orquesta; persistencia, notificación y auditoría viven detrás de abstracciones pequeñas (cada una evoluciona por su cuenta).</p>
   <div class="dn-java-block">
     <div class="dn-java-block__cap">RESPETA SRP — ROLES SEPARADOS</div>
-    <pre><code>public final class PlaceOrder {
+    <pre><span class="c-keyword">public final class</span> <span class="c-type">PlaceOrder</span> {
 
-    private final OrderRepository orders;
-    private final OrderNotifier notifier;
-    private final OrderAudit audit;
+    <span class="c-keyword">private final</span> <span class="c-type">OrderRepository</span> orders;
+    <span class="c-keyword">private final</span> <span class="c-type">OrderNotifier</span> notifier;
+    <span class="c-keyword">private final</span> <span class="c-type">OrderAudit</span> audit;
 
-    public PlaceOrder(OrderRepository orders,
-                      OrderNotifier notifier,
-                      OrderAudit audit) {
-        this.orders = orders;
-        this.notifier = notifier;
-        this.audit = audit;
+    <span class="c-keyword">public</span> <span class="c-type">PlaceOrder</span>(<span class="c-type">OrderRepository</span> orders,
+                      <span class="c-type">OrderNotifier</span> notifier,
+                      <span class="c-type">OrderAudit</span> audit) {
+        <span class="c-keyword">this</span>.orders = orders;
+        <span class="c-keyword">this</span>.notifier = notifier;
+        <span class="c-keyword">this</span>.audit = audit;
     }
 
-    public void execute(OrderId id, Money total) {
-        var order = new Order(id, total, Instant.now());
-        orders.save(order);
-        notifier.orderConfirmed(order);
-        audit.recordPlaced(order);
+    <span class="c-keyword">public void</span> <span class="c-method">execute</span>(<span class="c-type">OrderId</span> id, <span class="c-type">Money</span> total) {
+        <span class="c-keyword">var</span> order = <span class="c-keyword">new</span> <span class="c-type">Order</span>(id, total, <span class="c-type">Instant</span>.<span class="c-method">now</span>());
+        orders.<span class="c-method">save</span>(order);
+        notifier.<span class="c-method">orderConfirmed</span>(order);
+        audit.<span class="c-method">recordPlaced</span>(order);
     }
-}</code></pre>
+}</pre>
   </div>
   <div class="solid-prose mt-10">
     <p><code>OrderNotifier</code> puede ser correo, SMS o webhook sin tocar <code>PlaceOrder</code>. El log estructurado puede pasar a OpenTelemetry cambiando solo <code>OrderAudit</code>.</p>

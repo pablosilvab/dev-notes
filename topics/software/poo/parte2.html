@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  /* HEADER */
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(20,184,166,0.08) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #14B8A6; color: #0A0E1A; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #5EEAD4; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #14B8A6; background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
+  .pill-b { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-c { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-d { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+  .pill-e { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+
+  /* BODY */
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-teal   { color: #14B8A6; }
+  .sn-yellow { color: #EAB308; }
+  .sn-blue   { color: #3B82F6; }
+  .sn-green  { color: #22C55E; }
+  .sn-rose   { color: #F43F5E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+  .section-kicker { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; letter-spacing: 0.1em; white-space: nowrap; }
+
+  /* CARDS */
+  .cards-grid { display: grid; gap: 12px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-yellow::before { background: #EAB308; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-purple::before { background: #A855F7; }
+  .card-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+  .card-kicker { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-bottom: 5px; letter-spacing: 0.1em; }
+  .card-title { font-size: 14px; font-weight: 700; color: #E2E8F0; margin-bottom: 8px; line-height: 1.2; }
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.65; }
+  .card-desc strong { color: #94A3B8; }
+
+  /* COMPARISON BLOCK — full-width antes/después + análisis */
+  .comparison { background: #0F1625; border: 1px solid #1E2A40; border-radius: 14px; overflow: hidden; margin-bottom: 14px; }
+  .comp-top { height: 3px; }
+  .ct-teal   { background: linear-gradient(90deg, #0F766E, #5EEAD4); }
+  .ct-yellow { background: linear-gradient(90deg, #A16207, #FDE68A); }
+  .ct-blue   { background: linear-gradient(90deg, #1D4ED8, #60A5FA); }
+  .ct-green  { background: linear-gradient(90deg, #15803D, #4ADE80); }
+  .comp-body { padding: 22px 26px; }
+  .comp-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; gap: 20px; }
+  .comp-info { flex: 1; }
+  .comp-num { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .comp-name { font-size: 17px; font-weight: 700; color: #E2E8F0; margin-bottom: 8px; }
+  .comp-def { font-size: 12.5px; color: #8899B8; line-height: 1.65; max-width: 520px; }
+  .comp-def strong { color: #94A3B8; }
+  .comp-tag { display: inline-flex; font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 4px; margin-top: 8px; margin-right: 4px; }
+  .tag-teal   { color: #5EEAD4; background: rgba(20,184,166,0.08); border: 1px solid rgba(20,184,166,0.2); }
+  .tag-yellow { color: #FDE68A; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); }
+  .tag-blue   { color: #93C5FD; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); }
+  .tag-green  { color: #86EFAC; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+  .code-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; }
+  .code-label-bad  { font-family: 'Space Mono', monospace; font-size: 9px; color: #FDA4AF; }
+  .code-label-good { font-family: 'Space Mono', monospace; font-size: 9px; color: #86EFAC; }
+  pre { padding: 12px 16px; font-family: 'DM Mono', monospace; font-size: 10.5px; line-height: 1.65; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-num     { color: #FB923C; }
+  .comp-note { margin-top: 10px; background: #080C17; border: 1px solid #1A2236; border-radius: 8px; padding: 10px 14px; font-size: 11.5px; color: #64748B; line-height: 1.55; }
+  .comp-note strong { color: #94A3B8; }
+
+  /* METRICS TABLE */
+  .metrics { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .met-header { display: grid; grid-template-columns: 1.3fr 1fr 1.5fr 1.2fr; background: #080C17; border-bottom: 1px solid #1E2A40; }
+  .metc { padding: 10px 16px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; border-right: 1px solid #1A2236; }
+  .metc:last-child { border-right: none; }
+  .met-row { display: grid; grid-template-columns: 1.3fr 1fr 1.5fr 1.2fr; border-bottom: 1px solid #1A2236; }
+  .met-row:last-child { border-bottom: none; }
+  .met-row:hover { background: rgba(255,255,255,0.012); }
+  .met-name { padding: 12px 16px; display: flex; align-items: center; gap: 8px; border-right: 1px solid #1A2236; }
+  .met-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .met-sname { font-size: 13px; font-weight: 600; color: #E2E8F0; }
+  .met-val { padding: 12px 16px; font-size: 12px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.45; }
+  .met-val:last-child { border-right: none; }
+  .met-badge { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; margin-top: 12px; }
+  .callout-teal   { background: rgba(20,184,166,0.05);  border: 1px solid rgba(20,184,166,0.2); }
+  .callout-yellow { background: rgba(234,179,8,0.05);   border: 1px solid rgba(234,179,8,0.2); }
+  .callout-blue   { background: rgba(59,130,246,0.05);  border: 1px solid rgba(59,130,246,0.2); }
+  .callout-green  { background: rgba(34,197,94,0.05);   border: 1px solid rgba(34,197,94,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-teal   { color: #5EEAD4; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-blue   { color: #93C5FD; }
+  .ct-green  { color: #86EFAC; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #14B8A6; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; text-decoration: none; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 4px; }
+  .footer-btn-prev { color: #A5B4FC; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.25); }
+  .footer-btn-home { color: #FDE68A; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.25); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">POO · PARTE 2 DE 2</div>
+        <h1>Composición, Cohesión<br><span>y Acoplamiento</span></h1>
+        <p class="header-sub">Cómo ensamblar objetos bien — las decisiones que más impactan en mantenibilidad</p>
+      </div>
+    </div>
+    <div class="part-badge">POO · P2</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🧩 Composición vs Herencia</span>
+    <span class="pill pill-b">🔗 Cohesión</span>
+    <span class="pill pill-c">🔓 Acoplamiento</span>
+    <span class="pill pill-d">🗣 Tell, Don't Ask</span>
+    <span class="pill pill-e">🚶 Law of Demeter</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN 01 — COMPOSICIÓN VS HERENCIA -->
+  <div class="section-header">
+    <span class="section-num sn-teal">01</span>
+    <span class="section-title-text">Composición vs Herencia — la decisión de diseño más importante</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">FAVOR COMPOSITION OVER INHERITANCE · GoF</span>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-top ct-teal"></div>
+    <div class="comp-body">
+      <div class="comp-header">
+        <div class="comp-info">
+          <div class="comp-num">CONCEPTO 01</div>
+          <div class="comp-name">🧩 Composición sobre Herencia</div>
+          <div class="comp-def">Los GoF lo enunciaron en 1994: <strong>"Prefer object composition over class inheritance"</strong>. La herencia crea acoplamiento rígido en tiempo de compilación. La composición crea flexibilidad en tiempo de ejecución — puedes cambiar el comportamiento intercambiando la parte compuesta sin tocar la clase contenedora.</div>
+          <span class="comp-tag tag-teal">HAS-A en lugar de IS-A</span>
+          <span class="comp-tag tag-teal">inyección de dependencias</span>
+          <span class="comp-tag tag-teal">Strategy pattern</span>
+        </div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">herencia para reutilizar — acoplamiento rígido</span><span class="code-label-bad">❌ HERENCIA INAPROPIADA</span></div>
+          <pre><span class="c-comment">// OrderService hereda logging "gratis"</span>
+<span class="c-keyword">class</span> <span class="c-type">OrderService</span> <span class="c-keyword">extends</span> <span class="c-type">BaseLoggingService</span> {
+  <span class="c-keyword">void</span> <span class="c-method">placeOrder</span>(<span class="c-type">Order</span> order) {
+    <span class="c-method">log</span>(<span class="c-string">"Placing: "</span> + order.getId()); <span class="c-comment">// heredado</span>
+    <span class="c-comment">/* lógica de negocio */</span>
+  }
+}
+<span class="c-comment">// OrderService NO ES-UN BaseLoggingService</span>
+<span class="c-comment">// Acoplado a la jerarquía para siempre</span>
+<span class="c-comment">// Cambiar el logger → modificar herencia</span>
+<span class="c-comment">// No puedes tener dos loggers distintos</span></pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">composición — flexible e intercambiable</span><span class="code-label-good">✅ COMPOSICIÓN</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">OrderService</span> {  <span class="c-comment">// no extiende nada</span>
+  <span class="c-keyword">private final</span> <span class="c-type">Logger</span> logger;      <span class="c-comment">// TIENE-UN</span>
+  <span class="c-keyword">private final</span> <span class="c-type">OrderRepository</span> repo;
+
+  <span class="c-type">OrderService</span>(<span class="c-type">Logger</span> logger,
+               <span class="c-type">OrderRepository</span> repo) {
+    <span class="c-keyword">this</span>.logger = logger;
+    <span class="c-keyword">this</span>.repo = repo;
+  }
+
+  <span class="c-keyword">void</span> <span class="c-method">placeOrder</span>(<span class="c-type">Order</span> order) {
+    logger.<span class="c-method">info</span>(<span class="c-string">"Placing: "</span> + order.getId());
+    <span class="c-comment">/* lógica de negocio */</span>
+  }
+  <span class="c-comment">// Logger es intercambiable en tests y prod</span>
+}</pre>
+        </div>
+      </div>
+      <div class="comp-note"><strong>Regla práctica:</strong> Si puedes decir "A ES-UN B" con convicción semántica → herencia. Si dices "A USA-UN B" o "A TIENE-UN B" → composición. En caso de duda, siempre composición.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 02 — COHESIÓN -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">02</span>
+    <span class="section-title-text">Cohesión — qué pertenece junto</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">LCOM · SINGLE RESPONSIBILITY · RAZÓN DE CAMBIO</span>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-top ct-yellow"></div>
+    <div class="comp-body">
+      <div class="comp-header">
+        <div class="comp-info">
+          <div class="comp-num">CONCEPTO 02</div>
+          <div class="comp-name">🔗 Cohesión</div>
+          <div class="comp-def">Medida de cuánto los elementos de una clase (campos + métodos) están relacionados entre sí. <strong>Alta cohesión = una clase, una responsabilidad clara.</strong> La prueba de Fowler: si al describir la clase necesitas la palabra "y", tiene baja cohesión. SRP es la formalización de cohesión en SOLID.</div>
+          <span class="comp-tag tag-yellow">alta cohesión</span>
+          <span class="comp-tag tag-yellow">una razón de cambio</span>
+          <span class="comp-tag tag-yellow">SRP</span>
+        </div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">baja cohesión — clase que hace de todo</span><span class="code-label-bad">❌ SRP ROTO</span></div>
+          <pre><span class="c-comment">// UserManager hace demasiado</span>
+<span class="c-keyword">class</span> <span class="c-type">UserManager</span> {
+  <span class="c-keyword">void</span> <span class="c-method">createUser</span>(<span class="c-type">User</span> u) { <span class="c-comment">/* DB */</span> }
+  <span class="c-keyword">void</span> <span class="c-method">sendWelcomeEmail</span>(<span class="c-type">User</span> u) { <span class="c-comment">/* SMTP */</span> }
+  <span class="c-keyword">void</span> <span class="c-method">generatePDFReport</span>() { <span class="c-comment">/* PDF */</span> }
+  <span class="c-keyword">void</span> <span class="c-method">connectToDatabase</span>() { <span class="c-comment">/* JDBC */</span> }
+  <span class="c-keyword">void</span> <span class="c-method">validateTaxId</span>(<span class="c-type">String</span> rut) { <span class="c-comment">/* regex */</span> }
+}
+<span class="c-comment">// Cambia el PDF → toca UserManager</span>
+<span class="c-comment">// Cambia el SMTP → toca UserManager</span>
+<span class="c-comment">// 5 razones de cambio → baja cohesión</span></pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">alta cohesión — cada clase, una razón</span><span class="code-label-good">✅ SRP CORRECTO</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">UserRepository</span> {
+  <span class="c-keyword">void</span> <span class="c-method">save</span>(<span class="c-type">User</span> u) { <span class="c-comment">/* solo DB */</span> }
+}
+<span class="c-keyword">class</span> <span class="c-type">WelcomeEmailSender</span> {
+  <span class="c-keyword">void</span> <span class="c-method">send</span>(<span class="c-type">User</span> u) { <span class="c-comment">/* solo SMTP */</span> }
+}
+<span class="c-keyword">class</span> <span class="c-type">UserReportGenerator</span> {
+  <span class="c-keyword">void</span> <span class="c-method">generate</span>() { <span class="c-comment">/* solo PDF */</span> }
+}
+<span class="c-comment">// Cada clase cambia por una sola razón</span>
+<span class="c-comment">// Fácil de testear de forma aislada</span>
+<span class="c-comment">// Fácil de reutilizar en otros contextos</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 03 — ACOPLAMIENTO -->
+  <div class="section-header">
+    <span class="section-num sn-blue">03</span>
+    <span class="section-title-text">Acoplamiento — qué depende de qué</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">TIGHT vs LOOSE COUPLING · DIP · INYECCIÓN DE DEPENDENCIAS</span>
+  </div>
+
+  <div class="comparison">
+    <div class="comp-top ct-blue"></div>
+    <div class="comp-body">
+      <div class="comp-header">
+        <div class="comp-info">
+          <div class="comp-num">CONCEPTO 03</div>
+          <div class="comp-name">🔓 Acoplamiento</div>
+          <div class="comp-def">Grado en que una clase depende de los detalles internos de otras. <strong>Alto acoplamiento = un cambio en A rompe B.</strong> El objetivo no es cero acoplamiento (imposible) sino acoplamiento a abstracciones estables, no a implementaciones volátiles. DIP es la formalización de esto.</div>
+          <span class="comp-tag tag-blue">depender de interfaces</span>
+          <span class="comp-tag tag-blue">inyección de dependencias</span>
+          <span class="comp-tag tag-blue">DIP</span>
+        </div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">acoplamiento fuerte — depende del concreto</span><span class="code-label-bad">❌ DIP ROTO</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">OrderService</span> {
+  <span class="c-comment">// instancia directa = acoplamiento máximo</span>
+  <span class="c-keyword">private</span> <span class="c-type">MySQLOrderRepository</span> repo =
+    <span class="c-keyword">new</span> <span class="c-type">MySQLOrderRepository</span>();
+
+  <span class="c-keyword">void</span> <span class="c-method">place</span>(<span class="c-type">Order</span> o) { repo.<span class="c-method">save</span>(o); }
+}
+<span class="c-comment">// Cambiar a PostgreSQL → modificar aquí</span>
+<span class="c-comment">// Imposible de testear con doble de prueba</span>
+<span class="c-comment">// Viola DIP: depende de un detalle volátil</span></pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">acoplamiento débil — depende de la abstracción</span><span class="code-label-good">✅ DIP CORRECTO</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">OrderService</span> {
+  <span class="c-keyword">private final</span> <span class="c-type">OrderRepository</span> repo; <span class="c-comment">// interfaz</span>
+
+  <span class="c-comment">// dependencia inyectada desde fuera</span>
+  <span class="c-type">OrderService</span>(<span class="c-type">OrderRepository</span> repo) {
+    <span class="c-keyword">this</span>.repo = repo;
+  }
+
+  <span class="c-keyword">void</span> <span class="c-method">place</span>(<span class="c-type">Order</span> o) { repo.<span class="c-method">save</span>(o); }
+}
+<span class="c-comment">// MySQL, PostgreSQL, InMemory → mismo código</span>
+<span class="c-comment">// Tests: inyectar FakeOrderRepository</span></pre>
+        </div>
+      </div>
+      <div class="comp-note"><strong>Alta cohesión + bajo acoplamiento</strong> es el objetivo de diseño OO. Son las dos caras de la misma moneda: una clase cohesionada tiene pocos motivos para depender de muchas cosas; una clase poco acoplada es fácil de mantener cohesionada.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 04 — TELL DON'T ASK + LAW OF DEMETER -->
+  <div class="section-header">
+    <span class="section-num sn-green">04</span>
+    <span class="section-title-text">Tell, Don't Ask y Law of Demeter</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">PRINCIPIOS PRÁCTICOS DE DISEÑO OO</span>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="comparison">
+      <div class="comp-top ct-green"></div>
+      <div class="comp-body">
+        <div class="comp-num">PRINCIPIO 01</div>
+        <div class="comp-name" style="font-size:16px; margin-bottom:8px">🗣 Tell, Don't Ask</div>
+        <div class="comp-def" style="max-width:none; margin-bottom:14px"><strong>Dile a los objetos qué hacer, no les preguntes su estado para decidir tú.</strong> Si preguntas el estado de un objeto para tomar una decisión en su nombre, estás violando el encapsulamiento: la lógica que pertenece al objeto se está escapando al llamador.</div>
+        <div class="code-pair">
+          <div class="code-panel">
+            <div class="code-header"><span class="code-title">Ask — decisión fuera del objeto</span><span class="code-label-bad">❌</span></div>
+            <pre><span class="c-comment">// Le pregunto el estado y decido yo</span>
+<span class="c-keyword">if</span> (account.<span class="c-method">getBalance</span>() > amount) {
+  account.<span class="c-method">setBalance</span>(
+    account.<span class="c-method">getBalance</span>() - amount);
+}
+<span class="c-comment">// Lógica de negocio fuera del objeto</span></pre>
+          </div>
+          <div class="code-panel">
+            <div class="code-header"><span class="code-title">Tell — el objeto decide</span><span class="code-label-good">✅</span></div>
+            <pre><span class="c-comment">// Le digo qué hacer, él decide cómo</span>
+account.<span class="c-method">withdraw</span>(amount);
+
+<span class="c-comment">// BankAccount.withdraw() contiene</span>
+<span class="c-comment">// la regla de negocio — donde pertenece</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="comparison">
+      <div class="comp-top ct-green"></div>
+      <div class="comp-body">
+        <div class="comp-num">PRINCIPIO 02</div>
+        <div class="comp-name" style="font-size:16px; margin-bottom:8px">🚶 Law of Demeter</div>
+        <div class="comp-def" style="max-width:none; margin-bottom:14px"><strong>"No hables con extraños."</strong> Un método solo debe llamar a métodos de: <em>sí mismo</em>, sus parámetros directos, objetos que creó, sus campos directos. Las cadenas de llamadas (<em>train wreck</em>) acoplan al llamador con toda la jerarquía interna.</div>
+        <div class="code-pair">
+          <div class="code-panel">
+            <div class="code-header"><span class="code-title">train wreck — viola Demeter</span><span class="code-label-bad">❌</span></div>
+            <pre><span class="c-comment">// Conoce Order, Customer, Address, City</span>
+<span class="c-type">double</span> tax = order
+  .<span class="c-method">getCustomer</span>()
+  .<span class="c-method">getAddress</span>()
+  .<span class="c-method">getCity</span>()
+  .<span class="c-method">getTaxRate</span>();
+<span class="c-comment">// Cambiar Address → rompe aquí</span></pre>
+          </div>
+          <div class="code-panel">
+            <div class="code-header"><span class="code-title">delegación — solo habla con vecinos</span><span class="code-label-good">✅</span></div>
+            <pre><span class="c-comment">// Order sabe cómo obtener su tasa</span>
+<span class="c-type">double</span> tax = order.<span class="c-method">getTaxRate</span>();
+
+<span class="c-comment">// Cambios internos en Address</span>
+<span class="c-comment">// no afectan a este código</span>
+<span class="c-comment">// Menos acoplamiento → más mantenible</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 05 — MÉTRICAS DE DISEÑO -->
+  <div class="section-header">
+    <span class="section-num sn-rose">05</span>
+    <span class="section-title-text">Métricas de diseño — cómo medir la calidad OO</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="metrics">
+    <div class="met-header">
+      <div class="metc">Métrica</div>
+      <div class="metc">Mide</div>
+      <div class="metc">Señal de problema</div>
+      <div class="metc">Remedio</div>
+    </div>
+    <div class="met-row">
+      <div class="met-name"><span class="met-dot" style="background:#14B8A6"></span><span class="met-sname">LCOM</span></div>
+      <div class="met-val">Falta de cohesión en métodos</div>
+      <div class="met-val">Clase grande donde los métodos no comparten campos</div>
+      <div class="met-val"><span class="met-badge" style="background:rgba(20,184,166,0.12);color:#5EEAD4">Extract Class</span></div>
+    </div>
+    <div class="met-row">
+      <div class="met-name"><span class="met-dot" style="background:#EAB308"></span><span class="met-sname">CBO</span></div>
+      <div class="met-val">Acoplamiento entre objetos</div>
+      <div class="met-val">Clase depende de demasiadas otras clases concretas</div>
+      <div class="met-val"><span class="met-badge" style="background:rgba(234,179,8,0.12);color:#FDE68A">DIP + interfaces</span></div>
+    </div>
+    <div class="met-row">
+      <div class="met-name"><span class="met-dot" style="background:#3B82F6"></span><span class="met-sname">DIT</span></div>
+      <div class="met-val">Profundidad del árbol de herencia</div>
+      <div class="met-val">Jerarquía de más de 3-4 niveles</div>
+      <div class="met-val"><span class="met-badge" style="background:rgba(59,130,246,0.12);color:#93C5FD">Composición</span></div>
+    </div>
+    <div class="met-row">
+      <div class="met-name"><span class="met-dot" style="background:#22C55E"></span><span class="met-sname">RFC</span></div>
+      <div class="met-val">Respuesta de la clase (métodos alcanzables)</div>
+      <div class="met-val">Clase con demasiadas responsabilidades externas</div>
+      <div class="met-val"><span class="met-badge" style="background:rgba(34,197,94,0.12);color:#86EFAC">SRP</span></div>
+    </div>
+    <div class="met-row">
+      <div class="met-name"><span class="met-dot" style="background:#A855F7"></span><span class="met-sname">WMC</span></div>
+      <div class="met-val">Complejidad ciclomática total</div>
+      <div class="met-val">Demasiados métodos o métodos muy complejos</div>
+      <div class="met-val"><span class="met-badge" style="background:rgba(168,85,247,0.12);color:#D8B4FE">Extract Method</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-teal" style="margin-top:0">
+    <span class="callout-icon">🗺</span>
+    <div>
+      <div class="callout-title ct-teal">La cadena completa — de POO a arquitectura</div>
+      <div class="callout-text"><strong>POO (pilares)</strong> → define los mecanismos básicos. <strong>Cohesión y acoplamiento</strong> → miden la calidad del diseño. <strong>SOLID</strong> → formaliza las reglas para lograr alta cohesión y bajo acoplamiento. <strong>GoF Patterns</strong> → soluciones probadas para problemas recurrentes de diseño OO. <strong>DDD</strong> → aplica todos estos principios al modelado del dominio. <strong>Hexagonal / Clean Architecture</strong> → organiza todo en capas con dependencias controladas. Es la misma idea en escalas distintas.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">POO · PARTE 2 DE 2 · COMPOSICIÓN, COHESIÓN Y ACOPLAMIENTO</span>
+  <div class="footer-nav">
+    <span class="footer-count">5 CONCEPTOS · JAVA EXAMPLES</span>
+    <a class="footer-btn footer-btn-prev" href="parte1.html">← Parte 1: Los 4 pilares</a>
+    <a class="footer-btn footer-btn-home" href="../../../index.html">↩ dev-notes</a>
+  </div>
+</div>
+</body>
+</html>

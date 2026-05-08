@@ -68,17 +68,17 @@
   <p class="solid-compare-title" style="margin-top:0">El servicio de informes conoce directamente el cliente HTTP del proveedor de correo y la ruta del archivo PDF.</p>
   <div class="dn-java-block">
     <div class="dn-java-block__cap">ROMPE DIP — ALTO NIVEL → DETALLE CONCRETO</div>
-    <pre><code>public final class WeeklySalesReportJob {
+    <pre><span class="c-keyword">public final class</span> <span class="c-type">WeeklySalesReportJob</span> {
 
-    public void run(SalesRepository repo) {
-        var rows = repo.lastWeekRows();
-        byte[] pdf = new PdfBoxRenderer().render(rows);
+    <span class="c-keyword">public void</span> <span class="c-method">run</span>(<span class="c-type">SalesRepository</span> repo) {
+        <span class="c-keyword">var</span> rows = repo.<span class="c-method">lastWeekRows</span>();
+        <span class="c-keyword">byte</span>[] pdf = <span class="c-keyword">new</span> <span class="c-type">PdfBoxRenderer</span>().<span class="c-method">render</span>(rows);
 
-        var mail = new com.vendor.mail.MailApiClient(
-            System.getenv("MAIL_API_KEY")); // SDK concreto
-        mail.sendBinary("ops@empresa.com", "ventas.pdf", pdf);
+        <span class="c-keyword">var</span> mail = <span class="c-keyword">new</span> com.vendor.mail.<span class="c-type">MailApiClient</span>(
+            <span class="c-type">System</span>.<span class="c-method">getenv</span>(<span class="c-string">"MAIL_API_KEY"</span>)); <span class="c-comment">// SDK concreto</span>
+        mail.<span class="c-method">sendBinary</span>(<span class="c-string">"ops@empresa.com"</span>, <span class="c-string">"ventas.pdf"</span>, pdf);
     }
-}</code></pre>
+}</pre>
   </div>
 
   <div class="section-header">
@@ -89,31 +89,31 @@
   <p class="solid-compare-title" style="margin-top:0">El trabajo declara la necesidad de «entregar un informe»; quien compone el grafo en el <code>main</code> o el contenedor Spring elige SMTP, S3 o Slack.</p>
   <div class="dn-java-block">
     <div class="dn-java-block__cap">RESPETA DIP — POLÍTICA SOBRE ABSTRACCIÓN</div>
-    <pre><code>public interface ReportRenderer {
-    byte[] render(SalesSummary summary);
+    <pre><span class="c-keyword">public interface</span> <span class="c-type">ReportRenderer</span> {
+    <span class="c-keyword">byte</span>[] <span class="c-method">render</span>(<span class="c-type">SalesSummary</span> summary);
 }
 
-public interface ReportDelivery {
-    void deliver(String filename, byte[] content);
+<span class="c-keyword">public interface</span> <span class="c-type">ReportDelivery</span> {
+    <span class="c-keyword">void</span> <span class="c-method">deliver</span>(<span class="c-type">String</span> filename, <span class="c-keyword">byte</span>[] content);
 }
 
-public final class WeeklySalesReportJob {
-    private final ReportRenderer renderer;
-    private final ReportDelivery delivery;
+<span class="c-keyword">public final class</span> <span class="c-type">WeeklySalesReportJob</span> {
+    <span class="c-keyword">private final</span> <span class="c-type">ReportRenderer</span> renderer;
+    <span class="c-keyword">private final</span> <span class="c-type">ReportDelivery</span> delivery;
 
-    public WeeklySalesReportJob(ReportRenderer renderer, ReportDelivery delivery) {
-        this.renderer = renderer;
-        this.delivery = delivery;
+    <span class="c-keyword">public</span> <span class="c-type">WeeklySalesReportJob</span>(<span class="c-type">ReportRenderer</span> renderer, <span class="c-type">ReportDelivery</span> delivery) {
+        <span class="c-keyword">this</span>.renderer = renderer;
+        <span class="c-keyword">this</span>.delivery = delivery;
     }
 
-    public void run(SalesRepository repo) {
-        var summary = SalesSummary.from(repo.lastWeekRows());
-        byte[] pdf = renderer.render(summary);
-        delivery.deliver("ventas-semana.pdf", pdf);
+    <span class="c-keyword">public void</span> <span class="c-method">run</span>(<span class="c-type">SalesRepository</span> repo) {
+        <span class="c-keyword">var</span> summary = <span class="c-type">SalesSummary</span>.<span class="c-method">from</span>(repo.<span class="c-method">lastWeekRows</span>());
+        <span class="c-keyword">byte</span>[] pdf = renderer.<span class="c-method">render</span>(summary);
+        delivery.<span class="c-method">deliver</span>(<span class="c-string">"ventas-semana.pdf"</span>, pdf);
     }
 }
 
-// En infraestructura: MailApiReportDelivery implements ReportDelivery { … }</code></pre>
+<span class="c-comment">// En infraestructura: MailApiReportDelivery implements ReportDelivery { … }</span></pre>
   </div>
   <div class="solid-prose mt-10">
     <p><code>WeeklySalesReportJob</code> sigue estable si mañana el informe va a un bucket S3 o a un canal interno: solo cambian los adaptadores, no la política de «obtener datos → renderizar → entregar».</p>

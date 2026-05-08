@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(59,130,246,0.09) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(234,179,8,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #EAB308; color: #0A0E1A; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #3B82F6; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #3B82F6; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-b { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+  .pill-c { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-d { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+  .pill-e { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-yellow { color: #EAB308; }
+  .sn-blue   { color: #3B82F6; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-green  { color: #22C55E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+  .section-kicker { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; letter-spacing: 0.1em; white-space: nowrap; }
+
+  /* TECHNIQUE CARD */
+  .technique { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; margin-bottom: 14px; }
+  .technique-top { height: 3px; }
+  .tt-yellow { background: #EAB308; }
+  .tt-blue   { background: #3B82F6; }
+  .tt-rose   { background: #F43F5E; }
+  .tt-green  { background: #22C55E; }
+  .tt-purple { background: #A855F7; }
+  .technique-body { padding: 22px 24px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 24px; align-items: start; }
+  .tech-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-bottom: 4px; letter-spacing: 0.1em; }
+  .tech-name { font-size: 16px; font-weight: 700; color: #E2E8F0; margin-bottom: 8px; line-height: 1.2; }
+  .tech-def { font-size: 12.5px; color: #8899B8; line-height: 1.65; margin-bottom: 14px; }
+  .tech-smell { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; color: #FDE68A; background: rgba(234,179,8,0.07); border: 1px solid rgba(234,179,8,0.2); border-radius: 4px; padding: 4px 10px; margin-bottom: 10px; font-family: 'DM Mono', monospace; }
+  .tech-smell-b { color: #93C5FD; background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); }
+  .tech-smell-r { color: #FDA4AF; background: rgba(244,63,94,0.07); border-color: rgba(244,63,94,0.2); }
+  .tech-when { font-size: 11.5px; color: #64748B; line-height: 1.55; }
+  .tech-when strong { color: #94A3B8; }
+
+  /* CODE PANEL */
+  .code-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .code-panel.full { grid-column: 1 / -1; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; }
+  .code-label-bad  { font-family: 'Space Mono', monospace; font-size: 9px; color: #FDA4AF; }
+  .code-label-good { font-family: 'Space Mono', monospace; font-size: 9px; color: #86EFAC; }
+  pre { padding: 12px 16px; font-family: 'DM Mono', monospace; font-size: 10.5px; line-height: 1.65; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-bad     { color: #FDA4AF; }
+  .c-good    { color: #86EFAC; }
+  .c-num     { color: #FB923C; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; margin-bottom: 10px; }
+  .callout-yellow { background: rgba(234,179,8,0.05);  border: 1px solid rgba(234,179,8,0.2); }
+  .callout-blue   { background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05);  border: 1px solid rgba(244,63,94,0.2); }
+  .callout-green  { background: rgba(34,197,94,0.05);  border: 1px solid rgba(34,197,94,0.2); }
+  .callout-purple { background: rgba(168,85,247,0.05); border: 1px solid rgba(168,85,247,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-blue   { color: #93C5FD; }
+  .ct-rose   { color: #FDA4AF; }
+  .ct-green  { color: #86EFAC; }
+  .ct-purple { color: #D8B4FE; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  /* QUICK MAP TABLE */
+  .qmap { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow: hidden; }
+  .qmap-header { display: grid; grid-template-columns: 1.5fr 1.2fr 2fr 1fr; background: #080C17; border-bottom: 1px solid #1E2A40; }
+  .qmc { padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; border-right: 1px solid #1A2236; }
+  .qmc:last-child { border-right: none; }
+  .qmap-row { display: grid; grid-template-columns: 1.5fr 1.2fr 2fr 1fr; border-bottom: 1px solid #1A2236; }
+  .qmap-row:last-child { border-bottom: none; }
+  .qmap-row:hover { background: rgba(255,255,255,0.012); }
+  .qm-name { padding: 11px 14px; display: flex; align-items: center; gap: 8px; border-right: 1px solid #1A2236; }
+  .qm-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .qm-sname { font-size: 12px; font-weight: 600; color: #E2E8F0; }
+  .qm-val { padding: 11px 14px; font-size: 11.5px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.4; }
+  .qm-val:last-child { border-right: none; }
+  .qm-badge { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .back-link:hover { color: #6B7FA3; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #3B82F6; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; text-decoration: none; letter-spacing: 0.06em; padding: 6px 14px; border-radius: 4px; }
+  .footer-btn-prev { color: #A5B4FC; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.25); }
+  .footer-btn-next { color: #FCD34D; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.25); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">REFACTORING · PARTE 2 DE 3</div>
+        <h1>El Catálogo de<br><span>Técnicas</span></h1>
+        <p class="header-sub">7 maniobras concretas organizadas por objetivo: componer, mover y simplificar</p>
+      </div>
+    </div>
+    <div class="part-badge">REFACTORING · P2</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🔨 Extract Method</span>
+    <span class="pill pill-b">📦 Inline Method</span>
+    <span class="pill pill-a">🔍 Replace Temp with Query</span>
+    <span class="pill pill-c">🚚 Move Method / Field</span>
+    <span class="pill pill-c">🧩 Extract Class</span>
+    <span class="pill pill-d">🌿 Decompose Conditional</span>
+    <span class="pill pill-e">🔀 Replace Conditional with Polymorphism</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN A — COMPONIENDO MÉTODOS -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">A</span>
+    <span class="section-title-text">Componiendo métodos — organización interna</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">SMELLS: LONG FUNCTION · DUPLICATED CODE</span>
+  </div>
+
+  <!-- Extract Method -->
+  <div class="technique">
+    <div class="technique-top tt-yellow"></div>
+    <div class="technique-body">
+      <div>
+        <div class="tech-num">TÉCNICA 01</div>
+        <div class="tech-name">🔨 Extract Method</div>
+        <div class="tech-def">Toma un fragmento de código que puede agruparse y muévelo a un método nuevo con un nombre que exprese su intención. Es la técnica más usada del catálogo y la base de casi todas las demás.</div>
+        <div class="tech-smell">🤢 Cura: Long Function · Duplicated Code · Comments as Explanation</div>
+        <div class="tech-when"><strong>Señal para aplicar:</strong> Encuentras un comentario tipo <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDBA74">// validar pedido</code> o <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDBA74">// calcular total</code>. Ese comentario es el nombre del método que aún no existe. Cuando necesitas scroll para leer una función. Cuando el mismo bloque aparece dos veces.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">processOrder() — antes</span><span class="code-label-bad">❌ SMELL</span></div>
+          <pre><span class="c-keyword">void</span> <span class="c-method">processOrder</span>(Order order) {
+  <span class="c-comment">// validar</span>
+  <span class="c-keyword">if</span> (order.getItems().isEmpty())
+    <span class="c-keyword">throw new</span> IllegalStateException(<span class="c-string">"No items"</span>);
+  <span class="c-keyword">if</span> (order.getCustomer() == <span class="c-keyword">null</span>)
+    <span class="c-keyword">throw new</span> IllegalStateException(<span class="c-string">"No customer"</span>);
+  <span class="c-comment">// calcular total</span>
+  <span class="c-type">double</span> total = <span class="c-num">0</span>;
+  <span class="c-keyword">for</span> (Item i : order.getItems())
+    total += i.getPrice() * i.getQty();
+  <span class="c-keyword">if</span> (order.getCustomer().isPremium())
+    total *= <span class="c-num">0.9</span>;
+  order.setTotal(total);
+  <span class="c-comment">// notificar</span>
+  emailService.<span class="c-method">send</span>(
+    order.getCustomer().getEmail(),
+    <span class="c-string">"Confirmado: $"</span> + total);
+}</pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">processOrder() — después</span><span class="code-label-good">✅ EXTRAÍDO</span></div>
+          <pre><span class="c-keyword">void</span> <span class="c-method">processOrder</span>(Order order) {
+  <span class="c-method">validateOrder</span>(order);
+  order.<span class="c-method">setTotal</span>(<span class="c-method">calculateTotal</span>(order));
+  <span class="c-method">notifyCustomer</span>(order);
+}
+
+<span class="c-keyword">private void</span> <span class="c-method">validateOrder</span>(Order o) {
+  <span class="c-keyword">if</span> (o.getItems().isEmpty())
+    <span class="c-keyword">throw new</span> IllegalStateException(<span class="c-string">"No items"</span>);
+  <span class="c-keyword">if</span> (o.getCustomer() == <span class="c-keyword">null</span>)
+    <span class="c-keyword">throw new</span> IllegalStateException(<span class="c-string">"No customer"</span>);
+}
+
+<span class="c-keyword">private double</span> <span class="c-method">calculateTotal</span>(Order o) {
+  <span class="c-type">double</span> t = o.getItems().stream()
+    .<span class="c-method">mapToDouble</span>(i -> i.getPrice() * i.getQty())
+    .<span class="c-method">sum</span>();
+  <span class="c-keyword">return</span> o.getCustomer().isPremium() ? t * <span class="c-num">0.9</span> : t;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inline Method -->
+  <div class="technique">
+    <div class="technique-top tt-yellow"></div>
+    <div class="technique-body">
+      <div>
+        <div class="tech-num">TÉCNICA 02</div>
+        <div class="tech-name">📦 Inline Method</div>
+        <div class="tech-def">La operación inversa de Extract Method. Cuando el cuerpo del método es tan claro como su nombre, o cuando el método delega trivialmente a otro sin añadir semántica, elimínalo y pon el código directamente en el punto de llamada.</div>
+        <div class="tech-smell">🤢 Cura: Indirection innecesaria · Cadenas de delegación que no aportan</div>
+        <div class="tech-when"><strong>Cuándo aplicar:</strong> El método tiene una sola línea y su nombre no aporta información adicional sobre el dominio. Un grupo de métodos mal descompuestos donde el nivel de abstracción es inconsistente. <strong>Atención:</strong> no apliques Inline si el método está en múltiples sitios o si el nombre tiene valor semántico para el dominio.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">antes — doble delegación inútil</span><span class="code-label-bad">❌ SMELL</span></div>
+          <pre><span class="c-keyword">boolean</span> <span class="c-method">isEligibleForDiscount</span>(Customer c) {
+  <span class="c-keyword">return</span> <span class="c-method">isPremiumLongTerm</span>(c);
+}
+
+<span class="c-keyword">private boolean</span> <span class="c-method">isPremiumLongTerm</span>(Customer c) {
+  <span class="c-keyword">return</span> c.getMonthsSinceJoin() > <span class="c-num">12</span>
+      && c.getTotalOrders() > <span class="c-num">10</span>;
+}
+
+<span class="c-comment">// el nombre isEligibleForDiscount ya</span>
+<span class="c-comment">// lo dice todo → inline isPremiumLongTerm</span></pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">después — directo y legible</span><span class="code-label-good">✅ INLINE</span></div>
+          <pre><span class="c-keyword">boolean</span> <span class="c-method">isEligibleForDiscount</span>(Customer c) {
+  <span class="c-keyword">return</span> c.getMonthsSinceJoin() > <span class="c-num">12</span>
+      && c.getTotalOrders() > <span class="c-num">10</span>;
+}
+
+<span class="c-comment">// Una sola capa, criterio legible,</span>
+<span class="c-comment">// fácil de modificar sin perder contexto.</span>
+<span class="c-comment">// Si la lógica crece → Extract de nuevo.</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Replace Temp with Query -->
+  <div class="technique">
+    <div class="technique-top tt-yellow"></div>
+    <div class="technique-body">
+      <div>
+        <div class="tech-num">TÉCNICA 03</div>
+        <div class="tech-name">🔍 Replace Temp with Query</div>
+        <div class="tech-def">En lugar de almacenar un resultado intermedio en una variable temporal, extrae la expresión en un método. La variable desaparece y el método puede reutilizarse en otros contextos del mismo objeto.</div>
+        <div class="tech-smell">🤢 Cura: Primitive Obsession · Long Function · duplicación de expresiones</div>
+        <div class="tech-when"><strong>Cuándo aplicar:</strong> La variable temporal se calcula una vez y solo se lee. La expresión podría ser útil en otros métodos de la misma clase. <strong>Prerequisito DDD:</strong> Esta técnica es el primer paso hacia el patrón Query en CQRS — separar consulta de comando.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">antes — variable temporal atada al método</span><span class="code-label-bad">❌ SMELL</span></div>
+          <pre><span class="c-type">double</span> <span class="c-method">getFinalPrice</span>() {
+  <span class="c-type">double</span> basePrice = quantity * itemPrice;
+  <span class="c-keyword">if</span> (basePrice > <span class="c-num">1000</span>)
+    <span class="c-keyword">return</span> basePrice * <span class="c-num">0.95</span>;
+  <span class="c-keyword">return</span> basePrice;
+  <span class="c-comment">// basePrice solo existe aquí</span>
+  <span class="c-comment">// si otra función la necesita: duplicado</span>
+}</pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">después — query reutilizable</span><span class="code-label-good">✅ QUERY</span></div>
+          <pre><span class="c-type">double</span> <span class="c-method">getFinalPrice</span>() {
+  <span class="c-keyword">return</span> <span class="c-method">basePrice</span>() > <span class="c-num">1000</span>
+    ? <span class="c-method">basePrice</span>() * <span class="c-num">0.95</span>
+    : <span class="c-method">basePrice</span>();
+}
+
+<span class="c-keyword">private double</span> <span class="c-method">basePrice</span>() {
+  <span class="c-keyword">return</span> quantity * itemPrice;
+  <span class="c-comment">// ahora cualquier método puede</span>
+  <span class="c-comment">// llamar a basePrice() sin duplicar</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN B — MOVIENDO CARACTERÍSTICAS -->
+  <div class="section-header">
+    <span class="section-num sn-blue">B</span>
+    <span class="section-title-text">Moviendo características — distribución de responsabilidades</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">SMELLS: FEATURE ENVY · DATA CLUMPS · LARGE CLASS</span>
+  </div>
+
+  <!-- Move Method -->
+  <div class="technique">
+    <div class="technique-top tt-blue"></div>
+    <div class="technique-body">
+      <div>
+        <div class="tech-num">TÉCNICA 04</div>
+        <div class="tech-name">🚚 Move Method / Move Field</div>
+        <div class="tech-def">Si un método o campo usa más datos de otra clase que los propios, muévelo allá. La heurística es simple: el código vive donde viven los datos que necesita. Esto elimina el smell <em>Feature Envy</em> y reduce el acoplamiento.</div>
+        <div class="tech-smell tech-smell-b">🤢 Cura: Feature Envy · Inappropriate Intimacy</div>
+        <div class="tech-when"><strong>Señal para aplicar:</strong> Un método llama a más getters de otra clase que de la propia. El acoplamiento entre clases es asimétrico — una clase "envidia" los datos de la otra. <strong>Regla:</strong> si un método usa 3+ datos de una clase B y 0-1 de la propia, pertenece a B.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">antes — método envidioso</span><span class="code-label-bad">❌ FEATURE ENVY</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">OrderLine</span> {
+  <span class="c-keyword">private</span> <span class="c-type">Product</span> product;
+  <span class="c-keyword">private int</span> qty;
+
+  <span class="c-type">double</span> <span class="c-method">getDiscountedPrice</span>() {
+    <span class="c-comment">// usa 3 datos de Product, 0 de OrderLine</span>
+    <span class="c-type">double</span> base = product.<span class="c-method">getBasePrice</span>();
+    <span class="c-type">double</span> tax  = product.<span class="c-method">getTaxRate</span>();
+    <span class="c-keyword">if</span> (product.<span class="c-method">isOnSale</span>())
+      <span class="c-keyword">return</span> (base * <span class="c-num">0.9</span>) * (<span class="c-num">1</span> + tax);
+    <span class="c-keyword">return</span> base * (<span class="c-num">1</span> + tax);
+  }
+}</pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">después — método en su clase natural</span><span class="code-label-good">✅ MOVIDO</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">Product</span> {
+  <span class="c-keyword">private double</span> basePrice;
+  <span class="c-keyword">private double</span> taxRate;
+  <span class="c-keyword">private boolean</span> onSale;
+
+  <span class="c-type">double</span> <span class="c-method">getDiscountedPrice</span>() {
+    <span class="c-comment">// ahora usa sus propios datos</span>
+    <span class="c-type">double</span> base = onSale ? basePrice * <span class="c-num">0.9</span> : basePrice;
+    <span class="c-keyword">return</span> base * (<span class="c-num">1</span> + taxRate);
+  }
+}
+
+<span class="c-keyword">class</span> <span class="c-type">OrderLine</span> {
+  <span class="c-keyword">double</span> <span class="c-method">lineTotal</span>() {
+    <span class="c-keyword">return</span> product.<span class="c-method">getDiscountedPrice</span>() * qty;
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Extract Class -->
+  <div class="technique">
+    <div class="technique-top tt-blue"></div>
+    <div class="technique-body">
+      <div>
+        <div class="tech-num">TÉCNICA 05</div>
+        <div class="tech-name">🧩 Extract Class</div>
+        <div class="tech-def">Cuando una clase hace el trabajo de dos, crea una segunda y mueve los campos y métodos que corresponden. La guía es la cohesión: todos los campos de una clase deben cambiar juntos por la misma razón.</div>
+        <div class="tech-smell tech-smell-b">🤢 Cura: Large Class · Data Clumps · Divergent Change · SRP violado</div>
+        <div class="tech-when"><strong>Señal para aplicar:</strong> Hay un subgrupo de campos que siempre se usa junto (candidato a Value Object). La clase tiene dos responsabilidades claramente distinguibles. Al documentarla sientes que necesitas la palabra "y" para describirla. <strong>Conexión DDD:</strong> Extract Class → Value Object o Entity según si tiene identidad.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">antes — Customer con address embebido</span><span class="code-label-bad">❌ LARGE CLASS</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">Customer</span> {
+  <span class="c-type">String</span> name;
+  <span class="c-type">String</span> street;   <span class="c-comment">// ← datos de dirección</span>
+  <span class="c-type">String</span> city;
+  <span class="c-type">String</span> zipCode;
+  <span class="c-type">String</span> country;
+
+  <span class="c-type">String</span> <span class="c-method">formatAddress</span>() { <span class="c-comment">/* ... */</span> }
+  <span class="c-keyword">boolean</span> <span class="c-method">isAddressValid</span>() { <span class="c-comment">/* ... */</span> }
+  <span class="c-comment">// Customer y Address mezclados → SRP roto</span>
+}</pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">después — Address como Value Object</span><span class="code-label-good">✅ EXTRAÍDO</span></div>
+          <pre><span class="c-keyword">class</span> <span class="c-type">Address</span> {  <span class="c-comment">// Value Object</span>
+  <span class="c-keyword">private final</span> <span class="c-type">String</span> street;
+  <span class="c-keyword">private final</span> <span class="c-type">String</span> city;
+  <span class="c-keyword">private final</span> <span class="c-type">String</span> zipCode;
+  <span class="c-keyword">private final</span> <span class="c-type">String</span> country;
+
+  <span class="c-type">String</span> <span class="c-method">format</span>() { <span class="c-comment">/* ... */</span> }
+  <span class="c-keyword">boolean</span> <span class="c-method">isValid</span>() { <span class="c-comment">/* ... */</span> }
+}
+
+<span class="c-keyword">class</span> <span class="c-type">Customer</span> {
+  <span class="c-type">String</span> name;
+  <span class="c-type">Address</span> address;  <span class="c-comment">// cohesión</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN C — SIMPLIFICANDO CONDICIONALES -->
+  <div class="section-header">
+    <span class="section-num sn-rose">C</span>
+    <span class="section-title-text">Simplificando condicionales — la firma de un senior</span>
+    <div class="section-line"></div>
+    <span class="section-kicker">SMELLS: SWITCH STATEMENTS · DIVERGENT CHANGE · OCP ROTO</span>
+  </div>
+
+  <!-- Decompose Conditional -->
+  <div class="technique">
+    <div class="technique-top tt-rose"></div>
+    <div class="technique-body">
+      <div>
+        <div class="tech-num">TÉCNICA 06</div>
+        <div class="tech-name">🌿 Decompose Conditional</div>
+        <div class="tech-def">Extrae la condición, la rama <em>then</em> y la rama <em>else</em> a métodos con nombre. El objetivo no es solo acortar el código — es dar nombre a la <em>intención</em> de cada rama para que el lector entienda el <em>porqué</em> sin ejecutarlo mentalmente.</div>
+        <div class="tech-smell tech-smell-r">🤢 Cura: Complex Conditional · Logic Buried in Conditionals</div>
+        <div class="tech-when"><strong>Señal para aplicar:</strong> La condición del <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDBA74">if</code> requiere más de una lectura para entenderse. Hay operadores lógicos compuestos (<code>&&</code>, <code>||</code>, <code>!</code>) que combinan más de 2 conceptos. El cuerpo del <code>then</code> o <code>else</code> supera 3-4 líneas.</div>
+      </div>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">antes — condicional opaca</span><span class="code-label-bad">❌ SMELL</span></div>
+          <pre><span class="c-keyword">if</span> (date.before(SUMMER_START)
+    || date.after(SUMMER_END)) {
+  charge = qty * winterRate
+         + winterServiceCharge;
+} <span class="c-keyword">else</span> {
+  charge = qty * summerRate;
+}
+<span class="c-comment">// ¿qué son SUMMER_START y END aquí?</span>
+<span class="c-comment">// ¿qué significa winterServiceCharge?</span>
+<span class="c-comment">// el lector debe inferir el modelo mental</span></pre>
+        </div>
+        <div class="code-panel">
+          <div class="code-header"><span class="code-title">después — intención nombrada</span><span class="code-label-good">✅ DESCOMPUESTO</span></div>
+          <pre>charge = <span class="c-method">isWinter</span>(date)
+  ? <span class="c-method">winterCharge</span>(qty)
+  : <span class="c-method">summerCharge</span>(qty);
+
+<span class="c-keyword">private boolean</span> <span class="c-method">isWinter</span>(Date d) {
+  <span class="c-keyword">return</span> d.before(SUMMER_START)
+      || d.after(SUMMER_END);
+}
+<span class="c-keyword">private double</span> <span class="c-method">winterCharge</span>(<span class="c-keyword">int</span> qty) {
+  <span class="c-keyword">return</span> qty * winterRate + winterServiceCharge;
+}
+<span class="c-keyword">private double</span> <span class="c-method">summerCharge</span>(<span class="c-keyword">int</span> qty) {
+  <span class="c-keyword">return</span> qty * summerRate;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Replace Conditional with Polymorphism -->
+  <div class="technique">
+    <div class="technique-top tt-rose"></div>
+    <div class="technique-body">
+      <div>
+        <div class="tech-num">TÉCNICA 07</div>
+        <div class="tech-name">🔀 Replace Conditional with Polymorphism</div>
+        <div class="tech-def">En lugar de un <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDBA74">switch</code> que chequea el tipo de un objeto para ejecutar lógica diferente, usa subclases e interfaces. Es la aplicación directa de OCP: agregar un tipo nuevo es agregar una clase, no modificar el switch.</div>
+        <div class="tech-smell tech-smell-r">🤢 Cura: Switch Statements · OCP roto · Divergent Change en el switch</div>
+        <div class="tech-when"><strong>Señal para aplicar:</strong> El mismo <code>switch</code> sobre el mismo campo aparece en dos o más métodos. Cuando aparece un nuevo tipo, hay que buscar y actualizar todos los switch. <strong>Esta es la conexión directa con GoF Strategy y el principio OCP de SOLID.</strong></div>
+      </div>
+      <div>
+        <div class="code-pair" style="margin-bottom:8px">
+          <div class="code-panel">
+            <div class="code-header"><span class="code-title">antes — switch que viola OCP</span><span class="code-label-bad">❌ OCP ROTO</span></div>
+            <pre><span class="c-type">double</span> <span class="c-method">calculateShipping</span>(Order order) {
+  <span class="c-keyword">switch</span> (order.getShippingType()) {
+    <span class="c-keyword">case</span> EXPRESS:
+      <span class="c-keyword">return</span> order.getTotal() * <span class="c-num">0.15</span>;
+    <span class="c-keyword">case</span> STANDARD:
+      <span class="c-keyword">return</span> order.getTotal() * <span class="c-num">0.05</span>;
+    <span class="c-keyword">case</span> ECONOMY:
+      <span class="c-keyword">return</span> <span class="c-num">2.99</span>;
+    <span class="c-keyword">default</span>:
+      <span class="c-keyword">throw new</span> IllegalArgumentException();
+  }
+  <span class="c-comment">// nuevo tipo → modificar aquí siempre</span>
+}</pre>
+          </div>
+          <div class="code-panel">
+            <div class="code-header"><span class="code-title">después — polimorfismo OCP-compliant</span><span class="code-label-good">✅ POLIMORFISMO</span></div>
+            <pre><span class="c-keyword">interface</span> <span class="c-type">ShippingStrategy</span> {
+  <span class="c-type">double</span> <span class="c-method">calculate</span>(Order order);
+}
+<span class="c-keyword">class</span> <span class="c-type">ExpressShipping</span> <span class="c-keyword">implements</span> <span class="c-type">ShippingStrategy</span> {
+  <span class="c-keyword">public double</span> <span class="c-method">calculate</span>(Order o) {
+    <span class="c-keyword">return</span> o.getTotal() * <span class="c-num">0.15</span>;
+  }
+}
+<span class="c-keyword">class</span> <span class="c-type">EconomyShipping</span> <span class="c-keyword">implements</span> <span class="c-type">ShippingStrategy</span> {
+  <span class="c-keyword">public double</span> <span class="c-method">calculate</span>(Order o) {
+    <span class="c-keyword">return</span> <span class="c-num">2.99</span>;
+  }
+}
+<span class="c-comment">// nuevo tipo = nueva clase, sin tocar nada</span></pre>
+          </div>
+        </div>
+        <div class="callout callout-purple">
+          <span class="callout-icon">🔗</span>
+          <div>
+            <div class="callout-title ct-purple">Conexión con GoF Strategy y SOLID OCP</div>
+            <div class="callout-text">Esta técnica materializa dos conceptos: el patrón <strong>Strategy</strong> (GoF) como mecanismo de implementación, y el principio <strong>Open-Closed</strong> (SOLID) como objetivo. El switch es literalmente OCP roto: cerrado a la extensión, abierto a la modificación.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 04 — MAPA RÁPIDO -->
+  <div class="section-header">
+    <span class="section-num sn-green">↗</span>
+    <span class="section-title-text">Mapa rápido — las 7 técnicas de un vistazo</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="qmap">
+    <div class="qmap-header">
+      <div class="qmc">Técnica</div>
+      <div class="qmc">Grupo</div>
+      <div class="qmc">Smell que cura</div>
+      <div class="qmc">Conexión SOLID/GoF</div>
+    </div>
+    <div class="qmap-row">
+      <div class="qm-name"><span class="qm-dot" style="background:#EAB308"></span><span class="qm-sname">Extract Method</span></div>
+      <div class="qm-val">Componiendo</div>
+      <div class="qm-val">Long Function, Duplicated Code</div>
+      <div class="qm-val"><span class="qm-badge" style="background:rgba(139,92,246,0.12);color:#D8B4FE">SRP</span></div>
+    </div>
+    <div class="qmap-row">
+      <div class="qm-name"><span class="qm-dot" style="background:#EAB308"></span><span class="qm-sname">Inline Method</span></div>
+      <div class="qm-val">Componiendo</div>
+      <div class="qm-val">Indirection innecesaria</div>
+      <div class="qm-val"><span class="qm-badge" style="background:rgba(234,179,8,0.12);color:#FDE68A">Legibilidad</span></div>
+    </div>
+    <div class="qmap-row">
+      <div class="qm-name"><span class="qm-dot" style="background:#EAB308"></span><span class="qm-sname">Replace Temp with Query</span></div>
+      <div class="qm-val">Componiendo</div>
+      <div class="qm-val">Duplicación de expresiones</div>
+      <div class="qm-val"><span class="qm-badge" style="background:rgba(20,184,166,0.12);color:#5EEAD4">DDD Query</span></div>
+    </div>
+    <div class="qmap-row">
+      <div class="qm-name"><span class="qm-dot" style="background:#3B82F6"></span><span class="qm-sname">Move Method / Field</span></div>
+      <div class="qm-val">Moviendo</div>
+      <div class="qm-val">Feature Envy</div>
+      <div class="qm-val"><span class="qm-badge" style="background:rgba(139,92,246,0.12);color:#D8B4FE">SRP · DIP</span></div>
+    </div>
+    <div class="qmap-row">
+      <div class="qm-name"><span class="qm-dot" style="background:#3B82F6"></span><span class="qm-sname">Extract Class</span></div>
+      <div class="qm-val">Moviendo</div>
+      <div class="qm-val">Large Class, Data Clumps</div>
+      <div class="qm-val"><span class="qm-badge" style="background:rgba(139,92,246,0.12);color:#D8B4FE">SRP</span> <span class="qm-badge" style="background:rgba(20,184,166,0.12);color:#5EEAD4">Value Object</span></div>
+    </div>
+    <div class="qmap-row">
+      <div class="qm-name"><span class="qm-dot" style="background:#F43F5E"></span><span class="qm-sname">Decompose Conditional</span></div>
+      <div class="qm-val">Simplificando</div>
+      <div class="qm-val">Complex Conditional</div>
+      <div class="qm-val"><span class="qm-badge" style="background:rgba(234,179,8,0.12);color:#FDE68A">Legibilidad</span></div>
+    </div>
+    <div class="qmap-row">
+      <div class="qm-name"><span class="qm-dot" style="background:#F43F5E"></span><span class="qm-sname">Replace Cond. with Polymorphism</span></div>
+      <div class="qm-val">Simplificando</div>
+      <div class="qm-val">Switch Statements</div>
+      <div class="qm-val"><span class="qm-badge" style="background:rgba(139,92,246,0.12);color:#D8B4FE">OCP</span> <span class="qm-badge" style="background:rgba(249,115,22,0.12);color:#FDBA74">Strategy</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-yellow" style="margin-top:12px">
+    <span class="callout-icon">📚</span>
+    <div>
+      <div class="callout-title ct-yellow">Refactoring to Patterns — Joshua Kerievsky</div>
+      <div class="callout-text">Kerievsky lleva estas técnicas un paso más allá: a veces el destino del refactoring no es solo código más limpio, sino la emergencia de un patrón GoF completo. <strong>Replace Conditional with Polymorphism</strong> evoluciona al patrón <strong>Strategy</strong>. <strong>Extract Class</strong> puede terminar siendo un <strong>Decorator</strong> o un <strong>Composite</strong>. El catálogo de Fowler es el camino; los patrones GoF son algunos de los destinos.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">REFACTORING · PARTE 2 DE 3 · CATÁLOGO DE TÉCNICAS</span>
+  <div class="footer-nav">
+    <span class="footer-count">7 TÉCNICAS · 3 GRUPOS</span>
+    <a class="footer-btn footer-btn-prev" href="parte1.html">← Parte 1: Smells</a>
+    <a class="footer-btn footer-btn-next" href="parte3.html">Parte 3: Deuda Técnica →</a>
+  </div>
+</div>
+</body>
+</html>

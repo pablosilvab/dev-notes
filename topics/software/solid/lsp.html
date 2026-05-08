@@ -68,26 +68,26 @@
   <p class="solid-compare-title" style="margin-top:0">Política «Premium» que rechaza carritos con artículos en oferta: refuerza precondiciones respecto a la política estándar que acepta cualquier carrito no vacío.</p>
   <div class="dn-java-block">
     <div class="dn-java-block__cap">ROMPE LSP — SUBTIPO MÁS EXIGENTE</div>
-    <pre><code>public class StandardDiscountPolicy {
-    public Money apply(Cart cart) {
-        if (cart.isEmpty()) {
-            throw new IllegalArgumentException("carrito vacío");
+    <pre><span class="c-keyword">public class</span> <span class="c-type">StandardDiscountPolicy</span> {
+    <span class="c-keyword">public</span> <span class="c-type">Money</span> <span class="c-method">apply</span>(<span class="c-type">Cart</span> cart) {
+        <span class="c-keyword">if</span> (cart.<span class="c-method">isEmpty</span>()) {
+            <span class="c-keyword">throw new</span> <span class="c-type">IllegalArgumentException</span>(<span class="c-string">"carrito vacío"</span>);
         }
-        return cart.total().multiplyPercent(5);
+        <span class="c-keyword">return</span> cart.<span class="c-method">total</span>().<span class="c-method">multiplyPercent</span>(<span class="c-num">5</span>);
     }
 }
 
-public final class PremiumDiscountPolicy extends StandardDiscountPolicy {
-    @Override
-    public Money apply(Cart cart) {
-        if (cart.hasPromoItems()) {
-            // el cliente que solo conocía StandardDiscountPolicy
-            // no esperaba este rechazo → sustitución insegura
-            throw new IllegalStateException("premium no aplica con promos");
+<span class="c-keyword">public final class</span> <span class="c-type">PremiumDiscountPolicy</span> <span class="c-keyword">extends</span> <span class="c-type">StandardDiscountPolicy</span> {
+    <span class="c-annotation">@Override</span>
+    <span class="c-keyword">public</span> <span class="c-type">Money</span> <span class="c-method">apply</span>(<span class="c-type">Cart</span> cart) {
+        <span class="c-keyword">if</span> (cart.<span class="c-method">hasPromoItems</span>()) {
+            <span class="c-comment">// el cliente que solo conocía StandardDiscountPolicy</span>
+            <span class="c-comment">// no esperaba este rechazo → sustitución insegura</span>
+            <span class="c-keyword">throw new</span> <span class="c-type">IllegalStateException</span>(<span class="c-string">"premium no aplica con promos"</span>);
         }
-        return cart.total().multiplyPercent(12);
+        <span class="c-keyword">return</span> cart.<span class="c-method">total</span>().<span class="c-method">multiplyPercent</span>(<span class="c-num">12</span>);
     }
-}</code></pre>
+}</pre>
   </div>
 
   <div class="section-header">
@@ -98,25 +98,25 @@ public final class PremiumDiscountPolicy extends StandardDiscountPolicy {
   <p class="solid-compare-title" style="margin-top:0">Misma familia de políticas sin herencia rígida: composición o políticas independientes que implementan el mismo contrato sin sorprender al llamador.</p>
   <div class="dn-java-block">
     <div class="dn-java-block__cap">RESPETA LSP — CONTRATO COMÚN, SIN SORPRESAS</div>
-    <pre><code>public interface DiscountPolicy {
-    Money apply(Cart cart);
+    <pre><span class="c-keyword">public interface</span> <span class="c-type">DiscountPolicy</span> {
+    <span class="c-type">Money</span> <span class="c-method">apply</span>(<span class="c-type">Cart</span> cart);
 }
 
-public final class StandardDiscount implements DiscountPolicy {
-    @Override public Money apply(Cart cart) {
-        if (cart.isEmpty()) throw new IllegalArgumentException("carrito vacío");
-        return cart.total().multiplyPercent(5);
+<span class="c-keyword">public final class</span> <span class="c-type">StandardDiscount</span> <span class="c-keyword">implements</span> <span class="c-type">DiscountPolicy</span> {
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public</span> <span class="c-type">Money</span> <span class="c-method">apply</span>(<span class="c-type">Cart</span> cart) {
+        <span class="c-keyword">if</span> (cart.<span class="c-method">isEmpty</span>()) <span class="c-keyword">throw new</span> <span class="c-type">IllegalArgumentException</span>(<span class="c-string">"carrito vacío"</span>);
+        <span class="c-keyword">return</span> cart.<span class="c-method">total</span>().<span class="c-method">multiplyPercent</span>(<span class="c-num">5</span>);
     }
 }
 
-public final class PremiumDiscount implements DiscountPolicy {
-    @Override public Money apply(Cart cart) {
-        if (cart.isEmpty()) throw new IllegalArgumentException("carrito vacío");
-        // sin promos: misma precondición que el estándar
-        Money base = cart.totalExcludingPromos();
-        return base.multiplyPercent(12);
+<span class="c-keyword">public final class</span> <span class="c-type">PremiumDiscount</span> <span class="c-keyword">implements</span> <span class="c-type">DiscountPolicy</span> {
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public</span> <span class="c-type">Money</span> <span class="c-method">apply</span>(<span class="c-type">Cart</span> cart) {
+        <span class="c-keyword">if</span> (cart.<span class="c-method">isEmpty</span>()) <span class="c-keyword">throw new</span> <span class="c-type">IllegalArgumentException</span>(<span class="c-string">"carrito vacío"</span>);
+        <span class="c-comment">// sin promos: misma precondición que el estándar</span>
+        <span class="c-type">Money</span> base = cart.<span class="c-method">totalExcludingPromos</span>();
+        <span class="c-keyword">return</span> base.<span class="c-method">multiplyPercent</span>(<span class="c-num">12</span>);
     }
-}</code></pre>
+}</pre>
   </div>
   <div class="solid-prose mt-10">
     <p>El checkout solo conoce <code>DiscountPolicy</code>; «premium» no invalida carritos con promos de forma explosiva: o bien ignora esas líneas en el cálculo, o bien devuelve <code>Money.ZERO</code> con reglas documentadas — pero no exige al cliente ramas especiales por tipo concreto.</p>

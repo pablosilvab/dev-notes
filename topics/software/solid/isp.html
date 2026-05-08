@@ -68,23 +68,23 @@
   <p class="solid-compare-title" style="margin-top:0">Una sola interfaz «empleado tech» mezcla implementación de features, revisión de código y guardia on-call.</p>
   <div class="dn-java-block">
     <div class="dn-java-block__cap">ROMPE ISP — INTERFAZ GORDA</div>
-    <pre><code>public interface TechEmployee {
-    void implementFeature(String ticketId);
-    void reviewPullRequest(String prUrl);
-    void acknowledgePagerDutyAlert(String incidentId);
+    <pre><span class="c-keyword">public interface</span> <span class="c-type">TechEmployee</span> {
+    <span class="c-keyword">void</span> <span class="c-method">implementFeature</span>(<span class="c-type">String</span> ticketId);
+    <span class="c-keyword">void</span> <span class="c-method">reviewPullRequest</span>(<span class="c-type">String</span> prUrl);
+    <span class="c-keyword">void</span> <span class="c-method">acknowledgePagerDutyAlert</span>(<span class="c-type">String</span> incidentId);
 }
 
-public final class JuniorDeveloper implements TechEmployee {
-    @Override public void implementFeature(String ticketId) { /* … */ }
+<span class="c-keyword">public final class</span> <span class="c-type">JuniorDeveloper</span> <span class="c-keyword">implements</span> <span class="c-type">TechEmployee</span> {
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public void</span> <span class="c-method">implementFeature</span>(<span class="c-type">String</span> ticketId) { <span class="c-comment">/* … */</span> }
 
-    @Override public void reviewPullRequest(String prUrl) {
-        throw new UnsupportedOperationException("aún no reviso PRs");
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public void</span> <span class="c-method">reviewPullRequest</span>(<span class="c-type">String</span> prUrl) {
+        <span class="c-keyword">throw new</span> <span class="c-type">UnsupportedOperationException</span>(<span class="c-string">"aún no reviso PRs"</span>);
     }
 
-    @Override public void acknowledgePagerDutyAlert(String incidentId) {
-        throw new UnsupportedOperationException("no estoy en on-call");
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public void</span> <span class="c-method">acknowledgePagerDutyAlert</span>(<span class="c-type">String</span> incidentId) {
+        <span class="c-keyword">throw new</span> <span class="c-type">UnsupportedOperationException</span>(<span class="c-string">"no estoy en on-call"</span>);
     }
-}</code></pre>
+}</pre>
   </div>
 
   <div class="section-header">
@@ -95,28 +95,28 @@ public final class JuniorDeveloper implements TechEmployee {
   <p class="solid-compare-title" style="margin-top:0">El mismo humano puede implementar varios roles; cada consumidor solo pide el rol que necesita.</p>
   <div class="dn-java-block">
     <div class="dn-java-block__cap">RESPETA ISP — ROLES SEGREGADOS</div>
-    <pre><code>public interface FeatureContributor {
-    void implementFeature(String ticketId);
+    <pre><span class="c-keyword">public interface</span> <span class="c-type">FeatureContributor</span> {
+    <span class="c-keyword">void</span> <span class="c-method">implementFeature</span>(<span class="c-type">String</span> ticketId);
 }
 
-public interface CodeReviewer {
-    void reviewPullRequest(String prUrl);
+<span class="c-keyword">public interface</span> <span class="c-type">CodeReviewer</span> {
+    <span class="c-keyword">void</span> <span class="c-method">reviewPullRequest</span>(<span class="c-type">String</span> prUrl);
 }
 
-public interface OnCallResponder {
-    void acknowledgeAlert(String incidentId);
+<span class="c-keyword">public interface</span> <span class="c-type">OnCallResponder</span> {
+    <span class="c-keyword">void</span> <span class="c-method">acknowledgeAlert</span>(<span class="c-type">String</span> incidentId);
 }
 
-public final class JuniorDeveloper implements FeatureContributor {
-    @Override public void implementFeature(String ticketId) { /* … */ }
+<span class="c-keyword">public final class</span> <span class="c-type">JuniorDeveloper</span> <span class="c-keyword">implements</span> <span class="c-type">FeatureContributor</span> {
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public void</span> <span class="c-method">implementFeature</span>(<span class="c-type">String</span> ticketId) { <span class="c-comment">/* … */</span> }
 }
 
-public final class StaffEngineer
-        implements FeatureContributor, CodeReviewer, OnCallResponder {
-    @Override public void implementFeature(String ticketId) { /* … */ }
-    @Override public void reviewPullRequest(String prUrl) { /* … */ }
-    @Override public void acknowledgeAlert(String incidentId) { /* … */ }
-}</code></pre>
+<span class="c-keyword">public final class</span> <span class="c-type">StaffEngineer</span>
+        <span class="c-keyword">implements</span> <span class="c-type">FeatureContributor</span>, <span class="c-type">CodeReviewer</span>, <span class="c-type">OnCallResponder</span> {
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public void</span> <span class="c-method">implementFeature</span>(<span class="c-type">String</span> ticketId) { <span class="c-comment">/* … */</span> }
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public void</span> <span class="c-method">reviewPullRequest</span>(<span class="c-type">String</span> prUrl) { <span class="c-comment">/* … */</span> }
+    <span class="c-annotation">@Override</span> <span class="c-keyword">public void</span> <span class="c-method">acknowledgeAlert</span>(<span class="c-type">String</span> incidentId) { <span class="c-comment">/* … */</span> }
+}</pre>
   </div>
   <div class="solid-prose mt-10">
     <p>El servicio de asignación de revisiones depende solo de <code>CodeReviewer</code>; el orquestador de incidentes solo de <code>OnCallResponder</code>. Nadie arrastra métodos fantasma.</p>
