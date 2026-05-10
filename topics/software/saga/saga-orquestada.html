@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saga Orquestada — Coordinador, Fallos y Compensación</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #0A0E1A; overflow-x: hidden; width: 100%; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; overflow-x: hidden; color: #E2E8F0; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(244,63,94,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #A855F7; color: #FFFFFF; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #A855F7; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #A855F7; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #D8B4FE; border-color: rgba(216,180,254,0.3); background: rgba(216,180,254,0.07); }
+  .pill-b { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+  .pill-c { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-d { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-purple { color: #A855F7; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-yellow { color: #EAB308; }
+  .sn-blue   { color: #3B82F6; }
+  .sn-green  { color: #22C55E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .cards-grid { display: grid; gap: 10px; }
+  .cards-grid > * { min-width: 0; }
+  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.c-yellow::before { background: #EAB308; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-orange::before { background: #F97316; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-teal::before   { background: #14B8A6; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-yellow { background: rgba(234,179,8,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-orange { background: rgba(249,115,22,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-yellow { background: rgba(234,179,8,0.12);  color: #FDE68A; }
+  .kw-rose   { background: rgba(244,63,94,0.12);  color: #FDA4AF; }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-blue   { background: rgba(59,130,246,0.12); color: #93C5FD; }
+  .kw-orange { background: rgba(249,115,22,0.12); color: #FDBA74; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .kw-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+
+  /* ── GOLDEN RULE ── */
+  .golden-rule {
+    background: rgba(168,85,247,0.04);
+    border: 1px solid rgba(168,85,247,0.25);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .gr-icon { font-size: 40px; flex-shrink: 0; }
+  .gr-label { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #A855F7; letter-spacing: 0.12em; margin-bottom: 8px; }
+  .gr-text { font-size: 17px; font-weight: 600; color: #E2E8F0; line-height: 1.4; margin-bottom: 10px; }
+  .gr-sub { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .gr-sub strong { color: #94A3B8; }
+
+  /* ── ORCHESTRATOR DIAGRAM ── */
+  .orch-diagram {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 28px 32px;
+    width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .orch-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+
+  .orch-layout { display: flex; gap: 0; align-items: flex-start; }
+  .orch-center { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .orch-box {
+    background: rgba(168,85,247,0.12); border: 2px solid rgba(168,85,247,0.5);
+    border-radius: 12px; padding: 20px 24px; text-align: center; min-width: 160px;
+  }
+  .orch-box-title { font-size: 13px; font-weight: 700; color: #D8B4FE; margin-bottom: 4px; }
+  .orch-box-sub { font-size: 10px; color: #7C3AED; font-family: 'DM Mono', monospace; }
+  .orch-box-state { font-size: 10px; color: #A855F7; margin-top: 8px; font-family: 'DM Mono', monospace; }
+
+  .orch-services { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .orch-side { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+
+  .orch-svc {
+    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+    border-radius: 8px; font-size: 11px; font-weight: 600;
+  }
+  .orch-svc-green  { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.25);  color: #86EFAC; }
+  .orch-svc-teal   { background: rgba(20,184,166,0.1); border: 1px solid rgba(20,184,166,0.25); color: #5EEAD4; }
+  .orch-svc-yellow { background: rgba(234,179,8,0.1);  border: 1px solid rgba(234,179,8,0.25);  color: #FDE68A; }
+  .orch-svc-blue   { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #93C5FD; }
+  .orch-svc-icon { font-size: 18px; flex-shrink: 0; }
+  .orch-svc-name { font-size: 11px; font-weight: 700; }
+  .orch-svc-cmd { font-size: 9px; font-family: 'DM Mono', monospace; opacity: 0.75; }
+
+  .connector { display: flex; align-items: center; }
+  .conn-line { height: 1px; background: #2D3E5A; flex: 1; position: relative; }
+  .conn-arrow-r::after { content: '▶'; color: #2D3E5A; font-size: 10px; position: absolute; right: -4px; top: -6px; }
+  .conn-arrow-l::before { content: '◀'; color: #2D3E5A; font-size: 10px; position: absolute; left: -4px; top: -6px; }
+  .conn-label {
+    font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 8px;
+    border-radius: 3px; white-space: nowrap; margin: 0 6px;
+  }
+  .conn-cmd   { background: rgba(168,85,247,0.12); color: #D8B4FE; border: 1px solid rgba(168,85,247,0.2); }
+  .conn-reply { background: rgba(34,197,94,0.1);   color: #86EFAC;  border: 1px solid rgba(34,197,94,0.2);  }
+  .conn-fail  { background: rgba(244,63,94,0.1);   color: #FDA4AF;  border: 1px solid rgba(244,63,94,0.2);  }
+  .conn-comp  { background: rgba(234,179,8,0.1);   color: #FDE68A;  border: 1px solid rgba(234,179,8,0.2);  }
+
+  /* ── STATE MACHINE ── */
+  .state-machine {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 28px 32px;
+    width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .sm-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+
+  .states-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .state-node {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 12px 16px; border-radius: 10px; text-align: center; min-width: 110px;
+  }
+  .st-pending    { background: rgba(59,130,246,0.1);  border: 1px solid rgba(59,130,246,0.3);  }
+  .st-reserving  { background: rgba(20,184,166,0.1);  border: 1px solid rgba(20,184,166,0.3);  }
+  .st-paying     { background: rgba(234,179,8,0.1);   border: 1px solid rgba(234,179,8,0.3);   }
+  .st-shipping   { background: rgba(34,197,94,0.1);   border: 1px solid rgba(34,197,94,0.3);   }
+  .st-done       { background: rgba(34,197,94,0.2);   border: 2px solid rgba(34,197,94,0.5);   }
+  .st-comp       { background: rgba(244,63,94,0.1);   border: 1px dashed rgba(244,63,94,0.35); }
+  .st-cancelled  { background: rgba(244,63,94,0.15);  border: 2px solid rgba(244,63,94,0.5);   }
+  .sn-icon { font-size: 18px; }
+  .sn-name { font-size: 11px; font-weight: 700; }
+  .sn-blue   { color: #93C5FD; }
+  .sn-teal   { color: #5EEAD4; }
+  .sn-yellow { color: #FDE68A; }
+  .sn-green  { color: #86EFAC; }
+  .sn-done   { color: #22C55E; }
+  .sn-comp   { color: #FDA4AF; }
+  .sn-label  { font-size: 9px; font-family: 'DM Mono', monospace; opacity: 0.7; }
+
+  .st-arrow { color: #2D3E5A; font-size: 16px; padding: 0 2px; flex-shrink: 0; }
+  .st-arrow-fail { color: #F43F5E; font-size: 13px; }
+
+  .fail-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .fail-note { font-family: 'DM Mono', monospace; font-size: 9px; color: #F43F5E; background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.2); padding: 2px 8px; border-radius: 3px; }
+
+  .sm-note { margin-top: 16px; padding: 12px 16px; background: #0A0E1A; border: 1px solid #1A2236; border-radius: 8px; font-size: 11.5px; color: #64748B; line-height: 1.55; }
+
+  /* FAILURE MODES TABLE */
+  .fail-table { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow-x: auto; overflow-y: hidden; width: 100%; max-width: 100%; }
+  .ft-header { display: grid; grid-template-columns: 1.2fr 1fr 1.6fr 1.2fr; background: #080C17; border-bottom: 1px solid #1E2A40; min-width: 800px; }
+  .ftc { padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; border-right: 1px solid #1A2236; font-weight: 500; }
+  .ftc:last-child { border-right: none; }
+  .ft-row { display: grid; grid-template-columns: 1.2fr 1fr 1.6fr 1.2fr; border-bottom: 1px solid #1A2236; min-width: 800px; }
+  .ft-row:last-child { border-bottom: none; }
+  .ft-row:hover { background: rgba(255,255,255,0.012); }
+  .ft-cell { padding: 12px 14px; font-size: 11.5px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.5; }
+  .ft-cell:last-child { border-right: none; }
+  .ft-name { font-size: 12px; font-weight: 600; color: #E2E8F0; }
+  .ft-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: inline-block; margin-right: 6px; vertical-align: middle; }
+  .sev-crit { background: #F43F5E; }
+  .sev-high { background: #F97316; }
+  .sev-med  { background: #EAB308; }
+  .sev-badge { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 6px; border-radius: 3px; }
+  .sb-crit { background: rgba(244,63,94,0.12); color: #FDA4AF; }
+  .sb-high { background: rgba(249,115,22,0.12); color: #FDBA74; }
+  .sb-med  { background: rgba(234,179,8,0.12);  color: #FDE68A; }
+  .sb-good { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-purple { background: rgba(168,85,247,0.05); border: 1px solid rgba(168,85,247,0.2); }
+  .callout-yellow { background: rgba(234,179,8,0.05);  border: 1px solid rgba(234,179,8,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05);  border: 1px solid rgba(244,63,94,0.2); }
+  .callout-green  { background: rgba(34,197,94,0.05);  border: 1px solid rgba(34,197,94,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-purple { color: #D8B4FE; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-rose   { color: #FDA4AF; }
+  .ct-green  { color: #86EFAC; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  /* COMPARE TABLE */
+  .comp-table { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow-x: auto; overflow-y: hidden; width: 100%; max-width: 100%; }
+  .ct-header { display: grid; grid-template-columns: 1.2fr 1fr 1fr; background: #080C17; border-bottom: 1px solid #1E2A40; min-width: 720px; }
+  .ctc { padding: 10px 16px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; border-right: 1px solid #1A2236; font-weight: 500; }
+  .ctc:last-child { border-right: none; }
+  .ct-row { display: grid; grid-template-columns: 1.2fr 1fr 1fr; border-bottom: 1px solid #1A2236; min-width: 720px; }
+  .ct-row:last-child { border-bottom: none; }
+  .ct-row:hover { background: rgba(255,255,255,0.012); }
+  .ct-cell { padding: 12px 16px; font-size: 11.5px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.5; }
+  .ct-cell:last-child { border-right: none; }
+  .ct-cell strong { color: #94A3B8; font-weight: 500; }
+  .badge-pro  { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; background: rgba(34,197,94,0.12); color: #86EFAC; }
+  .badge-con  { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; background: rgba(244,63,94,0.12); color: #FDA4AF; }
+  .badge-neu  { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; background: rgba(168,85,247,0.12); color: #D8B4FE; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #A855F7; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #A855F7; background: rgba(168,85,247,0.08); border: 1px solid rgba(168,85,247,0.2); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">SAGA PATTERN · PARTE 2 DE 2</div>
+        <h1>Saga<br><span>Orquestada</span></h1>
+        <p class="header-sub">Un coordinador central dirige el flujo, gestiona los fallos y activa las compensaciones</p>
+      </div>
+    </div>
+    <div class="part-badge">SAGA · P2</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🎯 Orchestrator</span>
+    <span class="pill pill-b">❌ Manejo de fallos</span>
+    <span class="pill pill-c">↩ Compensaciones</span>
+    <span class="pill pill-d">📊 Estado global visible</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN 1 — QUÉ ES -->
+  <div class="section-header">
+    <span class="section-num sn-purple">01</span>
+    <span class="section-title-text">¿Qué es una Saga Orquestada?</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="golden-rule">
+    <span class="gr-icon">🎯</span>
+    <div>
+      <div class="gr-label">PRINCIPIO FUNDAMENTAL — UN ÚNICO COORDINADOR EXPLÍCITO</div>
+      <div class="gr-text">El orquestador sabe qué paso sigue, qué debe compensarse si falla, y persiste su propio estado. Los servicios participantes sólo ejecutan comandos — no saben que forman parte de una Saga.</div>
+      <div class="gr-sub">El orquestador centraliza la lógica del flujo de negocio. <strong>El estado global de la transacción larga vive en un único lugar</strong> — una entidad de base de datos con su máquina de estados. Los servicios participantes son ejecutores puros: reciben un comando, realizan su trabajo local y responden con éxito o fallo.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2 — ARQUITECTURA DEL ORQUESTADOR -->
+  <div class="section-header">
+    <span class="section-num sn-purple">02</span>
+    <span class="section-title-text">Arquitectura — orquestador y servicios participantes</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="orch-diagram">
+    <div class="orch-title">Relación orquestador ↔ servicios participantes (pedido de e-commerce)</div>
+
+    <div style="display: flex; gap: 32px; align-items: flex-start;">
+
+      <!-- Servicios izquierda -->
+      <div style="display:flex; flex-direction:column; gap:16px; flex:1; padding-top:20px;">
+        <!-- Inventory -->
+        <div>
+          <div class="orch-svc orch-svc-teal" style="margin-bottom:6px;">
+            <span class="orch-svc-icon">📦</span>
+            <div><div class="orch-svc-name">Inventory Service</div><div class="orch-svc-cmd">reserveStock / releaseStock</div></div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <div style="display:flex; flex-direction:column; gap:3px; text-align:right;">
+              <div class="conn-label conn-cmd" style="display:inline-block;">→ ReserveStock</div>
+              <div class="conn-label conn-reply" style="display:inline-block;">← StockReserved</div>
+              <div class="conn-label conn-comp" style="display:inline-block;">→ ReleaseStock (comp)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div>
+          <div class="orch-svc orch-svc-yellow" style="margin-bottom:6px;">
+            <span class="orch-svc-icon">💳</span>
+            <div><div class="orch-svc-name">Payment Service</div><div class="orch-svc-cmd">processPayment / refundPayment</div></div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <div style="display:flex; flex-direction:column; gap:3px; text-align:right;">
+              <div class="conn-label conn-cmd" style="display:inline-block;">→ ProcessPayment</div>
+              <div class="conn-label conn-reply" style="display:inline-block;">← PaymentSucceeded</div>
+              <div class="conn-label conn-fail" style="display:inline-block;">← PaymentFailed</div>
+              <div class="conn-label conn-comp" style="display:inline-block;">→ RefundPayment (comp)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flechas left → center -->
+      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding-top:60px; gap:24px;">
+        <div style="color:#2D3E5A; font-size:22px; line-height:1;">⇄</div>
+        <div style="color:#2D3E5A; font-size:22px; line-height:1;">⇄</div>
+      </div>
+
+      <!-- Orquestador centro -->
+      <div style="display:flex; flex-direction:column; align-items:center; gap:12px; flex-shrink:0;">
+        <div class="orch-box">
+          <div style="font-size:28px; margin-bottom:8px;">🎯</div>
+          <div class="orch-box-title">ORDER SAGA<br>ORCHESTRATOR</div>
+          <div class="orch-box-sub">Proceso durable</div>
+          <div style="margin-top:12px; border-top:1px solid rgba(168,85,247,0.2); padding-top:10px;">
+            <div style="font-size:9px; font-family:'DM Mono',monospace; color:#7C3AED; margin-bottom:4px;">ESTADO PERSISTIDO</div>
+            <div style="font-size:10px; font-family:'DM Mono',monospace; color:#A855F7;">saga_id · step · status</div>
+          </div>
+        </div>
+        <div style="font-size:11px; color:#3B4C68; font-family:'DM Mono',monospace; text-align:center; max-width:160px; line-height:1.4;">
+          Conoce el estado global.<br>Decide qué compensar.
+        </div>
+      </div>
+
+      <!-- Flechas center → right -->
+      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding-top:60px; gap:24px;">
+        <div style="color:#2D3E5A; font-size:22px; line-height:1;">⇄</div>
+        <div style="color:#2D3E5A; font-size:22px; line-height:1;">⇄</div>
+      </div>
+
+      <!-- Servicios derecha -->
+      <div style="display:flex; flex-direction:column; gap:16px; flex:1; padding-top:20px;">
+        <!-- Order -->
+        <div>
+          <div class="orch-svc orch-svc-green" style="margin-bottom:6px;">
+            <span class="orch-svc-icon">🛒</span>
+            <div><div class="orch-svc-name">Order Service</div><div class="orch-svc-cmd">confirmOrder / cancelOrder</div></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <div class="conn-label conn-cmd" style="display:inline-block;">→ ConfirmOrder</div>
+            <div class="conn-label conn-reply" style="display:inline-block;">← OrderConfirmed</div>
+            <div class="conn-label conn-comp" style="display:inline-block;">→ CancelOrder (comp)</div>
+          </div>
+        </div>
+
+        <!-- Shipping -->
+        <div>
+          <div class="orch-svc orch-svc-green" style="margin-bottom:6px; border-color:rgba(59,130,246,0.25); background:rgba(59,130,246,0.1); color:#93C5FD;">
+            <span class="orch-svc-icon">🚚</span>
+            <div><div class="orch-svc-name">Shipping Service</div><div class="orch-svc-cmd">createShipment / cancelShipment</div></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <div class="conn-label conn-cmd" style="display:inline-block;">→ CreateShipment</div>
+            <div class="conn-label conn-reply" style="display:inline-block;">← ShipmentCreated</div>
+            <div class="conn-label conn-comp" style="display:inline-block;">→ CancelShipment (comp)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; padding:12px 16px; background:#0A0E1A; border:1px solid #1A2236; border-radius:8px; font-size:11.5px; color:#64748B; line-height:1.55; text-align:center;">
+      🔑 Los servicios <strong style="color:#94A3B8">no saben entre sí que son parte de una Saga</strong>. Sólo ven comandos del orquestador y responden. Esta separación es la clave: podés añadir o quitar pasos sin tocar los servicios participantes.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3 — MÁQUINA DE ESTADOS -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">03</span>
+    <span class="section-title-text">Máquina de estados del orquestador</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="state-machine">
+    <div class="sm-title">Estados del flujo — happy path y compensación</div>
+
+    <!-- Happy path -->
+    <div style="font-size:10px; font-family:'DM Mono',monospace; color:#3B4C68; margin-bottom:10px;">HAPPY PATH →</div>
+    <div class="states-row">
+      <div class="state-node st-pending">
+        <span class="sn-icon">⏳</span>
+        <span class="sn-name sn-blue">PENDING</span>
+        <span class="sn-label">inicio</span>
+      </div>
+      <div class="st-arrow">→</div>
+      <div class="state-node st-reserving">
+        <span class="sn-icon">📦</span>
+        <span class="sn-name sn-teal">RESERVING</span>
+        <span class="sn-label">stock</span>
+      </div>
+      <div class="st-arrow">→</div>
+      <div class="state-node st-paying">
+        <span class="sn-icon">💳</span>
+        <span class="sn-name sn-yellow">PAYING</span>
+        <span class="sn-label">pago</span>
+      </div>
+      <div class="st-arrow">→</div>
+      <div class="state-node st-shipping">
+        <span class="sn-icon">🚚</span>
+        <span class="sn-name sn-green">SHIPPING</span>
+        <span class="sn-label">envío</span>
+      </div>
+      <div class="st-arrow">→</div>
+      <div class="state-node st-done">
+        <span class="sn-icon">✅</span>
+        <span class="sn-name sn-done">COMPLETED</span>
+        <span class="sn-label">final OK</span>
+      </div>
+    </div>
+
+    <!-- Compensación -->
+    <div style="font-size:10px; font-family:'DM Mono',monospace; color:#F43F5E; margin-top:20px; margin-bottom:10px;">COMPENSACIÓN ← (cuando falla el pago)</div>
+    <div class="states-row">
+      <div class="state-node st-paying" style="border-color:rgba(244,63,94,0.4);">
+        <span class="sn-icon">❌</span>
+        <span class="sn-name" style="color:#FDA4AF;">PAY_FAILED</span>
+        <span class="sn-label">pago rechazado</span>
+      </div>
+      <div class="st-arrow st-arrow-fail">→</div>
+      <div class="state-node st-comp">
+        <span class="sn-icon">↩</span>
+        <span class="sn-name sn-comp">RELEASING</span>
+        <span class="sn-label">comp. stock</span>
+      </div>
+      <div class="st-arrow st-arrow-fail">→</div>
+      <div class="state-node st-comp">
+        <span class="sn-icon">↩</span>
+        <span class="sn-name sn-comp">CANCELLING</span>
+        <span class="sn-label">comp. orden</span>
+      </div>
+      <div class="st-arrow st-arrow-fail">→</div>
+      <div class="state-node st-cancelled">
+        <span class="sn-icon">🚫</span>
+        <span class="sn-name" style="color:#F43F5E;">CANCELLED</span>
+        <span class="sn-label">final KO</span>
+      </div>
+    </div>
+
+    <div class="sm-note">
+      📌 <strong style="color:#94A3B8">El orquestador persiste cada transición de estado</strong> antes de enviar el siguiente comando. Si el orquestador cae y reinicia, sabe exactamente en qué paso estaba y puede reanudar desde ahí — esto lo convierte en un <em>proceso durable</em>. Herramientas como <span style="font-family:'DM Mono',monospace; font-size:10px; color:#D8B4FE">Temporal.io</span>, <span style="font-family:'DM Mono',monospace; font-size:10px; color:#D8B4FE">AWS Step Functions</span> o <span style="font-family:'DM Mono',monospace; font-size:10px; color:#D8B4FE">Conductor</span> gestionan esto por vos.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4 — MODOS DE FALLO -->
+  <div class="section-header">
+    <span class="section-num sn-rose">04</span>
+    <span class="section-title-text">Modos de fallo y cómo el orquestador los gestiona</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="fail-table">
+    <div class="ft-header">
+      <div class="ftc">Fallo</div>
+      <div class="ftc">Severidad</div>
+      <div class="ftc">Qué hace el orquestador</div>
+      <div class="ftc">Patrón</div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-cell"><span class="ft-dot sev-crit"></span><span class="ft-name">Servicio no responde (timeout)</span></div>
+      <div class="ft-cell"><span class="sev-badge sb-crit">Crítico</span></div>
+      <div class="ft-cell">Reintenta N veces con backoff exponencial. Si supera el límite, activa el path de compensación desde el paso actual hacia atrás.</div>
+      <div class="ft-cell"><span class="sev-badge sb-good">Retry + Compensate</span></div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-cell"><span class="ft-dot sev-crit"></span><span class="ft-name">Servicio responde con error de negocio</span></div>
+      <div class="ft-cell"><span class="sev-badge sb-crit">Crítico</span></div>
+      <div class="ft-cell">El error de negocio (PaymentFailed) es una respuesta válida — no se reintenta. Se activa inmediatamente el path de compensación para los pasos ya completados.</div>
+      <div class="ft-cell"><span class="sev-badge sb-good">Compensate only</span></div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-cell"><span class="ft-dot sev-high"></span><span class="ft-name">El orquestador cae a mitad del flujo</span></div>
+      <div class="ft-cell"><span class="sev-badge sb-high">Alto</span></div>
+      <div class="ft-cell">El estado persistido en BD permite recuperar la Saga desde el último estado consistente al reiniciar. El proceso durable retoma desde ahí.</div>
+      <div class="ft-cell"><span class="sev-badge sb-good">Durable Process</span></div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-cell"><span class="ft-dot sev-high"></span><span class="ft-name">Comando enviado pero respuesta perdida</span></div>
+      <div class="ft-cell"><span class="sev-badge sb-high">Alto</span></div>
+      <div class="ft-cell">El orquestador reenvía el comando (at-least-once). El servicio participante debe ser <strong>idempotente</strong> — procesar el mismo comando dos veces no produce efectos duplicados.</div>
+      <div class="ft-cell"><span class="sev-badge sb-good">Idempotency Key</span></div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-cell"><span class="ft-dot sev-med"></span><span class="ft-name">Compensación que falla a su vez</span></div>
+      <div class="ft-cell"><span class="sev-badge sb-med">Medio</span></div>
+      <div class="ft-cell">Reintento agresivo de la compensación (es crítico que se complete). Si no puede compensar automáticamente, escala a intervención manual — alertas y dead-letter queue.</div>
+      <div class="ft-cell"><span class="sev-badge sb-high">Retry + Manual</span></div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-cell"><span class="ft-dot sev-med"></span><span class="ft-name">Acción no compensable (email enviado)</span></div>
+      <div class="ft-cell"><span class="sev-badge sb-med">Medio</span></div>
+      <div class="ft-cell">La compensación es una acción correctiva, no un rollback real. Enviar un email de disculpa o una nota de crédito es la compensación — no se puede "desenviar" el primero.</div>
+      <div class="ft-cell"><span class="sev-badge sb-high">Corrective Action</span></div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 5 — COMPARACIÓN FINAL -->
+  <div class="section-header">
+    <span class="section-num sn-blue">05</span>
+    <span class="section-title-text">Orquestación vs Coreografía — cuándo elegir cada una</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="comp-table">
+    <div class="ct-header">
+      <div class="ctc">Dimensión</div>
+      <div class="ctc">🎼 Coreografía</div>
+      <div class="ctc">🎯 Orquestación</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Visibilidad del flujo</strong></div>
+      <div class="ct-cell"><span class="badge-con">distribuida</span> El flujo emerge — no está en un solo lugar</div>
+      <div class="ct-cell"><span class="badge-pro">centralizada</span> El orquestador es el único lugar donde ver el estado</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Acoplamiento</strong></div>
+      <div class="ct-cell"><span class="badge-pro">bajo</span> Solo conocen el contrato de eventos</div>
+      <div class="ct-cell"><span class="badge-neu">medio</span> Los servicios son desacoplados entre sí pero dependen del orquestador</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Complejidad del flujo</strong></div>
+      <div class="ct-cell">Simple, lineal (2-4 pasos)</div>
+      <div class="ct-cell"><span class="badge-pro">maneja bien</span> Flujos complejos con ramas, condiciones y reintentos</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Debugging</strong></div>
+      <div class="ct-cell"><span class="badge-con">difícil</span> Hay que correlacionar logs de múltiples servicios</div>
+      <div class="ct-cell"><span class="badge-pro">fácil</span> El estado de la Saga es un registro con historial de pasos</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Testing</strong></div>
+      <div class="ct-cell">Necesita integración para probar el flujo completo</div>
+      <div class="ct-cell"><span class="badge-pro">testeable en unitario</span> El orquestador es una clase con su lógica — se puede testear solo</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Punto único de fallo</strong></div>
+      <div class="ct-cell"><span class="badge-pro">ninguno</span> No hay nodo central</div>
+      <div class="ct-cell"><span class="badge-con">el orquestador</span> Debe ser altamente disponible y durable</div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;">
+    <div class="callout callout-purple">
+      <span class="callout-icon">🎯</span>
+      <div>
+        <div class="callout-title ct-purple">Elige orquestación cuando…</div>
+        <div class="callout-text">El flujo tiene más de 4-5 pasos, hay condiciones de ramificación (<em>si el stock es bajo, usa proveedor B</em>), necesitás visibilidad del estado en tiempo real, o el negocio exige auditoría detallada. <strong>La ganancia en observabilidad y control compensa la mayor complejidad del orquestador.</strong></div>
+      </div>
+    </div>
+    <div class="callout callout-yellow">
+      <span class="callout-icon">⚡</span>
+      <div>
+        <div class="callout-title ct-yellow">Herramientas para el orquestador</div>
+        <div class="callout-text">Podés implementarlo a mano (entidad Saga en tu BD) o usar herramientas especializadas: <strong>Temporal.io</strong> (workflows durables), <strong>AWS Step Functions</strong> (serverless), <strong>Conductor</strong> (Netflix OSS), o <strong>BPMN engines</strong> como Camunda. A mayor complejidad del flujo, más vale la inversión en infraestructura.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">SAGA PATTERN · PARTE 2 DE 2 · ORQUESTADA</span>
+  <div class="footer-nav">
+    <span class="footer-count">6 modos de fallo · comparación coreografía vs orquestación</span>
+    <a class="footer-btn" href="saga-coreografiada.html">← Parte 1: Coreografiada</a>
+  </div>
+</div>
+</body>
+</html>

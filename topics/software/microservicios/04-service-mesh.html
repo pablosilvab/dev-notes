@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microservicios · Service Mesh</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #0A0E1A; overflow-x: hidden; width: 100%; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; overflow-x: hidden; color: #E2E8F0; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(20,184,166,0.12) 0%, transparent 70%); pointer-events: none; }
+  .header::after { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #4338CA; color: #EEF2FF; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #5EEAD4; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; max-width: 720px; line-height: 1.5; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #5EEAD4; background: rgba(94,234,212,0.08); border: 1px solid rgba(94,234,212,0.35); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #5EEAD4; border-color: rgba(94,234,212,0.35); background: rgba(94,234,212,0.07); }
+  .pill-b { color: #A5B4FC; border-color: rgba(165,180,252,0.35); background: rgba(165,180,252,0.08); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; scroll-margin-top: 72px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-i { color: #818CF8; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .cards-grid { display: grid; gap: 10px; }
+  .cards-grid > * { min-width: 0; }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.cm::before { background: #14B8A6; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-m { background: rgba(20,184,166,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-m { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+
+  .diag {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 24px 28px;
+    width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .diag-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; text-align: center; }
+
+  .mesh-diag { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; min-width: 520px; }
+  .mesh-col { background: #0A0E1A; border: 1px solid #1E2A40; border-radius: 10px; padding: 16px; }
+  .mesh-col h4 { font-family: 'Space Mono', monospace; font-size: 9px; color: #5EEAD4; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .mesh-col p { font-size: 11.5px; color: #64748B; line-height: 1.55; }
+  .mesh-col code { font-family: 'DM Mono', monospace; font-size: 10px; color: #93C5FD; }
+
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-i { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.18); color: #A5B4FC; }
+
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-i { background: rgba(20,184,166,0.05); border: 1px solid rgba(20,184,166,0.22); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; color: #5EEAD4; margin-bottom: 5px; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+  .callout-text a { color: #5EEAD4; text-decoration: none; border-bottom: 1px solid rgba(94,234,212,0.35); }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #A5B4FC; background: rgba(165,180,252,0.08); border: 1px solid rgba(165,180,252,0.22); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">MICROSERVICIOS · INFOGRAFÍA 4 / 5</div>
+        <h1>Service<br><span>Mesh</span></h1>
+        <p class="header-sub">Data plane y control plane: políticas de red uniformes entre servicios (mTLS, retries). Los mismos conceptos de resiliencia aparecen también en librerías de aplicación — véase <a href="../resiliencia/parte1.html" style="color:#5EEAD4;text-decoration:none;border-bottom:1px solid rgba(94,234,212,0.35);">Resiliencia</a> para el contraste.</p>
+      </div>
+    </div>
+    <div class="part-badge">MS · 04</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">Este-oeste</span>
+    <span class="pill pill-b">Sidecar · mTLS</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-i">01</span>
+    <span class="section-title-text">Qué problema resuelve</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card cm">
+      <div class="card-header">
+        <div class="card-icon icon-m">🔀</div>
+        <div>
+          <div class="card-num">DATA PLANE</div>
+          <div class="card-title">Sidecar proxy (p. ej. Envoy)</div>
+        </div>
+      </div>
+      <div class="card-keywords"><span class="kw kw-m">mTLS</span><span class="kw kw-m">Retries</span><span class="kw kw-m">Circuit break</span></div>
+      <div class="card-desc">Cada pod lleva un proxy; el tráfico <strong>este-oeste</strong> (entre servicios) pasa por la malla: políticas de resiliencia, balances y cifrado sin reimplementar en cada lenguaje.</div>
+    </div>
+    <div class="card cm">
+      <div class="card-header">
+        <div class="card-icon icon-m">🎛</div>
+        <div>
+          <div class="card-num">CONTROL PLANE</div>
+          <div class="card-title">Istio · Linkerd · Consul Connect</div>
+        </div>
+      </div>
+      <div class="card-keywords"><span class="kw kw-m">SMI</span><span class="kw kw-m">Certs rotation</span></div>
+      <div class="card-desc">Distribuye configuración y certificados a los proxies. Es donde viven las reglas de tráfico avanzadas y la observabilidad consistente de la red.</div>
+    </div>
+  </div>
+
+  <div class="diag" style="margin-top:14px">
+    <div class="diag-title">Tres capas que suelen preguntar en entrevista / diseño</div>
+    <div class="mesh-diag">
+      <div class="mesh-col">
+        <h4>NORTE-SUR</h4>
+        <p>Usuarios → ingress/gateway. TLS, WAF, OAuth en el borde (infografía <a href="03-comunicacion-borde.html" style="color:#93C5FD;">Comunicación en el borde</a>).</p>
+      </div>
+      <div class="mesh-col">
+        <h4>ESTE-OESTE</h4>
+        <p>Servicio ↔ servicio dentro del cluster. Ahí brilla el mesh: <code>mTLS</code>, políticas uniformes.</p>
+      </div>
+      <div class="mesh-col">
+        <h4>OBSERVABILIDAD</h4>
+        <p>Métricas y trazas de red desde el proxy sin instrumentar cada librería HTTP.</p>
+      </div>
+    </div>
+    <div class="tip-box tip-i" style="margin-top:14px">Mesh añade operación y CPU/memoria: conviene cuando el grafo de llamadas internas es grande y la política de tráfico es crítica.</div>
+  </div>
+
+  <div class="callout callout-i" style="margin-top:14px">
+    <span class="callout-icon">◇</span>
+    <div>
+      <div class="callout-title">Circuit breaker en dos sitios</div>
+      <div class="callout-text">El mesh puede aplicar cortes y reintentos en el proxy; la aplicación puede (y suele) tener sus propias políticas. En entrevista importa explicar <strong>quién decide qué</strong> y evitar tormentas de reintentos duplicadas — coherencia con <a href="../resiliencia/parte2.html">Resiliencia — parte 2</a> si ya la tienes en el mapa.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">MICROSERVICIOS · 4 / 5 · SERVICE MESH</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="03-comunicacion-borde.html">← Anterior</a>
+    <a class="footer-btn" href="05-migracion-incremental.html">Siguiente: migración →</a>
+  </div>
+</div>
+</body>
+</html>

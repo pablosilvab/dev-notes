@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA · Parte 1 — Modelado y contratos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:#0A0E1A;overflow-x:hidden;width:100%}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto;overflow-x:hidden;color:#E2E8F0}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(217,70,239,0.12) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(34,197,94,0.06) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#D946EF;color:#fff;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  h1 span{color:#E879F9}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px;max-width:720px;line-height:1.5}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#D946EF;background:rgba(217,70,239,.08);border:1px solid rgba(217,70,239,.35);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace}
+  .pa{color:#F0ABFC;border-color:rgba(240,171,252,.35);background:rgba(240,171,252,.08)}
+  .pb{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .pc{color:#7DD3FC;border-color:rgba(125,211,252,.3);background:rgba(125,211,252,.07)}
+  .pd{color:#FCD34D;border-color:rgba(252,211,77,.3);background:rgba(252,211,77,.07)}
+  .body{padding:0 56px 56px}
+  .sh{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .sn{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-e{color:#D946EF}.sn-g{color:#22C55E}.sn-a{color:#F59E0B}.sn-s{color:#0EA5E9}
+  .stt{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .sl{flex:1;height:1px;background:#1E2A40}
+  .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+  .g2>*{min-width:0}
+  .stack-col{display:grid;grid-template-columns:1fr;gap:12px;width:100%}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .ce::before{background:#D946EF}.cg::before{background:#22C55E}.ca::before{background:#F59E0B}.cs::before{background:#0EA5E9}
+  .ci{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .ie{background:rgba(217,70,239,.15)}.ig{background:rgba(34,197,94,.12)}.ia{background:rgba(245,158,11,.12)}.is{background:rgba(14,165,233,.12)}
+  .cn{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .ct{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .kws{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px}
+  .ke{background:rgba(217,70,239,.12);color:#F0ABFC}.kg{background:rgba(34,197,94,.12);color:#86EFAC}.ka{background:rgba(245,158,11,.12);color:#FCD34D}.ks{background:rgba(14,165,233,.12);color:#7DD3FC}
+  .cd{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .ce{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .ce strong{color:#94A3B8;font-weight:500}
+  .tip{border-radius:6px;padding:8px 10px;font-size:11px;margin-top:10px;line-height:1.5}
+  .tip::before{content:'⚡ '}
+  .te{background:rgba(217,70,239,.06);border:1px solid rgba(217,70,239,.2);color:#F0ABFC}
+  .tg{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.18);color:#86EFAC}
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .cl-e{background:rgba(217,70,239,.05);border:1px solid rgba(217,70,239,.22)}
+  .cl-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .cl-ttl{font-size:12px;font-weight:600;margin-bottom:5px;color:#F0ABFC}
+  .cl-txt{font-size:12px;color:#64748B;line-height:1.65}
+  .cl-txt strong{color:#94A3B8}
+  /* Diagramas */
+  .diag{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:22px 24px;width:100%;overflow-x:auto}
+  .diag-ttl{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;text-align:center}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:min(100%,680px)}
+  .cmp-box{background:#0A0E1A;border-radius:10px;padding:14px 16px;border:1px solid #1E2A40}
+  .cmp-h{font-family:'Space Mono',monospace;font-size:9px;color:#D946EF;margin-bottom:8px;font-weight:700}
+  .cmp-h.g{color:#22C55E}
+  .cmp-t{font-size:12px;color:#8899B8;line-height:1.55}
+  .flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;padding:8px 0}
+  .fn{border-radius:8px;padding:12px 14px;text-align:center;font-size:11px;border:1px solid}
+  .fn-p{border-color:rgba(217,70,239,.35);background:rgba(217,70,239,.06);color:#E2E8F0}
+  .fn-g{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.06)}
+  .fn-s{border-color:rgba(14,165,233,.35);background:rgba(14,165,233,.06)}
+  .arr{color:#3B4C68;font-size:14px;font-family:'DM Mono',monospace}
+  .tbl{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
+  .tbl th,.tbl td{padding:10px 12px;text-align:left;border-bottom:1px solid #1A2236;color:#64748B}
+  .tbl th{color:#6B7FA3;font-weight:600;font-family:'Space Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.06em}
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .ft{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .fn-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .fc{font-family:'Space Mono',monospace;font-size:10px;color:#D946EF;letter-spacing:.06em}
+  .fb{font-family:'Space Mono',monospace;font-size:10px;color:#D946EF;background:rgba(217,70,239,.08);border:1px solid rgba(217,70,239,.25);padding:4px 12px;border-radius:3px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">EDA · PARTE 1 DE 2</div>
+        <h1>Modelado de eventos<br><span>Contratos y límites</span></h1>
+        <p class="header-sub">Eventos de dominio frente a eventos de integración, notification vs <em>event-carried state transfer</em>, contratos versionados y relación con bounded contexts. Vocabulario que un arquitecto espera oír al diseñar publicación/suscripción.</p>
+      </div>
+    </div>
+    <div class="part-badge">EDA · P1</div>
+  </div>
+  <div class="pills">
+    <span class="pill pa">Domain vs integration event</span>
+    <span class="pill pb">Notification · ECST</span>
+    <span class="pill pc">Schema · Versionado</span>
+    <span class="pill pd">Bounded context</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="sh"><span class="sn sn-e">00</span><span class="stt">EDA en una frase</span><div class="sl"></div></div>
+
+  <div class="callout cl-e" style="margin-top:0">
+    <span class="cl-icon">📡</span>
+    <div>
+      <div class="cl-ttl">Arquitectura orientada a eventos (EDA)</div>
+      <div class="cl-txt">Los servicios publican <strong>hechos</strong> que ya ocurrieron (eventos) en lugar de coordinar todo con llamadas síncronas. Los consumidores reaccionan de forma <strong>asíncrona</strong> y desacoplada: pueden estar caídos y recuperarse, escalar por separado y evolucionar contratos con reglas claras. No sustituye al REST/gRPC donde el flujo pide respuesta inmediata; convive con ellos.</div>
+    </div>
+  </div>
+
+  <div class="sh"><span class="sn sn-e">01</span><span class="stt">Domain event vs integration event</span><div class="sl"></div></div>
+
+  <div class="g2">
+    <div class="card ce">
+      <div class="ci"><div class="ico ie">🏠</div><div><div class="cn">DENTRO DEL BOUNDED CONTEXT</div><div class="ct">Domain event</div></div></div>
+      <div class="kws"><span class="kw ke">Ubiquitous Language</span><span class="kw ke">Modelo rico</span><span class="kw ke">Invariantes locales</span></div>
+      <div class="cd">Representa algo relevante que ocurrió en el dominio según el lenguaje del equipo (p. ej. <span style="font-family:'DM Mono',monospace;color:#F0ABFC;font-size:10px">OrderPlaced</span>). Suele usarse dentro del mismo contexto o para sagas/coreografía si el nombre y la carga siguen siendo del dominio.</div>
+      <div class="ce"><strong>Criterio práctico:</strong> si cambias el nombre del evento y el equipo de negocio deja de entenderlo, probablemente no es un buen nombre de dominio.</div>
+    </div>
+    <div class="card cg">
+      <div class="ci"><div class="ico ig">🔌</div><div><div class="cn">CRUCE DE FRONTERA</div><div class="ct">Integration event</div></div></div>
+      <div class="kws"><span class="kw kg">Contrato estable</span><span class="kw kg">Payload mínimo necesario</span><span class="kw kg">Schema explícito</span></div>
+      <div class="cd">Contrato pensado para que <strong>otro equipo o sistema</strong> consuma sin conocer tu modelo interno. Suele ser más estable, versionado y con campos pensados para compatibilidad hacia atrás (Avro/JSON Schema/Protobuf).</div>
+      <div class="ce"><strong>Mapeo típico:</strong> el dominio emite algo interno → un componente traduce a un integration event publicado en el bus (a veces el mismo tipo con capas distintas).</div>
+    </div>
+  </div>
+
+  <div class="sh"><span class="sn sn-g">02</span><span class="stt">Notification vs event-carried state transfer</span><div class="sl"></div></div>
+
+  <div class="stack-col">
+    <div class="diag">
+      <div class="diag-ttl">Dos formas de informar a otros contextos</div>
+      <div class="cmp">
+        <div class="cmp-box">
+          <div class="cmp-h">NOTIFICATION</div>
+          <div class="cmp-t">El evento dice <strong>qué pasó</strong> y un ID; el consumidor debe <strong>consultar</strong> una API o su propia vista si necesita más datos. Menos datos en el bus, más acoplamiento temporal y más carga en lecturas downstream.</div>
+          <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:#64748B;line-height:1.5">{ "type": "OrderPlaced", "orderId": "42" }</div>
+        </div>
+        <div class="cmp-box">
+          <div class="cmp-h g">EVENT-CARRIED STATE TRANSFER (ECST)</div>
+          <div class="cmp-t">El evento lleva <strong>la porción de estado</strong> que el consumidor necesita para actualizar su copia local (read model, cache). Más bytes en el bus, menos llamadas de ida y vuelta, ideal para vistas materializadas y reporting.</div>
+          <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:#64748B;line-height:1.5">{ "orderId":"42","customerId":"c1",<br>"lines":[...], "total": 199.00 }</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip te">En reuniones de diseño suele decirse “¿notification o llevamos estado en el evento?” — ahí se está eligiendo entre menos payload + más queries vs más payload + menos dependencia síncrona.</div>
+  </div>
+
+  <div class="sh"><span class="sn sn-s">03</span><span class="stt">Contratos: schema, compatibilidad y versionado</span><div class="sl"></div></div>
+
+  <div class="card cs">
+    <div class="ci"><div class="ico is">📋</div><div><div class="cn">LO QUE ESPERA UN SENIOR EN UNA RFC</div><div class="ct">Contrato de evento explícito</div></div></div>
+    <div class="cd">Nombre del tipo (<span style="font-family:'DM Mono',monospace;color:#7DD3FC;font-size:10px">orders.OrderPlaced.v2</span>), schema (Avro / JSON Schema / Protobuf), reglas de <strong>compatibilidad</strong>: solo añadir campos opcionales en minor, cambios breaking en major, política de deprecación. Los consumidores deben poder ignorar campos desconocidos (tolerant reader).</div>
+    <table class="tbl">
+      <thead><tr><th>Cambio</th><th>Típicamente compatible</th><th>Breaking</th></tr></thead>
+      <tbody>
+        <tr><td>Nuevo campo opcional</td><td>Sí, si los lectores son tolerantes</td><td>—</td></tr>
+        <tr><td>Renombrar campo sin alias</td><td>No</td><td>Sí</td></tr>
+        <tr><td>Cambiar semántica del mismo campo</td><td>Riesgo alto</td><td>Casi siempre</td></tr>
+      </tbody>
+    </table>
+    <div class="tip te">El bus no “arregla” contratos mal definidos: sin versionado acordado, cada despliegue es una ruleta de integración.</div>
+  </div>
+
+  <div class="sh"><span class="sn sn-a">04</span><span class="stt">Bounded context y límites del evento</span><div class="sl"></div></div>
+
+  <div class="diag">
+    <div class="diag-ttl">Quién publica y quién interpreta</div>
+    <div class="flow">
+      <div class="fn fn-p"><strong>Contexto A</strong><br><span style="font-size:10px;color:#64748B">dueño del agregado</span></div>
+      <span class="arr">publica →</span>
+      <div class="fn fn-s">Topic / stream<br><span style="font-size:10px;color:#64748B">contrato compartido</span></div>
+      <span class="arr">suscribe →</span>
+      <div class="fn fn-g"><strong>Contexto B</strong><br><span style="font-size:10px;color:#64748B">proyección / proceso</span></div>
+    </div>
+    <p style="font-size:12px;color:#64748B;line-height:1.6;margin-top:14px;text-align:center;max-width:720px;margin-left:auto;margin-right:auto">Un evento “global” sin dueño claro tiende al caos. El equipo dueño del agregado define el significado; los consumidores adaptan (translator / ACL) si su modelo difiere. Antipatrón: un topic donde cualquier servicio publica el mismo tipo de mensaje sin gobierno.</p>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="ft">EVENT-DRIVEN ARCHITECTURE · PARTE 1 DE 2 · MODELO Y CONTRATOS</span>
+  <div class="fn-row">
+    <span class="fc">Domain · Integration · ECST · Contratos</span>
+    <a class="fb" href="parte2.html">Parte 2: fiabilidad y antipatrones →</a>
+  </div>
+</div>
+</body>
+</html>

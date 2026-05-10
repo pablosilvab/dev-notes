@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microservicios · Migración incremental</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #0A0E1A; overflow-x: hidden; width: 100%; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; overflow-x: hidden; color: #E2E8F0; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%); pointer-events: none; }
+  .header::after { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #4338CA; color: #EEF2FF; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #FCD34D; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; max-width: 720px; line-height: 1.5; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #FCD34D; background: rgba(252,211,77,0.08); border: 1px solid rgba(252,211,77,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #FCD34D; border-color: rgba(252,211,77,0.35); background: rgba(252,211,77,0.07); }
+  .pill-b { color: #A5B4FC; border-color: rgba(165,180,252,0.35); background: rgba(165,180,252,0.08); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; scroll-margin-top: 72px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-a { color: #F59E0B; }
+  .sn-b { color: #3B82F6; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.ca::before { background: #F59E0B; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-a { background: rgba(245,158,11,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-a { background: rgba(245,158,11,0.12); color: #FCD34D; }
+
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+
+  .diag {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 24px 28px;
+    width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .diag-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; text-align: center; }
+
+  .strangler {
+    display: flex; align-items: stretch; justify-content: center; flex-wrap: wrap; gap: 8px;
+  }
+  .st-block {
+    flex: 1 1 160px; min-width: 0; max-width: 220px; background: #0A0E1A; border: 1px solid #1E2A40; border-radius: 10px; padding: 14px; text-align: center;
+  }
+  .st-block .st-ttl { font-family: 'Space Mono', monospace; font-size: 9px; color: #F59E0B; margin-bottom: 8px; }
+  .st-block p { font-size: 11px; color: #64748B; line-height: 1.5; }
+  .st-arrow { display: flex; align-items: center; color: #3B4C68; font-size: 18px; padding: 0 4px; }
+
+  .tbl-wrap { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow-x: auto; width: 100%; max-width: 100%; }
+  .tbl-h { display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; background: #080C17; border-bottom: 1px solid #1E2A40; min-width: 680px; }
+  .tbl-r { display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; border-bottom: 1px solid #1A2236; min-width: 680px; }
+  .tbl-r:last-child { border-bottom: none; }
+  .th { padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; font-weight: 500; border-right: 1px solid #1A2236; }
+  .th:last-child { border-right: none; }
+  .td { padding: 12px 14px; font-size: 11.5px; color: #64748B; line-height: 1.5; border-right: 1px solid #1A2236; }
+  .td:last-child { border-right: none; }
+  .td strong { color: #94A3B8; }
+
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-i { background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; color: #93C5FD; margin-bottom: 5px; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+  .callout-text a { color: #93C5FD; text-decoration: none; border-bottom: 1px solid rgba(147,197,253,0.35); }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .footer-meta { font-family: 'Space Mono', monospace; font-size: 10px; color: #FCD34D; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #A5B4FC; background: rgba(165,180,252,0.08); border: 1px solid rgba(165,180,252,0.22); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">MICROSERVICIOS · INFOGRAFÍA 5 / 5</div>
+        <h1>Migración<br><span>incremental</span></h1>
+        <p class="header-sub"><strong>Strangler Fig</strong> y monolito modular como caminos hacia microservicios sin big-bang. Los límites internos del monolito conectan con <a href="../refactoring/parte1.html" style="color:#FCD34D;text-decoration:none;border-bottom:1px solid rgba(252,211,77,0.35);">Refactoring</a> cuando toca ordenar el código antes de cortar deployables.</p>
+      </div>
+    </div>
+    <div class="part-badge">MS · 05</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">Strangler Fig</span>
+    <span class="pill pill-b">Gateway vs Mesh</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-a">01</span>
+    <span class="section-title-text">Strangler Fig — reemplazar por el borde</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card ca">
+    <div class="card-header">
+      <div class="card-icon icon-a">🌿</div>
+      <div>
+        <div class="card-num">PATRÓN</div>
+        <div class="card-title">Nuevo tráfico por rutas nuevas</div>
+      </div>
+    </div>
+    <div class="card-keywords"><span class="kw kw-a">Routing progresivo</span><span class="kw kw-a">Dual write</span><span class="kw kw-a">Feature flags</span></div>
+    <div class="card-desc">El tráfico nuevo entra por servicios extraídos; el legado atiende lo que falta. Con el tiempo la “higuera” reduce el monolito sin apagón único.</div>
+  </div>
+
+  <div class="diag" style="margin-top:14px">
+    <div class="diag-title">Flujo mental del patrón</div>
+    <div class="strangler">
+      <div class="st-block">
+        <div class="st-ttl">1 · FACHADA</div>
+        <p>Proxy o gateway delante del monolito; primer paso para rutear lecturas.</p>
+      </div>
+      <div class="st-arrow">→</div>
+      <div class="st-block">
+        <div class="st-ttl">2 · EXTRAER</div>
+        <p>Servicio nuevo para un subdominio estable; contrato explícito.</p>
+      </div>
+      <div class="st-arrow">→</div>
+      <div class="st-block">
+        <div class="st-ttl">3 · REDUCIR</div>
+        <p>Menos código en el monolito; eventual retiro.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-i" style="margin-top:14px">
+    <span class="callout-icon">🧩</span>
+    <div>
+      <div class="callout-title">Monolito modular como trampolín</div>
+      <div class="callout-text">Módulos con límites claros <strong>dentro</strong> del mismo deploy preparan equipos y datos antes de cortar procesos. Es la opción más sensata cuando el dominio aún cambia rápido; encaja con la idea de <strong>trade-offs</strong> en la <a href="01-limites-contratos-gobernanza.html">infografía 1</a>.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-b">02</span>
+    <span class="section-title-text">Gateway vs Mesh — no compiten</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-h">
+      <div class="th">Capa</div>
+      <div class="th">API Gateway / Ingress</div>
+      <div class="th">Service Mesh</div>
+    </div>
+    <div class="tbl-r">
+      <div class="td"><strong>Enfoque</strong></div>
+      <div class="td">Tráfico externo → cluster; políticas de borde.</div>
+      <div class="td">Tráfico interno entre workloads; identidad servicio-a-servicio.</div>
+    </div>
+    <div class="tbl-r">
+      <div class="td"><strong>Pregunta típica</strong></div>
+      <div class="td">¿Quién puede llamar a nuestra API pública?</div>
+      <div class="td">¿Cómo aseguro y observo llamadas entre pods?</div>
+    </div>
+    <div class="tbl-r">
+      <div class="td"><strong>En dev-notes</strong></div>
+      <div class="td"><a href="03-comunicacion-borde.html">Infografía 3 — borde</a></div>
+      <div class="td"><a href="04-service-mesh.html">Infografía 4 — mesh</a></div>
+    </div>
+    <div class="tbl-r">
+      <div class="td"><strong>Plataforma</strong></div>
+      <div class="td">Se conecta con Kubernetes (Ingress, Service) en la tarjeta siguiente del índice.</div>
+      <div class="td">Sidecars y políticas encajan con pods y namespaces.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">MICROSERVICIOS · 5 / 5 · MIGRACIÓN</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="04-service-mesh.html">← Anterior</a>
+    <span class="footer-meta">Serie completa</span>
+    <a class="footer-btn" href="01-limites-contratos-gobernanza.html">Volver al inicio de la serie →</a>
+  </div>
+</div>
+</body>
+</html>

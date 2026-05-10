@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saga Coreografiada — Eventos y Responsabilidades</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #0A0E1A; overflow-x: hidden; width: 100%; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; overflow-x: hidden; color: #E2E8F0; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%); pointer-events: none; }
+  .header::after  { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(20,184,166,0.05) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #22C55E; color: #0A0E1A; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #22C55E; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #22C55E; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.3); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-b { color: #5EEAD4; border-color: rgba(94,234,212,0.3); background: rgba(94,234,212,0.07); }
+  .pill-c { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-d { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-green  { color: #22C55E; }
+  .sn-teal   { color: #14B8A6; }
+  .sn-yellow { color: #EAB308; }
+  .sn-rose   { color: #F43F5E; }
+  .sn-blue   { color: #3B82F6; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .cards-grid { display: grid; gap: 10px; }
+  .cards-grid > * { min-width: 0; }
+  .g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.c-yellow::before { background: #EAB308; }
+  .card.c-rose::before   { background: #F43F5E; }
+  .card.c-green::before  { background: #22C55E; }
+  .card.c-blue::before   { background: #3B82F6; }
+  .card.c-orange::before { background: #F97316; }
+  .card.c-purple::before { background: #A855F7; }
+  .card.c-teal::before   { background: #14B8A6; }
+  .card.c-pink::before   { background: #EC4899; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-yellow { background: rgba(234,179,8,0.12); }
+  .icon-rose   { background: rgba(244,63,94,0.12); }
+  .icon-green  { background: rgba(34,197,94,0.12); }
+  .icon-blue   { background: rgba(59,130,246,0.12); }
+  .icon-orange { background: rgba(249,115,22,0.12); }
+  .icon-purple { background: rgba(168,85,247,0.12); }
+  .icon-teal   { background: rgba(20,184,166,0.12); }
+  .icon-pink   { background: rgba(236,72,153,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-yellow { background: rgba(234,179,8,0.12);  color: #FDE68A; }
+  .kw-rose   { background: rgba(244,63,94,0.12);  color: #FDA4AF; }
+  .kw-green  { background: rgba(34,197,94,0.12);  color: #86EFAC; }
+  .kw-blue   { background: rgba(59,130,246,0.12); color: #93C5FD; }
+  .kw-orange { background: rgba(249,115,22,0.12); color: #FDBA74; }
+  .kw-purple { background: rgba(168,85,247,0.12); color: #D8B4FE; }
+  .kw-teal   { background: rgba(20,184,166,0.12); color: #5EEAD4; }
+  .kw-pink   { background: rgba(236,72,153,0.12); color: #F9A8D4; }
+
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-green  { background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.18); color: #86EFAC; }
+  .tip-yellow { background: rgba(234,179,8,0.06); border: 1px solid rgba(234,179,8,0.18); color: #FDE68A; }
+  .tip-rose   { background: rgba(244,63,94,0.06); border: 1px solid rgba(244,63,94,0.18); color: #FDA4AF; }
+  .tip-teal   { background: rgba(20,184,166,0.06); border: 1px solid rgba(20,184,166,0.18); color: #5EEAD4; }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow-diagram {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 28px 32px;
+    width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .flow-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+
+  /* horizontal swim-lane */
+  .swimlane { display: flex; flex-direction: column; gap: 6px; }
+  .sl-row { display: flex; align-items: center; gap: 0; }
+  .sl-label {
+    width: 130px; flex-shrink: 0;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+    padding: 10px 14px 10px 0; text-align: right; line-height: 1.3;
+  }
+  .sl-label-green  { color: #22C55E; }
+  .sl-label-teal   { color: #14B8A6; }
+  .sl-label-yellow { color: #EAB308; }
+  .sl-label-blue   { color: #3B82F6; }
+  .sl-label-purple { color: #A855F7; }
+
+  .sl-track { flex: 1; display: flex; align-items: center; position: relative; }
+  .sl-separator { border-top: 1px dashed #1E2A40; flex: 1; }
+
+  /* service node */
+  .svc {
+    display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 14px;
+    border-radius: 8px; font-size: 11px; font-weight: 600; line-height: 1.2; text-align: center;
+    min-width: 110px; position: relative;
+  }
+  .svc-green  { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.3);  color: #86EFAC; }
+  .svc-teal   { background: rgba(20,184,166,0.1); border: 1px solid rgba(20,184,166,0.3); color: #5EEAD4; }
+  .svc-yellow { background: rgba(234,179,8,0.1);  border: 1px solid rgba(234,179,8,0.3);  color: #FDE68A; }
+  .svc-blue   { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: #93C5FD; }
+  .svc-purple { background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); color: #D8B4FE; }
+  .svc-icon { font-size: 16px; }
+  .svc-name { font-size: 10px; font-weight: 700; letter-spacing: 0.03em; }
+  .svc-action { font-size: 9px; font-weight: 400; opacity: 0.75; font-family: 'DM Mono', monospace; }
+
+  /* event bubble */
+  .evt-row { display: flex; align-items: flex-start; padding: 0 0 0 130px; gap: 0; }
+  .evt-col { flex: 1; display: flex; justify-content: center; }
+  .evt-bubble {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+    padding: 3px 9px; border-radius: 20px; letter-spacing: 0.04em; margin: 6px 0;
+  }
+  .evt-green  { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.3);  color: #86EFAC; }
+  .evt-teal   { background: rgba(20,184,166,0.1); border: 1px solid rgba(20,184,166,0.3); color: #5EEAD4; }
+  .evt-yellow { background: rgba(234,179,8,0.1);  border: 1px solid rgba(234,179,8,0.3);  color: #FDE68A; }
+  .evt-blue   { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: #93C5FD; }
+
+  .arr-down { color: #2D3E5A; font-size: 14px; text-align: center; line-height: 1; }
+
+  .flow-note {
+    margin-top: 20px; padding: 12px 16px; background: #0A0E1A;
+    border: 1px solid #1A2236; border-radius: 8px; font-size: 11.5px;
+    color: #64748B; line-height: 1.55; text-align: center;
+  }
+
+  /* ── GOLDEN RULE ── */
+  .golden-rule {
+    background: rgba(34,197,94,0.04);
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 0;
+  }
+  .gr-icon { font-size: 40px; flex-shrink: 0; }
+  .gr-label { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #22C55E; letter-spacing: 0.12em; margin-bottom: 8px; }
+  .gr-text { font-size: 17px; font-weight: 600; color: #E2E8F0; line-height: 1.4; margin-bottom: 10px; }
+  .gr-sub { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .gr-sub strong { color: #94A3B8; }
+
+  /* ── COMPARISON TABLE ── */
+  .comp-table { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow-x: auto; overflow-y: hidden; width: 100%; max-width: 100%; }
+  .ct-header { display: grid; grid-template-columns: 1.4fr 1.4fr 1fr; background: #080C17; border-bottom: 1px solid #1E2A40; min-width: 680px; }
+  .ctc { padding: 10px 16px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; border-right: 1px solid #1A2236; font-weight: 500; }
+  .ctc:last-child { border-right: none; }
+  .ct-row { display: grid; grid-template-columns: 1.4fr 1.4fr 1fr; border-bottom: 1px solid #1A2236; min-width: 680px; }
+  .ct-row:last-child { border-bottom: none; }
+  .ct-row:hover { background: rgba(255,255,255,0.012); }
+  .ct-cell { padding: 12px 16px; font-size: 11.5px; color: #64748B; border-right: 1px solid #1A2236; line-height: 1.5; }
+  .ct-cell:last-child { border-right: none; }
+  .ct-cell strong { color: #94A3B8; font-weight: 500; }
+  .badge-pro  { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; background: rgba(34,197,94,0.12); color: #86EFAC; }
+  .badge-con  { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; padding: 2px 7px; border-radius: 3px; background: rgba(244,63,94,0.12); color: #FDA4AF; }
+
+  /* CALLOUT */
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-green  { background: rgba(34,197,94,0.05);  border: 1px solid rgba(34,197,94,0.2); }
+  .callout-yellow { background: rgba(234,179,8,0.05);  border: 1px solid rgba(234,179,8,0.2); }
+  .callout-rose   { background: rgba(244,63,94,0.05);  border: 1px solid rgba(244,63,94,0.2); }
+  .callout-teal   { background: rgba(20,184,166,0.05); border: 1px solid rgba(20,184,166,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; margin-bottom: 5px; }
+  .ct-green  { color: #86EFAC; }
+  .ct-yellow { color: #FDE68A; }
+  .ct-rose   { color: #FDA4AF; }
+  .ct-teal   { color: #5EEAD4; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; }
+  .footer-count { font-family: 'Space Mono', monospace; font-size: 10px; color: #22C55E; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #22C55E; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+
+  /* responsive */
+  .code-panel { background: #080C17; border: 1px solid #1E2A40; border-radius: 10px; overflow: hidden; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #1A2236; background: #0A0E1A; }
+  .code-title { font-family: 'DM Mono', monospace; font-size: 10px; color: #6B7FA3; }
+  .code-lang { font-family: 'Space Mono', monospace; font-size: 9px; color: #3B4C68; background: #0F1625; border: 1px solid #1A2236; padding: 2px 8px; border-radius: 3px; }
+  pre { padding: 14px 18px; font-family: 'DM Mono', monospace; font-size: 11px; line-height: 1.65; color: #64748B; margin: 0; overflow-x: auto; }
+  .c-keyword { color: #A5B4FC; }
+  .c-type    { color: #5EEAD4; }
+  .c-string  { color: #86EFAC; }
+  .c-comment { color: #2D3E5A; font-style: italic; }
+  .c-method  { color: #FCD34D; }
+  .c-event   { color: #86EFAC; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">SAGA PATTERN · PARTE 1 DE 2</div>
+        <h1>Saga<br><span>Coreografiada</span></h1>
+        <p class="header-sub">Eventos entre servicios sin coordinador central — cada servicio reacciona y emite</p>
+      </div>
+    </div>
+    <div class="part-badge">SAGA · P1</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">📡 Domain Events</span>
+    <span class="pill pill-b">🔄 Pasos locales</span>
+    <span class="pill pill-c">↩ Compensaciones</span>
+    <span class="pill pill-d">🔀 Sin 2PC</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- SECCIÓN 1 — QUÉ ES -->
+  <div class="section-header">
+    <span class="section-num sn-green">01</span>
+    <span class="section-title-text">¿Qué es una Saga Coreografiada?</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="golden-rule">
+    <span class="gr-icon">🎼</span>
+    <div>
+      <div class="gr-label">PRINCIPIO FUNDAMENTAL — SIN COORDINADOR CENTRAL</div>
+      <div class="gr-text">Cada servicio reacciona a un evento, ejecuta su paso local y emite el siguiente evento. Nadie dirige la orquesta — todos conocen su partitura.</div>
+      <div class="gr-sub">La coreografía distribuye la lógica de negocio entre los propios servicios. <strong>No hay un punto único de fallo que conozca el estado global.</strong> El flujo emerge de la reacción encadenada de eventos. La consistencia final (eventual consistency) es la garantía — no la transacción atómica.</div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2 — FLUJO DE EVENTOS -->
+  <div class="section-header">
+    <span class="section-num sn-teal">02</span>
+    <span class="section-title-text">Flujo de eventos — ejemplo: Pedido de e-commerce</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="flow-title">Camino feliz (Happy Path) — sin fallos</div>
+
+    <!-- Fila 1: Order Service -->
+    <div style="display:flex; align-items:center; gap:0; margin-bottom:4px;">
+      <div style="width:130px; flex-shrink:0; font-family:'DM Mono',monospace; font-size:10px; color:#22C55E; text-align:right; padding-right:14px; line-height:1.3;">Order<br>Service</div>
+      <div style="display:flex; align-items:center; gap:0; flex:1;">
+        <div class="svc svc-green" style="min-width:120px;"><span class="svc-icon">🛒</span><span class="svc-name">ORDER CREATED</span><span class="svc-action">Paso local: reserva</span></div>
+        <div style="flex:1; border-top:1px dashed #1E2A40;"></div>
+        <div style="width:110px;"></div>
+        <div style="flex:1; border-top:1px dashed #1E2A40;"></div>
+        <div style="width:110px;"></div>
+        <div style="flex:1; border-top:1px dashed #1E2A40;"></div>
+        <div style="width:110px;"></div>
+      </div>
+    </div>
+
+    <!-- Evento 1 -->
+    <div style="display:flex; gap:0; padding-left:130px; margin-bottom:4px;">
+      <div style="display:flex; flex-direction:column; align-items:center; min-width:120px;">
+        <div style="color:#2D3E5A; font-size:13px;">↓</div>
+        <div class="evt-bubble evt-green">📡 OrderPlaced</div>
+        <div style="color:#2D3E5A; font-size:13px;">↓</div>
+      </div>
+    </div>
+
+    <!-- Fila 2: Inventory Service -->
+    <div style="display:flex; align-items:center; gap:0; margin-bottom:4px;">
+      <div style="width:130px; flex-shrink:0; font-family:'DM Mono',monospace; font-size:10px; color:#14B8A6; text-align:right; padding-right:14px; line-height:1.3;">Inventory<br>Service</div>
+      <div style="display:flex; align-items:center; gap:0; flex:1;">
+        <div style="width:120px; border-top:1px dashed #1E2A40;"></div>
+        <div style="flex:0 0 8px;"></div>
+        <div class="svc svc-teal" style="min-width:120px;"><span class="svc-icon">📦</span><span class="svc-name">STOCK RESERVED</span><span class="svc-action">Paso local: descuenta</span></div>
+        <div style="flex:1; border-top:1px dashed #1E2A40;"></div>
+        <div style="width:110px;"></div>
+        <div style="flex:1; border-top:1px dashed #1E2A40;"></div>
+        <div style="width:110px;"></div>
+      </div>
+    </div>
+
+    <!-- Evento 2 -->
+    <div style="display:flex; gap:0; padding-left:130px; margin-bottom:4px;">
+      <div style="display:flex; flex-direction:column; align-items:center; min-width:270px;">
+        <div style="width:100%; display:flex; justify-content:flex-end; padding-right:20px;">
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="color:#2D3E5A; font-size:13px;">↓</div>
+            <div class="evt-bubble evt-teal">📡 StockReserved</div>
+            <div style="color:#2D3E5A; font-size:13px;">↓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila 3: Payment Service -->
+    <div style="display:flex; align-items:center; gap:0; margin-bottom:4px;">
+      <div style="width:130px; flex-shrink:0; font-family:'DM Mono',monospace; font-size:10px; color:#EAB308; text-align:right; padding-right:14px; line-height:1.3;">Payment<br>Service</div>
+      <div style="display:flex; align-items:center; gap:0; flex:1;">
+        <div style="width:240px; border-top:1px dashed #1E2A40;"></div>
+        <div style="flex:0 0 8px;"></div>
+        <div class="svc svc-yellow" style="min-width:120px;"><span class="svc-icon">💳</span><span class="svc-name">PAYMENT PROCESSED</span><span class="svc-action">Paso local: cobra</span></div>
+        <div style="flex:1; border-top:1px dashed #1E2A40;"></div>
+        <div style="width:110px;"></div>
+      </div>
+    </div>
+
+    <!-- Evento 3 -->
+    <div style="display:flex; gap:0; padding-left:130px; margin-bottom:4px;">
+      <div style="display:flex; flex-direction:column; align-items:center; min-width:390px;">
+        <div style="width:100%; display:flex; justify-content:flex-end; padding-right:20px;">
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="color:#2D3E5A; font-size:13px;">↓</div>
+            <div class="evt-bubble evt-yellow">📡 PaymentSucceeded</div>
+            <div style="color:#2D3E5A; font-size:13px;">↓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila 4: Shipping Service -->
+    <div style="display:flex; align-items:center; gap:0;">
+      <div style="width:130px; flex-shrink:0; font-family:'DM Mono',monospace; font-size:10px; color:#3B82F6; text-align:right; padding-right:14px; line-height:1.3;">Shipping<br>Service</div>
+      <div style="display:flex; align-items:center; gap:0; flex:1;">
+        <div style="width:360px; border-top:1px dashed #1E2A40;"></div>
+        <div style="flex:0 0 8px;"></div>
+        <div class="svc svc-blue" style="min-width:120px;"><span class="svc-icon">🚚</span><span class="svc-name">SHIPMENT CREATED</span><span class="svc-action">Paso local: envía</span></div>
+      </div>
+    </div>
+
+    <div class="flow-note">
+      📡 Cada evento viaja por un <strong style="color:#94A3B8">message broker</strong> (Kafka, RabbitMQ). Los servicios son productores y consumidores — <strong style="color:#94A3B8">no se conocen entre sí directamente</strong>. El broker garantiza entrega (at-least-once).
+    </div>
+  </div>
+
+  <!-- SECCIÓN 3 — COMPENSACIONES -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">03</span>
+    <span class="section-title-text">Compensaciones — qué pasa cuando falla el pago</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="flow-title">Camino de compensación — PaymentFailed dispara rollback distribuido</div>
+
+    <!-- Fila Payment -->
+    <div style="display:flex; align-items:center; gap:0; margin-bottom:4px;">
+      <div style="width:130px; flex-shrink:0; font-family:'DM Mono',monospace; font-size:10px; color:#EAB308; text-align:right; padding-right:14px; line-height:1.3;">Payment<br>Service</div>
+      <div style="display:flex; align-items:center; gap:0; flex:1;">
+        <div style="width:240px; border-top:1px dashed #1E2A40;"></div>
+        <div style="flex:0 0 8px;"></div>
+        <div class="svc" style="min-width:140px; background:rgba(244,63,94,0.1); border:1px solid rgba(244,63,94,0.3); color:#FDA4AF;"><span class="svc-icon">❌</span><span class="svc-name">PAYMENT FAILED</span><span class="svc-action">tarjeta rechazada</span></div>
+      </div>
+    </div>
+
+    <!-- Evento fallo -->
+    <div style="display:flex; gap:0; padding-left:130px; margin-bottom:4px;">
+      <div style="display:flex; flex-direction:column; align-items:center; min-width:410px;">
+        <div style="width:100%; display:flex; justify-content:flex-end; padding-right:20px;">
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="color:#2D3E5A; font-size:13px;">↓</div>
+            <div class="evt-bubble evt-green" style="background:rgba(244,63,94,0.1); border-color:rgba(244,63,94,0.3); color:#FDA4AF;">📡 PaymentFailed</div>
+            <div style="color:#2D3E5A; font-size:13px;">↓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory compensación -->
+    <div style="display:flex; align-items:center; gap:0; margin-bottom:4px;">
+      <div style="width:130px; flex-shrink:0; font-family:'DM Mono',monospace; font-size:10px; color:#14B8A6; text-align:right; padding-right:14px; line-height:1.3;">Inventory<br>Service</div>
+      <div style="display:flex; align-items:center; gap:0; flex:1;">
+        <div style="width:110px; border-top:1px dashed #1E2A40;"></div>
+        <div style="flex:0 0 8px;"></div>
+        <div class="svc svc-teal" style="min-width:140px;"><span class="svc-icon">↩</span><span class="svc-name">STOCK RELEASED</span><span class="svc-action">compensación local</span></div>
+      </div>
+    </div>
+
+    <!-- Evento compensación inventory -->
+    <div style="display:flex; gap:0; padding-left:130px; margin-bottom:4px;">
+      <div style="display:flex; flex-direction:column; align-items:center; min-width:280px;">
+        <div style="width:100%; display:flex; justify-content:flex-start; padding-left:10px;">
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="color:#2D3E5A; font-size:13px;">↓</div>
+            <div class="evt-bubble evt-teal">📡 StockReleased</div>
+            <div style="color:#2D3E5A; font-size:13px;">↓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order compensación -->
+    <div style="display:flex; align-items:center; gap:0;">
+      <div style="width:130px; flex-shrink:0; font-family:'DM Mono',monospace; font-size:10px; color:#22C55E; text-align:right; padding-right:14px; line-height:1.3;">Order<br>Service</div>
+      <div style="display:flex; align-items:center; gap:0; flex:1;">
+        <div class="svc svc-green" style="min-width:140px;"><span class="svc-icon">↩</span><span class="svc-name">ORDER CANCELLED</span><span class="svc-action">compensación local</span></div>
+      </div>
+    </div>
+
+    <div class="flow-note" style="background:rgba(244,63,94,0.04); border-color:rgba(244,63,94,0.2); color:#FDA4AF;">
+      ⚠️ <strong style="color:#F43F5E">Idempotencia obligatoria:</strong> cada handler de compensación debe ser idempotente — si recibe el mismo evento dos veces (at-least-once delivery), no debe compensar dos veces. Usa IDs de correlación en cada evento.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4 — RESPONSABILIDADES POR SERVICIO -->
+  <div class="section-header">
+    <span class="section-num sn-rose">04</span>
+    <span class="section-title-text">Responsabilidades de cada servicio participante</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">📡</div>
+        <div>
+          <div class="card-num">RESPONSABILIDAD · 01</div>
+          <div class="card-title">Publicar eventos de dominio</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">Domain Event</span>
+        <span class="kw kw-teal">Outbox Pattern</span>
+        <span class="kw kw-yellow">at-least-once</span>
+      </div>
+      <div class="card-desc">Cada servicio debe emitir un evento de dominio cuando completa su paso local con éxito. El evento es la señal para que el siguiente participante actúe. Si el servicio muere antes de emitir, el evento debe poder reenviarse.</div>
+      <div class="card-example">
+        <strong>Patrón Outbox:</strong> persiste el evento en la misma transacción local que el cambio de estado. Un proceso de fondo lee la tabla outbox y lo publica al broker. Garantiza que si el paso local persiste, el evento siempre llega.
+      </div>
+    </div>
+
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">👂</div>
+        <div>
+          <div class="card-num">RESPONSABILIDAD · 02</div>
+          <div class="card-title">Suscribirse y actuar con idempotencia</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">Consumer Group</span>
+        <span class="kw kw-green">Idempotency Key</span>
+        <span class="kw kw-blue">Exactly-once semántica</span>
+      </div>
+      <div class="card-desc">Cada servicio es consumidor de los eventos que le conciernen. El handler debe ser idempotente: procesar el mismo evento N veces debe producir el mismo resultado que procesarlo una sola vez.</div>
+      <div class="card-example">
+        <strong>Implementación:</strong> guarda el <code style="font-family:'DM Mono',monospace; font-size:10px; color:#5EEAD4">event_id</code> en una tabla de eventos procesados. Antes de actuar, verifica si ya lo procesaste — si sí, descarta silenciosamente.
+      </div>
+    </div>
+
+    <div class="card c-yellow">
+      <div class="card-header">
+        <div class="card-icon icon-yellow">↩</div>
+        <div>
+          <div class="card-num">RESPONSABILIDAD · 03</div>
+          <div class="card-title">Implementar la transacción compensatoria</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-yellow">Compensating Tx</span>
+        <span class="kw kw-rose">Rollback semántico</span>
+        <span class="kw kw-orange">Estado de negocio</span>
+      </div>
+      <div class="card-desc">Por cada paso local que puede necesitar deshacerse, debe existir una transacción compensatoria equivalente. No es un rollback técnico — es una operación de negocio que invierte el efecto: liberar stock, devolver pago, cancelar envío.</div>
+      <div class="card-example">
+        <strong>Límite importante:</strong> las compensaciones no pueden "deshacer" acciones ya consumidas por el mundo real (un email enviado, un SMS entregado). Para esos casos, la compensación es una <em>acción de corrección</em>, no un rollback.
+      </div>
+    </div>
+
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🔍</div>
+        <div>
+          <div class="card-num">RESPONSABILIDAD · 04</div>
+          <div class="card-title">Mantener estado local coherente</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">State Machine</span>
+        <span class="kw kw-purple">Database per Service</span>
+        <span class="kw kw-green">Eventual Consistency</span>
+      </div>
+      <div class="card-desc">El servicio es dueño de su propio estado. Nadie más puede leer ni escribir su base de datos. La máquina de estados local debe contemplar todos los estados posibles: pendiente, procesado, fallido, compensado.</div>
+      <div class="card-example">
+        <strong>Estados del pedido:</strong> <code style="font-family:'DM Mono',monospace; font-size:10px; color:#93C5FD">PENDING → CONFIRMED → PAID → SHIPPED</code> y los caminos de compensación <code style="font-family:'DM Mono',monospace; font-size:10px; color:#FDA4AF">CANCELLING → CANCELLED</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 5 — CUÁNDO USAR -->
+  <div class="section-header">
+    <span class="section-num sn-blue">05</span>
+    <span class="section-title-text">Cuándo elegir coreografía — pros y contras</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="comp-table">
+    <div class="ct-header">
+      <div class="ctc">Aspecto</div>
+      <div class="ctc">Coreografía ✅</div>
+      <div class="ctc">Cuidado ⚠️</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Acoplamiento</strong></div>
+      <div class="ct-cell"><span class="badge-pro">bajo</span> Los servicios sólo conocen el contrato del evento, no quién lo produce</div>
+      <div class="ct-cell">Cambiar el shape del evento rompe todos los consumidores</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Escalabilidad</strong></div>
+      <div class="ct-cell"><span class="badge-pro">alta</span> Cada servicio escala independientemente según su carga de eventos</div>
+      <div class="ct-cell">Broker se convierte en cuello de botella si no se diseña bien</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Observabilidad</strong></div>
+      <div class="ct-cell">Cada evento es trazable con distributed tracing (trace_id)</div>
+      <div class="ct-cell"><span class="badge-con">difícil</span> El flujo global no es visible en ningún lugar — hay que reconstruirlo</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Complejidad lógica</strong></div>
+      <div class="ct-cell">Simple si el flujo es lineal sin muchas ramas</div>
+      <div class="ct-cell"><span class="badge-con">peligrosa</span> Con más de 5-6 participantes el flujo se vuelve un espagueti de eventos</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Punto único de fallo</strong></div>
+      <div class="ct-cell"><span class="badge-pro">ninguno</span> No hay un coordinador cuya caída paralice el flujo</div>
+      <div class="ct-cell">El broker debe ser HA (High Availability); si cae, el flujo se detiene</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><strong>Idóneo para</strong></div>
+      <div class="ct-cell">Flujos con pocos pasos, servicios autónomos, arquitectura EDA madura</div>
+      <div class="ct-cell">Evitar en flujos con lógica de negocio compleja, ramificaciones o reintentos elaborados</div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;">
+    <div class="callout callout-green">
+      <span class="callout-icon">✅</span>
+      <div>
+        <div class="callout-title ct-green">Señal de que la coreografía es la correcta</div>
+        <div class="callout-text">Tienes un equipo por servicio, el flujo tiene menos de 5 pasos claros, y ya usas un event broker. Los servicios son autónomos y el acoplamiento temporal no es problema — la <strong>velocidad de desarrollo independiente</strong> importa más que el control central.</div>
+      </div>
+    </div>
+    <div class="callout callout-rose">
+      <span class="callout-icon">🚨</span>
+      <div>
+        <div class="callout-title ct-rose">Señal de que necesitas orquestación en cambio</div>
+        <div class="callout-text">El flujo tiene más de 6 pasos, con condiciones y ramas (<em>si el pago falla pero el stock se reservó hace 10 min, ¿qué hacemos?</em>). La lógica de compensación es compleja y necesitas <strong>un único lugar donde ver el estado global</strong> del proceso.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">SAGA PATTERN · PARTE 1 DE 2 · COREOGRAFIADA</span>
+  <div class="footer-nav">
+    <span class="footer-count">4 responsabilidades · flujo feliz + compensación</span>
+    <a class="footer-btn" href="saga-orquestada.html">Parte 2: Orquestada →</a>
+  </div>
+</div>
+</body>
+</html>

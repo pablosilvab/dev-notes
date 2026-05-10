@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microservicios · Datos distribuidos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #0A0E1A; overflow-x: hidden; width: 100%; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; overflow-x: hidden; color: #E2E8F0; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(67,56,202,0.12) 0%, transparent 70%); pointer-events: none; }
+  .header::after { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(34,197,94,0.06) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #4F46E5; color: #fff; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #86EFAC; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; max-width: 720px; line-height: 1.5; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #86EFAC; background: rgba(134,239,172,0.08); border: 1px solid rgba(134,239,172,0.28); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #86EFAC; border-color: rgba(134,239,172,0.35); background: rgba(134,239,172,0.07); }
+  .pill-b { color: #A5B4FC; border-color: rgba(165,180,252,0.35); background: rgba(165,180,252,0.08); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; scroll-margin-top: 72px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-g { color: #22C55E; }
+  .sn-r { color: #F43F5E; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .cards-grid { display: grid; gap: 10px; }
+  .cards-grid > * { min-width: 0; }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.cg::before { background: #22C55E; }
+  .card.cr::before { background: #F43F5E; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-g { background: rgba(34,197,94,0.12); }
+  .icon-r { background: rgba(244,63,94,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-i { background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.2); }
+  .callout-g { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.22); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; color: #A5B4FC; margin-bottom: 5px; }
+  .callout-g .callout-title { color: #86EFAC; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.65; }
+  .callout-text strong { color: #94A3B8; }
+  .callout-text a { color: #A5B4FC; text-decoration: none; border-bottom: 1px solid rgba(165,180,252,0.35); }
+  .callout-text a:hover { color: #E0E7FF; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .footer-meta { font-family: 'Space Mono', monospace; font-size: 10px; color: #86EFAC; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #818CF8; background: rgba(129,140,248,0.08); border: 1px solid rgba(129,140,248,0.22); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">MICROSERVICIOS · INFOGRAFÍA 2 / 5</div>
+        <h1>Datos<br><span>distribuidos</span></h1>
+        <p class="header-sub"><strong>Database per service</strong>: cada equipo posee su modelo y su almacenamiento; la coordinación entre contextos pasa a patrones que ya tienes en el mapa (eventos, sagas, consistencia eventual).</p>
+      </div>
+    </div>
+    <div class="part-badge">MS · 02</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">Database per service</span>
+    <span class="pill pill-b">Saga · EDA · CAP</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-g">01</span>
+    <span class="section-title-text">Database per service</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card cg">
+      <div class="card-header">
+        <div class="card-icon icon-g">🗄</div>
+        <div>
+          <div class="card-num">MODELO DE DATOS</div>
+          <div class="card-title">Privacidad y evolución</div>
+        </div>
+      </div>
+      <div class="card-desc">Cada servicio posee su almacenamiento; otros acceden solo por <strong>API o eventos</strong>. Permite escalar y desplegar sin migraciones globales coordinadas.</div>
+      <div class="card-example"><strong>Integración:</strong> datos compartidos vía <em>event-carried state transfer</em>, APIs de consulta o CQRS — no JOINs cross-DB.</div>
+    </div>
+    <div class="card cr">
+      <div class="card-header">
+        <div class="card-icon icon-r">⛔</div>
+        <div>
+          <div class="card-num">ANTI-PATRÓN</div>
+          <div class="card-title">Base compartida entre servicios</div>
+        </div>
+      </div>
+      <div class="card-desc">Varios equipos escribiendo las mismas tablas = <strong>acoplamiento de esquema</strong>, imposibilidad de desplegar independiente y borrón de límites de dominio.</div>
+      <div class="card-example"><strong>Síntoma:</strong> “necesitamos parar todo para migrar esta columna”.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-i" style="margin-top:18px">
+    <span class="callout-icon">🔗</span>
+    <div>
+      <div class="callout-title">Sin BD propia, no hay transacción local clara</div>
+      <div class="callout-text">Los flujos largos y las compensaciones entran en el terreno de <a href="../saga/saga-coreografiada.html">Saga coreografiada</a> y <a href="../saga/saga-orquestada.html">Saga orquestada</a>. La Integración por eventos está en <a href="../event-driven/parte1.html">EDA — parte 1</a>. El marco teórico de consistencia (CAP, eventual) enlaza con <a href="../dist/parte1.html">Sistemas distribuidos — parte 1</a>.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-g" style="margin-top:12px">
+    <span class="callout-icon">⚡</span>
+    <div>
+      <div class="callout-title">Resiliencia en las llamadas</div>
+      <div class="callout-text">Cuando los datos están separados, las fallas de red entre servicios son el día a día: timeouts, reintentos y circuit breaker se estudian en <a href="../resiliencia/parte1.html">Resiliencia — parte 1</a> (complemento práctico al modelo de datos).</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">MICROSERVICIOS · 2 / 5 · DATOS DISTRIBUIDOS</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="01-limites-contratos-gobernanza.html">← Anterior</a>
+    <a class="footer-btn" href="03-comunicacion-borde.html">Siguiente: borde →</a>
+  </div>
+</div>
+</body>
+</html>

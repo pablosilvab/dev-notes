@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDA · Parte 2 — Fiabilidad y antipatrones</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:#0A0E1A;overflow-x:hidden;width:100%}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto;overflow-x:hidden;color:#E2E8F0}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(236,72,153,0.1) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(217,70,239,0.06) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#C026D3;color:#fff;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  h1 span{color:#E879F9}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px;max-width:720px;line-height:1.5}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#E879F9;background:rgba(232,121,249,.08);border:1px solid rgba(232,121,249,.35);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace}
+  .pa{color:#F0ABFC;border-color:rgba(240,171,252,.35);background:rgba(240,171,252,.08)}
+  .pb{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .pc{color:#FCA5A5;border-color:rgba(252,165,165,.35);background:rgba(252,165,165,.08)}
+  .pd{color:#7DD3FC;border-color:rgba(125,211,252,.3);background:rgba(125,211,252,.07)}
+  .body{padding:0 56px 56px}
+  .sh{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .sn{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-e{color:#D946EF}.sn-g{color:#22C55E}.sn-r{color:#F43F5E}.sn-s{color:#0EA5E9}
+  .stt{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .sl{flex:1;height:1px;background:#1E2A40}
+  .g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+  .g2>*{min-width:0}
+  .stack-col{display:grid;grid-template-columns:1fr;gap:12px;width:100%}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .ce::before{background:#D946EF}.cg::before{background:#22C55E}.cr::before{background:#F43F5E}.cs::before{background:#0EA5E9}
+  .ci{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .ie{background:rgba(217,70,239,.15)}.ig{background:rgba(34,197,94,.12)}.ir{background:rgba(244,63,94,.12)}.is{background:rgba(14,165,233,.12)}
+  .cn{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .ct{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .kws{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px}
+  .ke{background:rgba(217,70,239,.12);color:#F0ABFC}.kg{background:rgba(34,197,94,.12);color:#86EFAC}.kr{background:rgba(244,63,94,.12);color:#FCA5A5}.ks{background:rgba(14,165,233,.12);color:#7DD3FC}
+  .cd{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .ce{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .ce strong{color:#94A3B8;font-weight:500}
+  .tip{border-radius:6px;padding:8px 10px;font-size:11px;margin-top:10px;line-height:1.5}
+  .tip::before{content:'⚡ '}
+  .te{background:rgba(217,70,239,.06);border:1px solid rgba(217,70,239,.2);color:#F0ABFC}
+  .tg{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.18);color:#86EFAC}
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .cl-g{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.22)}
+  .cl-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .cl-ttl{font-size:12px;font-weight:600;margin-bottom:5px;color:#86EFAC}
+  .cl-txt{font-size:12px;color:#64748B;line-height:1.65}
+  .cl-txt strong{color:#94A3B8}
+  .diag{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:22px 24px;width:100%;overflow-x:auto}
+  .diag-ttl{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px;text-align:center}
+  .ob{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px}
+  .bx{border-radius:8px;padding:12px 14px;font-size:11px;text-align:center;border:1px solid;line-height:1.45}
+  .bx-a{border-color:rgba(14,165,233,.35);background:rgba(14,165,233,.06);color:#E2E8F0}
+  .bx-b{border-color:rgba(217,70,239,.35);background:rgba(217,70,239,.06)}
+  .bx-c{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.06)}
+  .ar{font-size:13px;color:#3B4C68}
+  .sum{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;overflow:hidden;width:100%;overflow-x:auto}
+  .sr{display:grid;grid-template-columns:1fr 1.3fr 1.3fr;min-width:680px;border-bottom:1px solid #1A2236}
+  .sr:last-child{border-bottom:none}
+  .sc{padding:10px 14px;font-size:10px;font-family:'Space Mono',monospace;color:#6B7FA3;text-transform:uppercase;letter-spacing:.06em;background:#080C17;border-right:1px solid #1A2236}
+  .sc:last-child{border-right:none}
+  .sd{padding:12px 14px;font-size:11.5px;color:#64748B;line-height:1.45;border-right:1px solid #1A2236}
+  .sd:last-child{border-right:none}
+  .st{font-weight:600;color:#E2E8F0;font-size:12px}
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  .ft{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .fn-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .fc{font-family:'Space Mono',monospace;font-size:10px;color:#E879F9;letter-spacing:.06em}
+  .fb{font-family:'Space Mono',monospace;font-size:10px;color:#E879F9;background:rgba(232,121,249,.08);border:1px solid rgba(232,121,249,.25);padding:4px 12px;border-radius:3px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">EDA · PARTE 2 DE 2</div>
+        <h1>Fiabilidad en la práctica<br><span>Outbox · idempotencia · antipatrones</span></h1>
+        <p class="header-sub">Consistencia eventual asumida de verdad, patrón transactional outbox, consumidores idempotentes, modelo mental at-least-once y errores típicos que ves en producción. Cierra el ciclo con Resiliencia/EIP en el mismo sitio.</p>
+      </div>
+    </div>
+    <div class="part-badge">EDA · P2</div>
+  </div>
+  <div class="pills">
+    <span class="pill pa">Transactional outbox</span>
+    <span class="pill pb">Idempotencia</span>
+    <span class="pill pc">Antipatrones</span>
+    <span class="pill pd">At-least-once</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="sh"><span class="sn sn-e">01</span><span class="stt">Consistencia eventual (sin romanticismo)</span><div class="sl"></div></div>
+
+  <div class="g2">
+    <div class="card ce">
+      <div class="ci"><div class="ico ie">⏱</div><div><div class="cn">QUÉ SE ACEPTA</div><div class="ct">Ventanas de inconsistencia</div></div></div>
+      <div class="kws"><span class="kw ke">Replicas</span><span class="kw ke">Proyecciones</span><span class="kw ke">Caches</span></div>
+      <div class="cd">Tras publicar un evento, otros sistemas pueden tardar segundos o más en reflejar el nuevo estado. Los SLAs y los diseños de UX deben asumirlo (mensajes “pendientes”, indicadores de sincronización, no depender de lectura inmediata cross-service sin diseño explícito).</div>
+    </div>
+    <div class="card cg">
+      <div class="ci"><div class="ico ig">✓</div><div><div class="cn">READ YOUR OWN WRITES</div><div class="ct">Sigue siendo local</div></div></div>
+      <div class="kws"><span class="kw kg">Misma DB</span><span class="kw kg">Sesión</span><span class="kw kg">Routing</span></div>
+      <div class="cd">El usuario puede ver su propio cambio al instante si la lectura va al servicio/BD que hizo el commit. Leer otro microservicio justo después del evento puede fallar sin compensación — ahí no es “eventual” por arte de magia, es diseño incorrecto.</div>
+    </div>
+  </div>
+
+  <div class="sh"><span class="sn sn-g">02</span><span class="stt">Transactional outbox — publicar sin perder la verdad</span><div class="sl"></div></div>
+
+  <div class="stack-col">
+    <div class="diag">
+      <div class="diag-ttl">Misma transacción: negocio + “pendiente de enviar”</div>
+      <div class="ob">
+        <div class="bx bx-a"><strong>Servicio</strong><br><span style="font-size:10px;color:#64748B">UPDATE negocio</span></div>
+        <span class="ar">+</span>
+        <div class="bx bx-b"><strong>Tabla outbox</strong><br><span style="font-size:10px;color:#64748B">INSERT fila del evento</span></div>
+        <span class="ar">→</span>
+        <div class="bx bx-c"><strong>Publisher / relay</strong><br><span style="font-size:10px;color:#64748B">lee outbox y envía al broker</span></div>
+        <span class="ar">→</span>
+        <div class="bx bx-a"><strong>Broker</strong><br><span style="font-size:10px;color:#64748B">Kafka / SQS / …</span></div>
+      </div>
+      <p style="font-size:12px;color:#64748B;line-height:1.65;margin-top:16px;text-align:center;max-width:700px;margin-left:auto;margin-right:auto">Evita el antipatrón “commit en BD y luego envío al bus”: si el proceso muere entre medias, o pierdes el evento o duplicas sin control. Con outbox, el evento queda persistido <strong>en la misma transacción</strong> que el cambio de negocio; un relay fiable hace el puente al mensajero.</p>
+    </div>
+    <div class="tip te">En código legacy sin outbox, los seniors piden al menos idempotencia + reconciliación; con outbox, la conversación pasa a throughput del relay y orden por partición/partición clave.</div>
+  </div>
+
+  <div class="sh"><span class="sn sn-s">03</span><span class="stt">Consumidores idempotentes</span><div class="sl"></div></div>
+
+  <div class="card cs">
+    <div class="ci"><div class="ico is">🔁</div><div><div class="cn">AT-LEAST-ONCE EN EL MUNDO REAL</div><div class="ct">El mismo evento puede llegar dos veces</div></div></div>
+    <div class="kws"><span class="kw ks">Redelivery</span><span class="kw ks">Rebalance</span><span class="kw ks">Crash antes del ack</span></div>
+    <div class="cd">Si el mensaje puede repetirse, el efecto secundario (cargo en cuenta, envío de email, stock) debe ser <strong>idempotente</strong>: misma clave de negocio + restricción única, tabla de deduplicación por <span style="font-family:'DM Mono',monospace;color:#7DD3FC;font-size:10px">eventId</span>, o modelo naturalmente idempotente (PUT con versión).</div>
+    <div class="ce"><strong>Pregunta que te harán en revisión:</strong> “¿Qué pasa si este handler se ejecuta dos veces con el mismo payload?”</div>
+  </div>
+
+  <div class="sh"><span class="sn sn-r">04</span><span class="stt">Antipatrones frecuentes</span><div class="sl"></div></div>
+
+  <div class="sum">
+    <div class="sr">
+      <div class="sc">Antipatrón</div>
+      <div class="sc">Síntoma</div>
+      <div class="sc">Enfoque sano</div>
+    </div>
+    <div class="sr">
+      <div class="sd"><span class="st">RPC disfrazado de evento</span></div>
+      <div class="sd">Cola de “requests” con correlation sin modelo de negocio; acoplamiento en tiempo.</div>
+      <div class="sd">Comando síncrono explícito o cola de comandos con contrato claro; eventos para hechos ya ocurridos.</div>
+    </div>
+    <div class="sr">
+      <div class="sd"><span class="st">God topic</span></div>
+      <div class="sd">Un único stream con tipos mezclados; consumidores filtran en vano.</div>
+      <div class="sd">Separar por bounded context o por tipo estable; gobierno de esquemas.</div>
+    </div>
+    <div class="sr">
+      <div class="sd"><span class="st">Sin versionado</span></div>
+      <div class="sd">Deploy rompe consumidores silenciosamente.</div>
+      <div class="sd">Schema registry, campos opcionales, contratos de compatibilidad.</div>
+    </div>
+    <div class="sr">
+      <div class="sd"><span class="st">Confiar en orden global</span></div>
+      <div class="sd">Asumir orden entre agregados distintos.</div>
+      <div class="sd">Orden solo dentro de partición/partición por clave de negocio; diseñar para causalidad débil.</div>
+    </div>
+  </div>
+
+  <div class="callout cl-g" style="margin-top:14px">
+    <span class="cl-icon">🔗</span>
+    <div>
+      <div class="cl-ttl">Encaje con el resto de dev-notes</div>
+      <div class="cl-txt"><strong>Resiliencia / mensajería</strong> cubre retries, DLQ y backpressure; <strong>EIP</strong> nombra router, splitter o canal; <strong>EDA</strong> decide qué eventos existen y cómo evolucionan. Kafka u otro broker son la herramienta — la conversación de negocio sigue siendo de contratos y límites entre contextos.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="ft">EVENT-DRIVEN ARCHITECTURE · PARTE 2 DE 2 · FIABILIDAD</span>
+  <div class="fn-row">
+    <a class="fb" href="parte1.html">← Parte 1: modelo y contratos</a>
+    <span class="fc">Outbox · Idempotencia · At-least-once</span>
+  </div>
+</div>
+</body>
+</html>

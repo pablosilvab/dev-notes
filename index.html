@@ -19,7 +19,7 @@
       </div>
       <div class="header-stats">
         <div class="stat-item">
-          <div class="stat-num">31</div>
+          <div class="stat-num">32</div>
           <div class="stat-label">TEMAS EN ÍNDICE</div>
         </div>
         <div class="stat-divider"></div>
@@ -772,40 +772,6 @@
         </div>
       </div>
 
-      <!-- ══ EIP — vocabulario de integración y mensajería empresarial ══ -->
-      <div class="topic-group">
-        <div class="tg-bar bar-eip"></div>
-        <div class="tg-inner">
-          <div class="tg-head">
-            <div class="tg-icon-title">
-              <div class="tg-icon icon-eip">🔌</div>
-              <div>
-                <div class="tg-label">INTEGRACIÓN · G. HOHPE</div>
-                <div class="tg-title">Enterprise Integration Patterns</div>
-              </div>
-            </div>
-            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
-          </div>
-          <p class="tg-desc">Basado en <em>Enterprise Integration Patterns</em> (Hohpe &amp; Woolf). El vocabulario que une GoF con EDA y Kafka: Message Channel, Filter, Router, Translator, Aggregator, Splitter, Scatter-Gather y Dead Letter Channel. Sin este lenguaje, diseñar flujos de mensajería queda sin naming preciso.</p>
-          <div class="modules-list">
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Canal y mensaje — Channel, Filter, Router, Translator</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Composición — Aggregator, Splitter, Scatter-Gather, Dead Letter</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-          </div>
-          <div class="tg-footer">
-            <span class="tg-count">0 / 2 módulos publicados</span>
-            <div class="tg-progress">
-              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
-              <span class="tg-pct tg-pct-muted">0%</span>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- ══ DDD — modelo de dominio y alineación con el negocio (mayor alcance organizativo) ══ -->
       <div class="topic-group">
@@ -1062,24 +1028,24 @@
                 <div class="tg-title">Resiliencia y mensajería</div>
               </div>
             </div>
-            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+            <span class="status-pill sp-done">PUBLICADO</span>
           </div>
           <p class="tg-desc">Timeouts, retries con jitter, idempotencia, circuit breaker, bulkhead; colas, contratos de entrega (al menos una vez, exactamente una vez a nivel mental), patrón outbox. Las sagas y el estilo event-driven amplían esto en las dos tarjetas siguientes.</p>
           <div class="modules-list">
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Patrones de resiliencia en HTTP y colas</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Mensajería, entrega y outbox (sin orquestar sagas aquí)</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
+            <a class="module-link" href="topics/software/resiliencia/parte1.html">
+              <div class="ml-left"><span class="ml-dot dot-rose"></span><span class="ml-text">Parte 1 — Timeout, Retry, Jitter, Circuit Breaker y Bulkhead</span></div>
+              <div class="ml-row-end"><span class="ml-meta">4 patrones</span><span class="ml-arrow">→</span></div>
+            </a>
+            <a class="module-link" href="topics/software/resiliencia/parte2.html">
+              <div class="ml-left"><span class="ml-dot dot-rose"></span><span class="ml-text">Parte 2 — Idempotencia, Outbox, DLQ y Backpressure</span></div>
+              <div class="ml-row-end"><span class="ml-meta">4 patrones · Java</span><span class="ml-arrow">→</span></div>
+            </a>
           </div>
           <div class="tg-footer">
-            <span class="tg-count">0 / 2 módulos publicados</span>
+            <span class="tg-count tg-complete">✓ 2 / 2 módulos publicados</span>
             <div class="tg-progress">
-              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
-              <span class="tg-pct tg-pct-muted">0%</span>
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-fill-complete tg-bar-fill--100"></div></div>
+              <span class="tg-pct tg-pct-complete">100%</span>
             </div>
           </div>
         </div>
@@ -1096,24 +1062,24 @@
                 <div class="tg-title">Arquitectura orientada a eventos (EDA)</div>
               </div>
             </div>
-            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+            <span class="status-pill sp-done">PUBLICADO</span>
           </div>
           <p class="tg-desc">Eventos de dominio, publicación/suscripción, notificación vs <em>event-carried state transfer</em>, consistencia eventual, idempotencia en consumidores, log de eventos y streaming a alto nivel. Puente natural tras mensajería y antes de sagas y microservicios.</p>
           <div class="modules-list">
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Modelado de eventos, contratos y bounded contexts</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Outbox, consumo fiable y antipatrones comunes</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
+            <a class="module-link" href="topics/software/event-driven/parte1.html">
+              <div class="ml-left"><span class="ml-dot dot-pink"></span><span class="ml-text">Parte 1 — Modelado de eventos, contratos y bounded contexts</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Notification · ECST</span><span class="ml-arrow">→</span></div>
+            </a>
+            <a class="module-link" href="topics/software/event-driven/parte2.html">
+              <div class="ml-left"><span class="ml-dot dot-pink"></span><span class="ml-text">Parte 2 — Outbox, consumo fiable e idempotencia</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Antipatrones</span><span class="ml-arrow">→</span></div>
+            </a>
           </div>
           <div class="tg-footer">
-            <span class="tg-count">0 / 2 módulos publicados</span>
+            <span class="tg-count tg-complete">✓ 2 / 2 módulos publicados</span>
             <div class="tg-progress">
-              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
-              <span class="tg-pct tg-pct-muted">0%</span>
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-fill-complete tg-bar-fill--100"></div></div>
+              <span class="tg-pct tg-pct-complete">100%</span>
             </div>
           </div>
         </div>
@@ -1165,24 +1131,24 @@
                 <div class="tg-title">Patrón Saga</div>
               </div>
             </div>
-            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+            <span class="status-pill sp-done">PUBLICADO</span>
           </div>
           <p class="tg-desc">Transacciones largas sin 2PC: <strong>coreografía</strong> (eventos entre servicios) vs <strong>orquestación</strong> (coordinador explícito). Pasos locales, compensaciones, estados del flujo y cuándo conviene cada estilo. Complementa EDA y microservicios con datos por servicio.</p>
           <div class="modules-list">
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Saga coreografiada — eventos y responsabilidades</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Saga orquestada — coordinador, fallos y compensación</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
+            <a class="module-link" href="topics/software/saga/saga-coreografiada.html">
+              <div class="ml-left"><span class="ml-dot dot-pink"></span><span class="ml-text">Saga coreografiada — eventos y responsabilidades</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Happy path · compensación</span><span class="ml-arrow">→</span></div>
+            </a>
+            <a class="module-link" href="topics/software/saga/saga-orquestada.html">
+              <div class="ml-left"><span class="ml-dot dot-pink"></span><span class="ml-text">Saga orquestada — coordinador, fallos y compensación</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Orquestador · estados</span><span class="ml-arrow">→</span></div>
+            </a>
           </div>
           <div class="tg-footer">
-            <span class="tg-count">0 / 2 módulos publicados</span>
+            <span class="tg-count tg-complete">✓ 2 / 2 módulos publicados</span>
             <div class="tg-progress">
-              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
-              <span class="tg-pct tg-pct-muted">0%</span>
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-fill-complete tg-bar-fill--100"></div></div>
+              <span class="tg-pct tg-pct-complete">100%</span>
             </div>
           </div>
         </div>
@@ -1233,36 +1199,36 @@
                 <div class="tg-title">Microservicios</div>
               </div>
             </div>
-            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+            <span class="status-pill sp-done">PUBLICADO</span>
           </div>
           <p class="tg-desc">Descomposición por límites de dominio, contratos entre equipos, datos por servicio y despliegue independiente. Comunicación en el borde con API Gateway y BFF. Red de servicios con Service Mesh. Migración incremental desde el monolito con Strangler Fig. Asume contenedores, CI/CD, resiliencia y observabilidad.</p>
           <div class="modules-list">
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Límites, contratos y gobernanza — Conway's Law y descomposición</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Datos distribuidos — database per service y patrones de descomposición</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Comunicación en el borde — API Gateway y BFF</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Service Mesh — malla de servicios, mTLS y observabilidad de red</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
-            <div class="module-link ml-locked">
-              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Migración incremental — Strangler Fig y monolito modular</span></div>
-              <span class="ml-meta">próximamente</span>
-            </div>
+            <a class="module-link" href="topics/software/microservicios/01-limites-contratos-gobernanza.html">
+              <div class="ml-left"><span class="ml-dot dot-indigo"></span><span class="ml-text">Límites, contratos y gobernanza — Conway's Law y descomposición</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Infografía 1 / 5</span><span class="ml-arrow">→</span></div>
+            </a>
+            <a class="module-link" href="topics/software/microservicios/02-datos-distribuidos.html">
+              <div class="ml-left"><span class="ml-dot dot-indigo"></span><span class="ml-text">Datos distribuidos — database per service y anti-patrón de BD compartida</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Infografía 2 / 5</span><span class="ml-arrow">→</span></div>
+            </a>
+            <a class="module-link" href="topics/software/microservicios/03-comunicacion-borde.html">
+              <div class="ml-left"><span class="ml-dot dot-indigo"></span><span class="ml-text">Comunicación en el borde — API Gateway y BFF</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Infografía 3 / 5</span><span class="ml-arrow">→</span></div>
+            </a>
+            <a class="module-link" href="topics/software/microservicios/04-service-mesh.html">
+              <div class="ml-left"><span class="ml-dot dot-indigo"></span><span class="ml-text">Service Mesh — malla de servicios, mTLS y observabilidad de red</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Infografía 4 / 5</span><span class="ml-arrow">→</span></div>
+            </a>
+            <a class="module-link" href="topics/software/microservicios/05-migracion-incremental.html">
+              <div class="ml-left"><span class="ml-dot dot-indigo"></span><span class="ml-text">Migración incremental — Strangler Fig y monolito modular</span></div>
+              <div class="ml-row-end"><span class="ml-meta">Infografía 5 / 5</span><span class="ml-arrow">→</span></div>
+            </a>
           </div>
           <div class="tg-footer">
-            <span class="tg-count">0 / 5 módulos publicados</span>
+            <span class="tg-count tg-complete">✓ 5 / 5 infografías publicadas</span>
             <div class="tg-progress">
-              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
-              <span class="tg-pct tg-pct-muted">0%</span>
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-fill-complete tg-bar-fill--100"></div></div>
+              <span class="tg-pct tg-pct-complete">100%</span>
             </div>
           </div>
         </div>
@@ -1336,7 +1302,7 @@
                 <span class="ml-text">Semana 1 — Conceptos de Nube y Seguridad</span>
               </div>
               <div class="ml-row-end">
-                <span class="ml-meta">15 conceptos</span>
+                <span class="ml-meta">Infografía 1 / 4</span>
                 <span class="ml-arrow">→</span>
               </div>
             </a>
@@ -1346,7 +1312,7 @@
                 <span class="ml-text">Semana 2 — Cómputo, Redes y Almacenamiento</span>
               </div>
               <div class="ml-row-end">
-                <span class="ml-meta">17 servicios</span>
+                <span class="ml-meta">Infografía 2 / 4</span>
                 <span class="ml-arrow">→</span>
               </div>
             </a>
@@ -1356,7 +1322,7 @@
                 <span class="ml-text">Semana 3 — Bases de Datos y Almacenamiento</span>
               </div>
               <div class="ml-row-end">
-                <span class="ml-meta">13 servicios</span>
+                <span class="ml-meta">Infografía 3 / 4</span>
                 <span class="ml-arrow">→</span>
               </div>
             </a>
@@ -1366,16 +1332,55 @@
                 <span class="ml-text">Semana 4 — Costos, Facturación, Gobernanza</span>
               </div>
               <div class="ml-row-end">
-                <span class="ml-meta">14 servicios</span>
+                <span class="ml-meta">Infografía 4 / 4</span>
                 <span class="ml-arrow">→</span>
               </div>
             </a>
           </div>
           <div class="tg-footer">
-            <span class="tg-count tg-complete">✓ 4 / 4 módulos publicados</span>
+            <span class="tg-count tg-complete">✓ 4 / 4 infografías publicadas</span>
             <div class="tg-progress">
               <div class="tg-bar-track"><div class="tg-bar-fill tg-fill-complete tg-bar-fill--100"></div></div>
               <span class="tg-pct tg-pct-complete">100%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PROFESSIONAL SCRUM DEVELOPER (PSD I) · Scrum.org ══ -->
+      <div class="topic-group">
+        <div class="tg-bar bar-scrum"></div>
+        <div class="tg-inner">
+          <div class="tg-head">
+            <div class="tg-icon-title">
+              <div class="tg-icon icon-scrum">🎯</div>
+              <div>
+                <div class="tg-label">CERTIFICACIÓN AGILE · SCRUM.ORG</div>
+                <div class="tg-title">Professional Scrum Developer</div>
+              </div>
+            </div>
+            <span class="status-pill sp-soon">PRÓXIMAMENTE</span>
+          </div>
+          <p class="tg-desc">Certificación internacional <strong>PSD I</strong> (Professional Scrum Developer): competencias del desarrollador dentro de un equipo Scrum — artefactos, eventos, calidad, trabajo incremental y colaboración en el Sprint. <em>No</em> es la certificación de Scrum Master (<abbr title="Professional Scrum Master">PSM</abbr>); el foco es cómo aporta código y prácticas técnicas el Developer al marco.</p>
+          <div class="modules-list">
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Rol Developer en Scrum — eventos, artefactos y Definition of Done desde el código</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Prácticas de ingeniería en equipo Scrum — calidad, emergencia del diseño y entrega incremental</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+            <div class="module-link ml-locked">
+              <div class="ml-left"><span class="ml-dot dot-gray"></span><span class="ml-text">Preparación examen PSD I — alcance, formato y diferencias respecto a PSM</span></div>
+              <span class="ml-meta">próximamente</span>
+            </div>
+          </div>
+          <div class="tg-footer">
+            <span class="tg-count">0 / 3 módulos publicados</span>
+            <div class="tg-progress">
+              <div class="tg-bar-track"><div class="tg-bar-fill tg-bar-fill--0"></div></div>
+              <span class="tg-pct tg-pct-muted">0%</span>
             </div>
           </div>
         </div>

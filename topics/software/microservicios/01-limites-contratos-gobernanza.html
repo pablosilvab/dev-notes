@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microservicios · Límites, contratos y gobernanza</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #0A0E1A; overflow-x: hidden; width: 100%; }
+  body { background: #0A0E1A; font-family: 'DM Sans', sans-serif; width: 100%; max-width: 1200px; margin: 0 auto; overflow-x: hidden; color: #E2E8F0; }
+
+  .header { padding: 48px 56px 32px; border-bottom: 1px solid #1E2A40; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -80px; right: -80px; width: 440px; height: 440px; background: radial-gradient(circle, rgba(67,56,202,0.14) 0%, transparent 70%); pointer-events: none; }
+  .header::after { content: ''; position: absolute; bottom: -60px; left: 80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(129,140,248,0.06) 0%, transparent 65%); pointer-events: none; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .topic-badge { background: #4F46E5; color: #fff; font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 2px; letter-spacing: 0.1em; margin-bottom: 12px; display: inline-block; }
+  .header h1 { font-size: 42px; font-weight: 700; color: #FFFFFF; letter-spacing: -0.02em; line-height: 1.1; }
+  .header h1 span { color: #818CF8; }
+  .header-sub { font-size: 15px; color: #6B7FA3; margin-top: 8px; max-width: 720px; line-height: 1.5; }
+  .part-badge { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #818CF8; background: rgba(129,140,248,0.08); border: 1px solid rgba(129,140,248,0.35); padding: 8px 16px; border-radius: 4px; letter-spacing: 0.12em; white-space: nowrap; }
+  .header-pills { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 20px; border: 1px solid; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+  .pill-a { color: #A5B4FC; border-color: rgba(165,180,252,0.35); background: rgba(165,180,252,0.08); }
+  .pill-b { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
+  .pill-c { color: #FDE68A; border-color: rgba(253,230,138,0.3); background: rgba(253,230,138,0.07); }
+  .pill-d { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+
+  .body { padding: 0 56px 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 32px 0 16px; scroll-margin-top: 72px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; }
+  .sn-i { color: #818CF8; }
+  .sn-g { color: #22C55E; }
+  .sn-a { color: #F59E0B; }
+  .section-title-text { font-size: 11px; font-weight: 600; color: #6B7FA3; letter-spacing: 0.12em; text-transform: uppercase; }
+  .section-line { flex: 1; height: 1px; background: #1E2A40; }
+
+  .lead-box {
+    background: rgba(79,70,229,0.06); border: 1px solid rgba(129,140,248,0.22); border-radius: 12px; padding: 22px 26px;
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .lead-icon { font-size: 36px; flex-shrink: 0; }
+  .lead-kicker { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #818CF8; letter-spacing: 0.12em; margin-bottom: 8px; }
+  .lead-title { font-size: 17px; font-weight: 600; color: #E2E8F0; line-height: 1.35; margin-bottom: 10px; }
+  .lead-text { font-size: 12px; color: #64748B; line-height: 1.65; }
+  .lead-text strong { color: #94A3B8; }
+
+  .cards-grid { display: grid; gap: 10px; }
+  .cards-grid > * { min-width: 0; }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+
+  .card { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; border-radius: 12px 0 0 12px; }
+  .card.ci::before { background: #6366F1; }
+  .card.ca::before { background: #F59E0B; }
+
+  .card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .card-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .icon-i { background: rgba(99,102,241,0.15); }
+  .icon-a { background: rgba(245,158,11,0.12); }
+
+  .card-num { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; margin-top: 2px; }
+  .card-title { font-size: 14px; font-weight: 600; color: #E2E8F0; line-height: 1.2; }
+  .card-keywords { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .kw { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.04em; }
+  .kw-i { background: rgba(99,102,241,0.12); color: #A5B4FC; }
+  .kw-a { background: rgba(245,158,11,0.12); color: #FCD34D; }
+
+  .card-desc { font-size: 12px; color: #8899B8; line-height: 1.6; margin-bottom: 10px; }
+  .card-example { font-size: 11.5px; color: #64748B; line-height: 1.55; border-top: 1px solid #1A2236; padding-top: 10px; }
+  .card-example strong { color: #94A3B8; font-weight: 500; }
+
+  .tip-box { border-radius: 6px; padding: 8px 10px; font-size: 11px; margin-top: 10px; line-height: 1.5; }
+  .tip-box::before { content: '⚡ '; }
+  .tip-i { background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.18); color: #A5B4FC; }
+
+  .diag {
+    background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; padding: 24px 28px;
+    width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .diag-title { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; color: #3B4C68; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px; text-align: center; }
+  .conway { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 16px; }
+  .cw-team { background: #0A0E1A; border: 1px dashed rgba(129,140,248,0.35); border-radius: 10px; padding: 14px 18px; text-align: center; min-width: 140px; }
+  .cw-team-lbl { font-family: 'Space Mono', monospace; font-size: 9px; color: #818CF8; margin-bottom: 6px; }
+  .cw-team-name { font-size: 12px; font-weight: 600; color: #E2E8F0; }
+  .cw-arrow { font-size: 22px; color: #3B4C68; }
+  .cw-note { margin-top: 14px; font-size: 11.5px; color: #64748B; text-align: center; line-height: 1.55; max-width: 680px; margin-left: auto; margin-right: auto; }
+
+  .tbl-wrap { background: #0F1625; border: 1px solid #1E2A40; border-radius: 12px; overflow-x: auto; width: 100%; max-width: 100%; }
+  .tbl-h { display: grid; grid-template-columns: 1fr 1fr 1fr; background: #080C17; border-bottom: 1px solid #1E2A40; min-width: 720px; }
+  .tbl-r { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid #1A2236; min-width: 720px; }
+  .tbl-r:last-child { border-bottom: none; }
+  .th { padding: 10px 14px; font-size: 10px; font-family: 'DM Mono', monospace; color: #6B7FA3; font-weight: 500; border-right: 1px solid #1A2236; }
+  .th:last-child { border-right: none; }
+  .td { padding: 12px 14px; font-size: 11.5px; color: #64748B; line-height: 1.5; border-right: 1px solid #1A2236; }
+  .td:last-child { border-right: none; }
+  .td strong { color: #94A3B8; }
+
+  .callout { border-radius: 10px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+  .callout-i { background: rgba(99,102,241,0.05); border: 1px solid rgba(99,102,241,0.2); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-title { font-size: 12px; font-weight: 600; color: #A5B4FC; margin-bottom: 5px; }
+  .callout-text { font-size: 12px; color: #64748B; line-height: 1.6; }
+  .callout-text strong { color: #94A3B8; }
+  .callout-text a { color: #A5B4FC; text-decoration: none; border-bottom: 1px solid rgba(165,180,252,0.35); }
+  .callout-text a:hover { color: #E0E7FF; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: #3B4C68; text-decoration: none; }
+  .footer { background: #080C17; border-top: 1px solid #1E2A40; padding: 20px 56px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-text { font-family: 'Space Mono', monospace; font-size: 10px; color: #2D3E5A; letter-spacing: 0.06em; }
+  .footer-nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .footer-meta { font-family: 'Space Mono', monospace; font-size: 10px; color: #818CF8; letter-spacing: 0.06em; }
+  .footer-btn { font-family: 'Space Mono', monospace; font-size: 10px; color: #818CF8; background: rgba(129,140,248,0.08); border: 1px solid rgba(129,140,248,0.22); padding: 4px 12px; border-radius: 3px; text-decoration: none; letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">MICROSERVICIOS · INFOGRAFÍA 1 / 5</div>
+        <h1>Límites, contratos<br><span>y gobernanza</span></h1>
+        <p class="header-sub">Conway, bounded contexts (DDD) y calidad en el borde entre equipos. Complementa la profundidad de dominio en <a href="../architecture/ddd/parte1.html" style="color:#818CF8;text-decoration:none;border-bottom:1px solid rgba(129,140,248,0.35);">DDD en dev-notes</a>.</p>
+      </div>
+    </div>
+    <div class="part-badge">MS · 01</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">Conway's Law</span>
+    <span class="pill pill-b">Bounded context</span>
+    <span class="pill pill-c">Contratos</span>
+    <span class="pill pill-d">Trade-offs</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-i">01</span>
+    <span class="section-title-text">Definición operativa</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="lead-box">
+    <span class="lead-icon">🧱</span>
+    <div>
+      <div class="lead-kicker">NO ES SOLO TAMAÑO DEL DEPLOYABLE</div>
+      <div class="lead-title">Microservicio = servicio alineado con un límite de negocio, con datos y ciclo de vida propios.</div>
+      <div class="lead-text">Se despliega de forma <strong>independiente</strong>, habla con otros por <strong>contratos de red</strong> (HTTP/gRPC/eventos) y no comparte base de datos con otros equipos en el modelo feliz. La complejidad se mueve del código al <strong>ensamble distribuido</strong>: observabilidad, consistencia eventual, versionado y cultura de equipos.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-g">02</span>
+    <span class="section-title-text">Conway's Law — la organización gana</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="diag">
+    <div class="diag-title">Los límites del software copian la comunicación de los equipos</div>
+    <div class="conway">
+      <div class="cw-team">
+        <div class="cw-team-lbl">EQUIPO A</div>
+        <div class="cw-team-name">Pedidos &amp; catálogo</div>
+      </div>
+      <span class="cw-arrow">⟷</span>
+      <div class="cw-team">
+        <div class="cw-team-lbl">CONTRATO</div>
+        <div class="cw-team-name">API / eventos versionados</div>
+      </div>
+      <span class="cw-arrow">⟷</span>
+      <div class="cw-team">
+        <div class="cw-team-lbl">EQUIPO B</div>
+        <div class="cw-team-name">Pagos &amp; riesgo</div>
+      </div>
+    </div>
+    <p class="cw-note">Si el organigrama no coincide con los límites del dominio, tendrás fricción: “nuestro” microservicio termina siendo propiedad compartida y sin dueño claro. <strong>Inverse Conway maneuver:</strong> reorganizar equipos para empujar la arquitectura deseada.</p>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-i">03</span>
+    <span class="section-title-text">Descomposición — bounded contexts (DDD)</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card ci">
+      <div class="card-header">
+        <div class="card-icon icon-i">◫</div>
+        <div>
+          <div class="card-num">LÍMITE</div>
+          <div class="card-title">Un contexto = un modelo coherente</div>
+        </div>
+      </div>
+      <div class="card-keywords"><span class="kw kw-i">Ubiquitous Language</span><span class="kw kw-i">Agregados</span></div>
+      <div class="card-desc">Cada servicio (idealmente) custodia un <strong>bounded context</strong>: su propio significado de “Cliente”, “Pedido”, etc. Lo que en otro contexto se llama igual puede ser otro concepto — se relacionan por integración explícita, no por tablas compartidas.</div>
+    </div>
+    <div class="card ca">
+      <div class="card-header">
+        <div class="card-icon icon-a">⚠</div>
+        <div>
+          <div class="card-num">ANTIPATRÓN</div>
+          <div class="card-title">Microservicio por capa técnica</div>
+        </div>
+      </div>
+      <div class="card-keywords"><span class="kw kw-a">UI / API / DB</span><span class="kw kw-a">Acoplamiento fuerte</span></div>
+      <div class="card-desc">Partir “capa de acceso a datos” vs “capa de negocio” en servicios distintos suele generar <strong>cascadas de llamadas</strong> y ownership difuso. La descomposición feliz sigue <strong>dominios</strong>, no carpetas de proyecto.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-i">04</span>
+    <span class="section-title-text">Contratos y gobernanza entre equipos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card ci">
+    <div class="card-header">
+      <div class="card-icon icon-i">📜</div>
+      <div>
+        <div class="card-num">GOBERNANZA</div>
+        <div class="card-title">Lo que fija calidad en el borde</div>
+      </div>
+    </div>
+    <div class="card-keywords"><span class="kw kw-i">OpenAPI / proto</span><span class="kw kw-i">Semver del contrato</span><span class="kw kw-i">SLI/SLO entre equipos</span></div>
+    <div class="card-desc">Publicar contrato (REST/gRPC/async schema), reglas de <strong>compatibilidad hacia atrás</strong>, ventanas de deprecación y canales de incidentes. Sin esto, cada deploy es una negociación ad hoc.</div>
+    <div class="card-example">
+      <strong>Pregunta en diseño:</strong> ¿quién es el <em>dueño</em> del contrato, cómo se versiona y qué pasa si un consumidor no migra a tiempo?
+    </div>
+    <div class="tip-box tip-i">La “API First” no es documentación bonita: es el orden en que se define el sistema distribuido.</div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-a">05</span>
+    <span class="section-title-text">Monolito vs microservicios — trade-offs honestos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-h">
+      <div class="th">Dimensión</div>
+      <div class="th">Monolito modular</div>
+      <div class="th">Microservicios maduros</div>
+    </div>
+    <div class="tbl-r">
+      <div class="td"><strong>Complejidad inicial</strong></div>
+      <div class="td">Baja — un árbol de deploy, transacciones locales.</div>
+      <div class="td">Alta — red, observabilidad, contratos, equipos.</div>
+    </div>
+    <div class="tbl-r">
+      <div class="td"><strong>Escala de equipos</strong></div>
+      <div class="td">Limitada — merges y ownership compiten.</div>
+      <div class="td">Equipos autónomos si los límites son reales.</div>
+    </div>
+    <div class="tbl-r">
+      <div class="td"><strong>Consistencia</strong></div>
+      <div class="td">ACID dentro del proceso único (simplifica).</div>
+      <div class="td">Eventual entre servicios — diseño explícito (véase <a href="../dist/parte1.html" style="color:#94A3B8;">sistemas distribuidos</a>).</div>
+    </div>
+    <div class="tbl-r">
+      <div class="td"><strong>Cuándo plantearlo</strong></div>
+      <div class="td">Producto joven, dominio aún fluido.</div>
+      <div class="td">Varios equipos, límites claros, plataforma lista.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-i" style="margin-top:16px">
+    <span class="callout-icon">→</span>
+    <div>
+      <div class="callout-title">Siguiente infografía</div>
+      <div class="callout-text">Los límites anteriores obligan a <strong>dueño del dato por servicio</strong>. Sigue en <a href="02-datos-distribuidos.html">Datos distribuidos — database per service</a>.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">MICROSERVICIOS · 1 / 5 · LÍMITES Y GOBERNANZA</span>
+  <div class="footer-nav">
+    <span class="footer-meta">Mapa microservicios</span>
+    <a class="footer-btn" href="02-datos-distribuidos.html">Siguiente: datos distribuidos →</a>
+  </div>
+</div>
+</body>
+</html>

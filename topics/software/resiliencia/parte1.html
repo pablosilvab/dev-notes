@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(244,63,94,0.09) 0%,transparent 70%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#F43F5E;color:#fff;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  h1 span{color:#F43F5E}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#F43F5E;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.3);padding:8px 16px;border-radius:4px;letter-spacing:.12em}
+  .pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace}
+  .pa{color:#FDA4AF;border-color:rgba(253,164,175,.3);background:rgba(253,164,175,.07)}
+  .pb{color:#FDE68A;border-color:rgba(253,230,138,.3);background:rgba(253,230,138,.07)}
+  .pc{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .pd{color:#D8B4FE;border-color:rgba(216,180,254,.3);background:rgba(216,180,254,.07)}
+  .body{padding:0 56px 56px}
+  .sh{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .sn{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-r{color:#F43F5E}.sn-y{color:#EAB308}.sn-g{color:#22C55E}
+  .st{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .sl{flex:1;height:1px;background:#1E2A40}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .g2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .cr{--c:#F43F5E}.cr::before{background:#F43F5E}
+  .cy{--c:#EAB308}.cy::before{background:#EAB308}
+  .co{--c:#F97316}.co::before{background:#F97316}
+  .cg{--c:#22C55E}.cg::before{background:#22C55E}
+  .cp{--c:#A855F7}.cp::before{background:#A855F7}
+  .ci{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .ir{background:rgba(244,63,94,.12)}.iy{background:rgba(234,179,8,.12)}
+  .ig{background:rgba(34,197,94,.12)}.io{background:rgba(249,115,22,.12)}
+  .ip{background:rgba(168,85,247,.12)}
+  .cn{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .ct{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .kws{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px}
+  .kr{background:rgba(244,63,94,.12);color:#FDA4AF}
+  .ky{background:rgba(234,179,8,.12);color:#FDE68A}
+  .kg{background:rgba(34,197,94,.12);color:#86EFAC}
+  .ko{background:rgba(249,115,22,.12);color:#FDBA74}
+  .kp{background:rgba(168,85,247,.12);color:#D8B4FE}
+  .kt{background:rgba(20,184,166,.12);color:#5EEAD4}
+  .cd{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .ce{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .ce strong{color:#94A3B8;font-weight:500}
+  .tip{border-radius:6px;padding:8px 10px;font-size:11px;margin-top:10px;line-height:1.5}
+  .tip::before{content:'⚡ '}
+  .tr{background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.18);color:#FDA4AF}
+  .ty{background:rgba(234,179,8,.06);border:1px solid rgba(234,179,8,.18);color:#FDE68A}
+  .to{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.18);color:#FDBA74}
+  .tg{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.18);color:#86EFAC}
+  /* Circuit Breaker */
+  .cbm{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:24px}
+  .cbm-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+  .cbs{display:flex;align-items:center;justify-content:center;gap:0}
+  .cbs-node{border-radius:10px;padding:16px 20px;text-align:center;min-width:155px}
+  .cbs-cl{background:rgba(34,197,94,.07);border:2px solid rgba(34,197,94,.4)}
+  .cbs-op{background:rgba(244,63,94,.07);border:2px solid rgba(244,63,94,.4)}
+  .cbs-ho{background:rgba(234,179,8,.07);border:2px solid rgba(234,179,8,.4)}
+  .cbs-icon{font-size:22px;margin-bottom:6px;display:block}
+  .cbs-name{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;margin-bottom:4px}
+  .ncl{color:#22C55E}.nop{color:#F43F5E}.nho{color:#EAB308}
+  .cbs-desc{font-size:11px;color:#64748B;line-height:1.4}
+  .tr-arr{display:flex;flex-direction:column;align-items:center;padding:0 10px;gap:3px}
+  .tr-lbl{font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;white-space:nowrap;text-align:center}
+  .tr-a{font-size:16px;color:#2D3E5A}
+  .cbd{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;border-top:1px solid #1A2236;padding-top:16px}
+  .cbd-i{background:#0A0E1A;border:1px solid #1A2236;border-radius:6px;padding:10px 12px}
+  .cbd-l{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;margin-bottom:4px}
+  .lcl{color:#22C55E}.lop{color:#F43F5E}.lho{color:#EAB308}
+  .cbd-t{font-size:11px;color:#64748B;line-height:1.45}
+  /* Bulkhead */
+  .bd{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:24px}
+  .bd-cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .bd-lbl{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;margin-bottom:10px}
+  .lbd{color:#F43F5E}.lbg{color:#22C55E}
+  .bd-pool{border-radius:8px;padding:12px;margin-bottom:6px}
+  .bps{background:rgba(244,63,94,.05);border:1px solid rgba(244,63,94,.2)}
+  .bpi{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.2)}
+  .bpi2{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.2)}
+  .bd-pl{font-size:10px;font-family:'DM Mono',monospace;color:#3B4C68;margin-bottom:6px}
+  .bd-th{display:flex;gap:3px;flex-wrap:wrap}
+  .th{width:14px;height:14px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px}
+  .thb{background:rgba(244,63,94,.3);color:#FDA4AF}
+  .thf{background:rgba(34,197,94,.2);color:#86EFAC}
+  .thk{background:rgba(244,63,94,.5);color:#FDA4AF;opacity:.5}
+  /* Code */
+  .cp-panel{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cp-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cp-ttl{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3}
+  .cp-lng{font-family:'Space Mono',monospace;font-size:9px;color:#3B4C68;background:#0F1625;border:1px solid #1A2236;padding:2px 8px;border-radius:3px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .kwd{color:#A5B4FC}.typ{color:#5EEAD4}.str{color:#86EFAC}
+  .cmt{color:#2D3E5A;font-style:italic}.mth{color:#FCD34D}.num{color:#FDA4AF}.dco{color:#D8B4FE}
+  /* Callout */
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .cl-r{background:rgba(244,63,94,.05);border:1px solid rgba(244,63,94,.2)}
+  .cl-g{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.2)}
+  .cl-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .cl-ttl{font-size:12px;font-weight:600;margin-bottom:5px}
+  .clt-r{color:#FDA4AF}.clt-g{color:#86EFAC}
+  .cl-txt{font-size:12px;color:#64748B;line-height:1.6}
+  .cl-txt strong{color:#94A3B8}
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center}
+  .ft{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .fn{display:flex;align-items:center;gap:12px}
+  .fc{font-family:'Space Mono',monospace;font-size:10px;color:#F43F5E;letter-spacing:.06em}
+  .fb{font-family:'Space Mono',monospace;font-size:10px;color:#F43F5E;background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.2);padding:4px 12px;border-radius:3px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">RESILIENCIA · PARTE 1 DE 2</div>
+        <h1>Comunicación<br><span>Tolerante a Fallos</span></h1>
+        <p class="header-sub">Timeouts, Retries con Jitter, Circuit Breaker y Bulkhead — cómo un servicio sobrevive cuando sus dependencias fallan</p>
+      </div>
+    </div>
+    <div class="part-badge">RESILIENCE · P1</div>
+  </div>
+  <div class="pills">
+    <span class="pill pa">⏱ Timeouts & Retries</span>
+    <span class="pill pb">🎲 Jitter exponencial</span>
+    <span class="pill pc">🔌 Circuit Breaker</span>
+    <span class="pill pd">🚢 Bulkhead</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="sh"><span class="sn sn-r">01</span><span class="st">El fallo es inevitable — diseñar para absorberlo</span><div class="sl"></div></div>
+
+  <div class="callout cl-r">
+    <span class="cl-icon">⚠️</span>
+    <div>
+      <div class="cl-ttl clt-r">La premisa fundamental de la resiliencia</div>
+      <div class="cl-txt">En sistemas distribuidos, no preguntes <em>"¿fallará el servicio B?"</em> — sino <em>"¿cuándo fallará y cómo respondo?"</em> La red falla. Los discos fallan. Los procesos se reinician. <strong>Un sistema resiliente no es el que nunca falla, sino el que está diseñado para fallar de forma controlada y recuperarse sin intervención humana.</strong></div>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-top:10px">
+    <div class="card cr">
+      <div class="ci"><div class="ico ir">⏱</div><div><div class="cn">PATRÓN 1</div><div class="ct">Timeout</div></div></div>
+      <div class="kws"><span class="kw kr">Límite de espera</span><span class="kw kr">Fail fast</span><span class="kw kr">Connection timeout</span></div>
+      <div class="cd">Define el tiempo máximo que un servicio espera respuesta de otro antes de declarar el fallo. Sin timeout, un hilo puede quedarse bloqueado indefinidamente — agotando el pool de conexiones y propagando el fallo en cascada.</div>
+      <div class="ce"><strong>Dos tipos:</strong><br>
+        <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">Connection timeout:</span> tiempo para establecer la conexión TCP (~2s).<br>
+        <span style="font-family:'DM Mono',monospace;color:#FDA4AF;font-size:10px">Read timeout:</span> tiempo esperando la respuesta una vez conectado. Calibra con el p99 de latencia del servicio dependiente.
+      </div>
+      <div class="tip tr">Un timeout demasiado largo propaga el fallo. Uno muy corto genera falsos negativos. Mide el p99 de latencia y usa ese valor como referencia.</div>
+    </div>
+    <div class="card cy">
+      <div class="ci"><div class="ico iy">🔁</div><div><div class="cn">PATRÓN 2</div><div class="ct">Retry</div></div></div>
+      <div class="kws"><span class="kw ky">Reintentos</span><span class="kw ky">Idempotente</span><span class="kw ky">Max attempts</span></div>
+      <div class="cd">Reintenta automáticamente una operación fallida. Solo seguro cuando la operación es <strong style="color:#94A3B8">idempotente</strong> — ejecutarla N veces produce el mismo resultado que 1 vez. Sin idempotencia, los retries crean duplicados.</div>
+      <div class="ce"><strong>Regla:</strong> Reintenta errores transitorios (503, 429, timeout). <strong>Nunca</strong> reintentes errores de negocio (400, 404, 422) — si el request está mal formado, reintentar es inútil y nocivo.</div>
+      <div class="tip ty">Define siempre un máximo de reintentos. Un retry infinito en cascada puede convertir un fallo puntual en una tormenta de tráfico.</div>
+    </div>
+    <div class="card co">
+      <div class="ci"><div class="ico io">🎲</div><div><div class="cn">PATRÓN 3</div><div class="ct">Jitter — Exponential Backoff</div></div></div>
+      <div class="kws"><span class="kw ko">Ruido aleatorio</span><span class="kw ko">Thundering herd</span><span class="kw ko">Backoff</span></div>
+      <div class="cd">Añade retraso aleatorio a cada reintento. Sin jitter, cientos de clientes reintentan en sincronía y rematan al servicio caído (efecto manada / thundering herd).</div>
+      <div class="ce">
+        <strong>Fórmula Full Jitter (AWS):</strong><br>
+        <span style="font-family:'DM Mono',monospace;color:#FDBA74;font-size:10px">sleep = random(0, min(cap, base × 2^attempt))</span><br><br>
+        Intento 1: <span style="font-family:'DM Mono',monospace;color:#FDBA74;font-size:10px">~100ms</span> &nbsp;
+        Intento 2: <span style="font-family:'DM Mono',monospace;color:#FDBA74;font-size:10px">~200ms</span> &nbsp;
+        Intento 3: <span style="font-family:'DM Mono',monospace;color:#FDBA74;font-size:10px">~400ms</span>
+      </div>
+      <div class="tip to">El jitter dispersa los reintentos en el tiempo. Sin él, 500 servicios reintentan a los exactos 2 segundos — con él, se distribuyen en una ventana de 2-3 segundos.</div>
+    </div>
+  </div>
+
+  <div class="sh" style="padding-top:28px"><span class="sn sn-y">02</span><span class="st">Circuit Breaker — la máquina de estados que protege el sistema</span><div class="sl"></div></div>
+
+  <div class="cbm">
+    <div class="cbm-title">Máquina de estados del Circuit Breaker</div>
+    <div class="cbs">
+      <div class="cbs-node cbs-cl">
+        <span class="cbs-icon">🟢</span>
+        <div class="cbs-name ncl">CLOSED</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#22C55E;margin-bottom:6px">Funcionando normal</div>
+        <div class="cbs-desc">Las llamadas fluyen. El CB cuenta los fallos en una ventana deslizante. Si superan el umbral configurado, el circuito se abre.</div>
+      </div>
+      <div class="tr-arr">
+        <div class="tr-lbl" style="color:#F43F5E">fallos &gt; umbral</div>
+        <div class="tr-a" style="color:#F43F5E">→</div>
+        <div style="height:16px"></div>
+        <div class="tr-a" style="color:#EAB308">←</div>
+        <div class="tr-lbl" style="color:#EAB308">timeout expirado</div>
+      </div>
+      <div class="cbs-node cbs-op">
+        <span class="cbs-icon">🔴</span>
+        <div class="cbs-name nop">OPEN</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#F43F5E;margin-bottom:6px">Circuito abierto</div>
+        <div class="cbs-desc">Las llamadas se rechazan inmediatamente (fail fast) sin llegar al servicio. El servicio caído puede recuperarse sin presión.</div>
+      </div>
+      <div class="tr-arr">
+        <div class="tr-lbl" style="color:#EAB308">prueba una llamada</div>
+        <div class="tr-a" style="color:#EAB308">→</div>
+        <div style="height:16px"></div>
+        <div class="tr-a" style="color:#F43F5E">←</div>
+        <div class="tr-lbl" style="color:#F43F5E">falla de nuevo</div>
+      </div>
+      <div class="cbs-node cbs-ho">
+        <span class="cbs-icon">🟡</span>
+        <div class="cbs-name nho">HALF-OPEN</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:#EAB308;margin-bottom:6px">Probando recuperación</div>
+        <div class="cbs-desc">Permite un número limitado de llamadas de prueba. Si tienen éxito → CLOSED. Si fallan → OPEN de nuevo.</div>
+      </div>
+      <div class="tr-arr">
+        <div class="tr-lbl" style="color:#22C55E">prueba exitosa ↙</div>
+        <div style="height:12px"></div>
+        <div style="font-size:9px;color:#3B4C68;font-family:'DM Mono',monospace;text-align:center">vuelve a CLOSED</div>
+      </div>
+    </div>
+    <div class="cbd">
+      <div class="cbd-i"><div class="cbd-l lcl">Qué monitorear</div><div class="cbd-t">Tasa de errores en ventana deslizante (ej: &gt;50% en últimos 10s). También latencia alta puede activarlo — no solo errores 5xx.</div></div>
+      <div class="cbd-i"><div class="cbd-l lop">Qué hacer en OPEN</div><div class="cbd-t">Retornar respuesta de fallback (valor cacheado, respuesta degradada, error claro). Nunca dejar la llamada colgada sin respuesta.</div></div>
+      <div class="cbd-i"><div class="cbd-l lho">Implementaciones</div><div class="cbd-t"><span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10px">Resilience4j</span> (Java), <span style="font-family:'DM Mono',monospace;color:#5EEAD4;font-size:10px">Polly</span> (.NET). En Istio/Envoy se configura sin código en el sidecar.</div></div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:10px">
+    <div class="cp-panel">
+      <div class="cp-hdr"><span class="cp-ttl">Resilience4j — CB + Retry + Fallback combinados</span><span class="cp-lng">JAVA</span></div>
+      <pre><span class="dco">@Service</span>
+<span class="kwd">public class</span> <span class="typ">OrderClient</span> {
+
+    <span class="cmt">// Decorar la llamada — CB fuera, Retry dentro</span>
+    <span class="dco">@CircuitBreaker</span>(name = <span class="str">"orderService"</span>, fallbackMethod = <span class="str">"fallback"</span>)
+    <span class="dco">@Retry</span>(name = <span class="str">"orderService"</span>)
+    <span class="dco">@TimeLimiter</span>(name = <span class="str">"orderService"</span>)
+    <span class="kwd">public</span> <span class="typ">Order</span> <span class="mth">getOrder</span>(<span class="typ">String</span> id) {
+        <span class="kwd">return</span> httpClient.<span class="mth">get</span>(<span class="str">"/orders/"</span> + id);
+    }
+
+    <span class="cmt">// Fallback cuando CB está OPEN</span>
+    <span class="kwd">private</span> <span class="typ">Order</span> <span class="mth">fallback</span>(<span class="typ">String</span> id, <span class="typ">Exception</span> ex) {
+        log.<span class="mth">warn</span>(<span class="str">"CB open for order {}"</span>, id);
+        <span class="kwd">return</span> orderCache.<span class="mth">getOrDefault</span>(id, <span class="typ">Order</span>.EMPTY);
+    }
+}</pre>
+    </div>
+
+    <div class="bd">
+      <div style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px">Bulkhead — aislamiento de pools de recursos</div>
+      <div class="bd-cmp">
+        <div>
+          <div class="bd-lbl lbd">❌ Sin Bulkhead — pool compartido</div>
+          <div class="bd-pool bps">
+            <div class="bd-pl">20 threads — todos los servicios comparten</div>
+            <div class="bd-th">
+              <div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div>
+              <div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div>
+              <div class="th thk">✕</div><div class="th thk">✕</div><div class="th thk">✕</div><div class="th thk">✕</div><div class="th thk">✕</div>
+              <div class="th thk">✕</div><div class="th thk">✕</div><div class="th thk">✕</div><div class="th thk">✕</div><div class="th thk">✕</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:#FDA4AF;line-height:1.5">B satura los 20 threads → A y C también quedan sin hilos → fallo total.</div>
+        </div>
+        <div>
+          <div class="bd-lbl lbg">✅ Con Bulkhead — pools aislados</div>
+          <div class="bd-pool bpi" style="margin-bottom:6px">
+            <div class="bd-pl">8 threads → Servicio A ✅</div>
+            <div class="bd-th"><div class="th thf">A</div><div class="th thf">A</div><div class="th thf">A</div><div class="th thf">A</div><div class="th thf">A</div><div class="th thf">A</div></div>
+          </div>
+          <div class="bd-pool bps" style="margin-bottom:6px">
+            <div class="bd-pl">8 threads → Servicio B ❌ saturado</div>
+            <div class="bd-th"><div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div><div class="th thb">B</div></div>
+          </div>
+          <div class="bd-pool bpi2">
+            <div class="bd-pl">4 threads → Servicio C ✅</div>
+            <div class="bd-th"><div class="th thf">C</div><div class="th thf">C</div><div class="th thf">C</div><div class="th thf">C</div></div>
+          </div>
+          <div style="font-size:11px;color:#86EFAC;line-height:1.5;margin-top:6px">B falla solo. A y C siguen operando — el barco no se hunde por un mamparo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh" style="padding-top:28px"><span class="sn sn-g">03</span><span class="st">Stack de resiliencia completo — el orden importa</span><div class="sl"></div></div>
+
+  <div style="background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:22px 24px">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      <div style="background:#0A0E1A;border:1px solid rgba(168,85,247,.2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:18px;margin-bottom:6px">🚢</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:#A855F7;font-weight:700;margin-bottom:4px">CAPA 1 — MÁS EXTERNA</div>
+        <div style="font-size:12px;font-weight:600;color:#E2E8F0;margin-bottom:4px">Bulkhead</div>
+        <div style="font-size:11px;color:#4A5E7A;line-height:1.4">Aísla recursos. Un fallo en un módulo no hunde el barco.</div>
+      </div>
+      <div style="background:#0A0E1A;border:1px solid rgba(244,63,94,.2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:18px;margin-bottom:6px">⏱</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:#F43F5E;font-weight:700;margin-bottom:4px">CAPA 2</div>
+        <div style="font-size:12px;font-weight:600;color:#E2E8F0;margin-bottom:4px">Timeout</div>
+        <div style="font-size:11px;color:#4A5E7A;line-height:1.4">Libera threads bloqueados. Define el límite de paciencia del sistema.</div>
+      </div>
+      <div style="background:#0A0E1A;border:1px solid rgba(234,179,8,.2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:18px;margin-bottom:6px">🔌</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:#EAB308;font-weight:700;margin-bottom:4px">CAPA 3</div>
+        <div style="font-size:12px;font-weight:600;color:#E2E8F0;margin-bottom:4px">Circuit Breaker</div>
+        <div style="font-size:11px;color:#4A5E7A;line-height:1.4">Evita llamadas inútiles. Da tiempo al servicio para recuperarse.</div>
+      </div>
+      <div style="background:#0A0E1A;border:1px solid rgba(249,115,22,.2);border-radius:8px;padding:12px;text-align:center">
+        <div style="font-size:18px;margin-bottom:6px">🔁</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:#F97316;font-weight:700;margin-bottom:4px">CAPA 4 — MÁS INTERNA</div>
+        <div style="font-size:12px;font-weight:600;color:#E2E8F0;margin-bottom:4px">Retry + Jitter</div>
+        <div style="font-size:11px;color:#4A5E7A;line-height:1.4">Recupera fallos transitorios. Jitter evita el efecto manada.</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:#0A0E1A;border:1px solid rgba(34,197,94,.2);border-radius:8px;font-size:12px;color:#64748B;line-height:1.55">
+      <strong style="color:#86EFAC">Orden de decoración:</strong> Bulkhead → Timeout → Circuit Breaker → Retry (de afuera hacia adentro). El Retry fuera del CB es un error — si el CB está abierto, no tiene sentido reintentar.
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="ft">RESILIENCIA · PARTE 1 DE 2 · COMUNICACIÓN TOLERANTE A FALLOS</span>
+  <div class="fn">
+    <span class="fc">4 patrones · Timeout · Retry · CB · Bulkhead</span>
+    <a class="fb" href="parte2.html">Parte 2: Mensajería →</a>
+  </div>
+</div>
+</body>
+</html>
