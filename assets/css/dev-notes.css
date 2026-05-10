@@ -821,6 +821,22 @@ body.dn-week-04 .header::after {
   background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 65%);
   pointer-events: none;
 }
+body.dn-week-05 .header::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(168,85,247,0.11) 0%, transparent 70%);
+  pointer-events: none;
+}
+body.dn-week-05 .header::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: 80px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(249,168,212,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
 
 body.dn-week-01 .week-badge { background: #FF9900; color: #0A0E1A; }
 body.dn-week-01 .header h1 span { color: #FF9900; }
@@ -836,10 +852,14 @@ body.dn-week-03 .header h1 span { color: #22C55E; }
 body.dn-week-04 .week-badge { background: #FF9900; color: #0A0E1A; }
 body.dn-week-04 .header h1 span { color: #FF9900; }
 
+body.dn-week-05 .week-badge { background: #A855F7; color: #FAF5FF; }
+body.dn-week-05 .header h1 span { color: #D8B4FE; }
+
 body.dn-week-01 .footer-count { color: #FF9900; }
 body.dn-week-02 .footer-count { color: #3B82F6; }
 body.dn-week-03 .footer-count { color: #22C55E; }
 body.dn-week-04 .footer-count { color: #FF9900; }
+body.dn-week-05 .footer-count { color: #D8B4FE; }
 
 /* Pills por semana */
 body.dn-week-01 .pill-a { color: #64B5F6; border-color: rgba(100,181,246,0.3); background: rgba(100,181,246,0.07); }
@@ -861,6 +881,11 @@ body.dn-week-04 .pill-a { color: #FCD34D; border-color: rgba(252,211,77,0.3); ba
 body.dn-week-04 .pill-b { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
 body.dn-week-04 .pill-c { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
 body.dn-week-04 .pill-d { color: #F9A8D4; border-color: rgba(249,168,212,0.3); background: rgba(249,168,212,0.07); }
+
+body.dn-week-05 .pill-a { color: #FCD34D; border-color: rgba(252,211,77,0.3); background: rgba(252,211,77,0.07); }
+body.dn-week-05 .pill-b { color: #93C5FD; border-color: rgba(147,197,253,0.3); background: rgba(147,197,253,0.07); }
+body.dn-week-05 .pill-c { color: #FDA4AF; border-color: rgba(253,164,175,0.3); background: rgba(253,164,175,0.07); }
+body.dn-week-05 .pill-d { color: #86EFAC; border-color: rgba(134,239,172,0.3); background: rgba(134,239,172,0.07); }
 
 /* Tips: default por semana */
 .tip-box {
@@ -1610,6 +1635,15 @@ body.dn-week-02 .tip-box:not(.tip-amber):not(.tip-green):not(.tip-blue):not(.tip
 .ps-green  { color: #22C55E; }
 .pricing-saving-label { font-size: 10px; color: var(--text-dim); font-family: 'DM Mono', monospace; }
 .pricing-note { font-size: 11px; color: #4A5E7A; line-height: 1.4; margin-top: 10px; border-top: 1px solid var(--border-subtle); padding-top: 8px; }
+.pricing-footnote {
+  font-size: 10px;
+  color: #64748B;
+  line-height: 1.45;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.28);
+}
+.pricing-footnote strong { color: #94A3B8; }
 
 /* Versus card */
 .versus-card {

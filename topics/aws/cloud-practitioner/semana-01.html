@@ -16,9 +16,9 @@
     <div>
       <a class="back-link" href="../../../index.html">← dev-notes</a>
       <div class="header-stack">
-        <div class="week-badge">SEMANA 01 / 04</div>
+        <div class="week-badge">SEMANA 01 / 05</div>
         <h1>AWS CLOUD<br><span>PRACTITIONER</span></h1>
-        <p class="header-sub">15 conceptos fundamentales que debes dominar esta semana</p>
+        <p class="header-sub">17 conceptos fundamentales que debes dominar esta semana</p>
       </div>
     </div>
     <div class="aws-logo">AWS CLF-C02</div>
@@ -336,9 +336,81 @@
     🏢 <strong>Analogía del arriendo:</strong> <span class="resp-analogy__muted">El dueño del edificio (AWS) asegura la estructura, cañerías y el ascensor. Tú (el inquilino) cierras la puerta con llave, decides quién entra y qué guardas adentro.</span>
   </div>
 
-  <!-- SECTION 5: Trusted Advisor -->
+  <!-- SECTION 5: Shield vs WAF -->
   <div class="section-header">
     <span class="section-num">05</span>
+    <span class="section-title-text">AWS Shield vs AWS WAF — capas distintas</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="versus-card">
+    <div class="versus-header">Comparación crítica de examen — protección DDoS vs reglas de aplicación web</div>
+    <div class="versus-body">
+      <div class="versus-col">
+        <div class="vc-service vcs-blue">AWS SHIELD</div>
+        <div class="vc-name">DDoS · red / volumétrico</div>
+        <div class="vc-question">Qué absorbe:</div>
+        <div class="vc-answer vc-answer--lead-blue">Ataques de denegación de servicio masivos</div>
+        <div class="vc-row vcr-blue"><strong>Shield Standard</strong> incluido sin costo con CloudFront, Route&nbsp;53 y Global Accelerator</div>
+        <div class="vc-row vcr-blue"><strong>Shield Advanced</strong> (de pago): soporte DRT, reembolsos por escalado en ataques, protección ampliada</div>
+        <div class="vc-row vcr-blue">Actúa ante inundaciones de tráfico que intentan tumbar la disponibilidad</div>
+        <div class="vc-analogy">🌊 <strong>No es</strong> para bloquear una URL concreta por “palabra prohibida” en el body — es absorbente ante oleadas de tráfico malicioso.</div>
+      </div>
+      <div class="versus-divider">
+        <div class="versus-badge">VS</div>
+      </div>
+      <div class="versus-col">
+        <div class="vc-service vcs-amber">AWS WAF</div>
+        <div class="vc-name">Capa 7 · aplicación web</div>
+        <div class="vc-question">Qué filtra:</div>
+        <div class="vc-answer vc-answer--lead-amber">Requests HTTP(S) según reglas que defines</div>
+        <div class="vc-row vcr-amber">Se asocia a <strong>ALB, API Gateway, CloudFront</strong>, App&nbsp;Sync…</div>
+        <div class="vc-row vcr-amber">Reglas por IP, geo, rate-based, listas OWASP (SQLi, XSS), patrones personalizados</div>
+        <div class="vc-row vcr-amber"><strong>Pregunta típica:</strong> “bloquear inyección SQL”, “limitar requests por IP”, “solo estos países” → <strong>WAF</strong>, no Shield solo</div>
+        <div class="vc-row vcr-amber"><strong>Capa 7:</strong> SQLi, XSS y reglas sobre el request HTTP — <strong>WAF</strong>. <strong>Shield</strong> no inspecciona el contenido de la petición para SQL; mitiga <strong>volumen / DDoS</strong>.</div>
+        <div class="vc-analogy">🧱 <strong>Analogía:</strong> Shield es el dique contra la marea; WAF es el portero que revisa cada visitante antes de entrar al club.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Amazon Macie -->
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-title-text">Amazon Macie — datos sensibles en S3</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="ta-card">
+    <div>
+      <div class="card-header card-header--tight">
+        <div class="card-icon icon-purple">📂</div>
+        <div>
+          <div class="card-num">16</div>
+          <div class="card-title">Amazon Macie</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">S3</span>
+        <span class="kw kw-purple">PII · datos sensibles</span>
+        <span class="kw kw-purple">Clasificación automática</span>
+        <span class="kw kw-purple">Machine learning</span>
+      </div>
+      <div class="card-desc">Servicio de seguridad y privacidad que descubre, clasifica y protege datos sensibles en Amazon S3 (y puede integrarse con flujos de cumplimiento). Usa ML para detectar patrones de información personal identificable (PII), financiera u otros datos que no deberían estar expuestos.</div>
+      <div class="card-example mt-4"><strong>Pregunta típica:</strong> “¿Qué hay en mis buckets que no catalogamos?”, “detectar datos personales olvidados”, “cumplimiento sobre objetos en S3” → <strong>Macie</strong>, no solo un antivirus genérico.</div>
+      <div class="ta-pillars">
+        <span class="ta-pillar tp1">Descubrimiento</span>
+        <span class="ta-pillar tp3">Clasificación</span>
+        <span class="ta-pillar tp4">Alertas</span>
+      </div>
+    </div>
+    <div class="ta-visual">🔐</div>
+  </div>
+
+  <div class="tip-box tip-purple mt-10"><strong>AWS KMS</strong> (Key Management Service): gestión centralizada de <strong>claves criptográficas</strong> para cifrar y descifrar datos en servicios AWS (S3, EBS, RDS, etc.). Control de acceso con IAM; rotación y auditoría de uso de claves. En examen: “¿dónde administro las claves de cifrado?” → <strong>KMS</strong>, no Macie (Macie descubre datos sensibles; KMS gestiona las llaves).</div>
+
+  <!-- SECTION 7: Trusted Advisor -->
+  <div class="section-header">
+    <span class="section-num">07</span>
     <span class="section-title-text">AWS Trusted Advisor</span>
     <div class="section-line"></div>
   </div>
@@ -348,7 +420,7 @@
       <div class="card-header card-header--tight">
         <div class="card-icon icon-amber">🔍</div>
         <div>
-          <div class="card-num">15</div>
+          <div class="card-num">17</div>
           <div class="card-title">AWS Trusted Advisor</div>
         </div>
       </div>
@@ -376,9 +448,9 @@
 
 <!-- FOOTER -->
 <div class="footer">
-  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 01 DE 04 — CONCEPTOS FUNDAMENTALES</span>
+  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 01 DE 05 — CONCEPTOS FUNDAMENTALES</span>
   <div class="footer-meta-row">
-    <span class="footer-count">15 CONCEPTOS · CLF-C02</span>
+    <span class="footer-count">17 CONCEPTOS · CLF-C02</span>
     <a class="module-link is-next" href="semana-02.html"><span class="ml-text">Siguiente: Semana 2 →</span></a>
   </div>
 </div>

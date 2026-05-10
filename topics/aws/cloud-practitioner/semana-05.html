@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Cloud Practitioner — Semana 5 · Repaso final</title>
+<link rel="stylesheet" href="../../../assets/css/dev-notes.css">
+</head>
+<body class="dn-infographic dn-week-05">
+<div class="page-shell">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../../index.html">← dev-notes</a>
+      <div class="header-stack">
+        <div class="week-badge">SEMANA 05 / 05 — REPASO</div>
+        <h1>Repaso final<br><span>CLF-C02</span></h1>
+        <p class="header-sub">Well-Architected, tabla de decisiones, tips del día del examen, glosario y auto-evaluación.</p>
+      </div>
+    </div>
+    <div class="aws-logo">AWS CLF-C02</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🏛 Pilares</span>
+    <span class="pill pill-b">📋 Keywords</span>
+    <span class="pill pill-c">⚡ Tips día D</span>
+    <span class="pill pill-d">📖 Glosario</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="callout callout-amber mt-0">
+    <span class="callout-icon">📚</span>
+    <div class="callout-content">
+      <div class="callout-title ct-amber">Qué es esta semana</div>
+      <div class="callout-text">Cierra el plan de estudio con material pensado para el día anterior al examen: arquitectura bien diseñada, atajos de vocabulario y trampas frecuentes. El detalle de servicios sigue en las <strong>Semanas 1 a 4</strong>.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-amber">01</span>
+    <span class="section-title-text">Mapa del plan (1 a 4)</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card c-amber">
+    <div class="card-header card-header--tight">
+      <div class="card-icon icon-amber">🔗</div>
+      <div><div class="card-title">Dónde profundizar</div></div>
+    </div>
+    <div class="card-desc" style="font-size:12px;line-height:1.75;">
+      <a href="semana-01.html" style="color:#FCD34D;">Semana 1</a> — Nube, IAM, responsabilidad compartida, Shield/WAF, Macie, Trusted Advisor<br>
+      <a href="semana-02.html" style="color:#FCD34D;">Semana 2</a> — EC2, Lambda, VPC, Route&nbsp;53, CloudFront, ELB, Auto Scaling, SQS/SNS<br>
+      <a href="semana-03.html" style="color:#FCD34D;">Semana 3</a> — Almacenamiento, RDS, migración (DMS, Snow, Direct Connect)<br>
+      <a href="semana-04.html" style="color:#FCD34D;">Semana 4</a> — Organizations, Cost Explorer, Budgets, RI/Savings, CloudTrail, Config, Control Tower
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 2 — WELL-ARCHITECTED FRAMEWORK
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-purple">02</span>
+    <span class="section-title-text">AWS Well-Architected Framework — los 6 pilares</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="pillars-grid">
+    <div class="pillar-card pp-amber">
+      <div class="pillar-num">01</div>
+      <span class="pillar-icon">🔐</span>
+      <div class="pillar-name">Seguridad</div>
+      <div class="pillar-key">IAM, cifrado, detección de amenazas, trazabilidad</div>
+    </div>
+    <div class="pillar-card pp-blue">
+      <div class="pillar-num">02</div>
+      <span class="pillar-icon">⚙️</span>
+      <div class="pillar-name">Excelencia Operacional</div>
+      <div class="pillar-key">Automatización, monitoreo, mejora continua, runbooks</div>
+    </div>
+    <div class="pillar-card pp-green">
+      <div class="pillar-num">03</div>
+      <span class="pillar-icon">🏗</span>
+      <div class="pillar-name">Confiabilidad</div>
+      <div class="pillar-key">Alta disponibilidad, recuperación ante fallos, Multi-AZ</div>
+    </div>
+    <div class="pillar-card pp-purple">
+      <div class="pillar-num">04</div>
+      <span class="pillar-icon">⚡</span>
+      <div class="pillar-name">Eficiencia de Performance</div>
+      <div class="pillar-key">Selección de recursos, escalado, arquitecturas serverless</div>
+    </div>
+    <div class="pillar-card pp-teal">
+      <div class="pillar-num">05</div>
+      <span class="pillar-icon">💰</span>
+      <div class="pillar-name">Optimización de Costos</div>
+      <div class="pillar-key">Pago por uso, Reserved, eliminar recursos ociosos</div>
+    </div>
+    <div class="pillar-card pp-rose">
+      <div class="pillar-num">06</div>
+      <span class="pillar-icon">🌱</span>
+      <div class="pillar-name">Sostenibilidad</div>
+      <div class="pillar-key">Reducir huella de carbono, eficiencia energética</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 3 — TABLA RESUMEN DE EXAMEN
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-amber">03</span>
+    <span class="section-title-text">Tabla resumen — keyword → servicio correcto</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tips-table">
+    <div class="tt-header">
+      <div class="tt-cell tt-head">Servicio</div>
+      <div class="tt-cell tt-head">Si el examen dice…</div>
+      <div class="tt-cell tt-head">Elige este servicio porque…</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-amber"></span><span class="tt-sname">AWS Organizations</span></div>
+      <div class="tt-val">"Factura única", "múltiples cuentas", "descuento por volumen", "política centralizada"</div>
+      <div class="tt-val">Gestiona y consolida múltiples cuentas. Los SCPs limitan lo que pueden hacer las cuentas hijas.</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-blue"></span><span class="tt-sname">Cost Explorer</span></div>
+      <div class="tt-val">"Visualizar costos pasados", "gráficos de gasto", "analizar tendencias", "predecir"</div>
+      <div class="tt-val">Herramienta de análisis y visualización retroactiva de costos con filtros y predicciones.</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-green"></span><span class="tt-sname">AWS Budgets</span></div>
+      <div class="tt-val">"Alertas de gasto", "umbral de costo", "notificar si se supera X dólares"</div>
+      <div class="tt-val">Configura alarmas proactivas antes o durante el mes para evitar sorpresas en la factura.</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-amber"></span><span class="tt-sname">Pricing Calculator</span></div>
+      <div class="tt-val">"Estimar antes de crear", "planificar migración", "presupuestar nueva arquitectura"</div>
+      <div class="tt-val">Estimación previa sin crear nada. Para proyectar costos antes de comprometerse.</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-blue"></span><span class="tt-sname">CloudTrail</span></div>
+      <div class="tt-val">"Quién borró el recurso", "auditoría de acciones", "historial de API calls", "el culpable"</div>
+      <div class="tt-val">Registra quién hizo qué y cuándo. Responde preguntas de seguridad forense.</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-amber"></span><span class="tt-sname">AWS Config</span></div>
+      <div class="tt-val">"Bucket S3 público", "compliance", "cómo estaba configurado antes", "reglas de cumplimiento"</div>
+      <div class="tt-val">Evalúa el estado de configuración de recursos vs. reglas. Detecta drift de configuración.</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-rose"></span><span class="tt-sname">Abuse Team</span></div>
+      <div class="tt-val">"Actividad ilegal desde AWS", "spam", "DDoS originado en EC2", "hackeo"</div>
+      <div class="tt-val">No es soporte técnico. Es el equipo legal/de seguridad para reportar abuso de infraestructura AWS.</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-green"></span><span class="tt-sname">Reserved Instances</span></div>
+      <div class="tt-val">"Workload estable", "24/7", "máximo ahorro", "compromiso de largo plazo"</div>
+      <div class="tt-val">Hasta 72% de descuento a cambio de comprometerse 1 o 3 años a un tipo de instancia.</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-service"><span class="tt-dot td-amber"></span><span class="tt-sname">Spot Instances</span></div>
+      <div class="tt-val">"Batch", "tolerante a interrupciones", "menor costo posible", "procesamiento masivo"</div>
+      <div class="tt-val">Hasta 90% de descuento. AWS puede recuperar la instancia con 2 min de aviso.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 4 — TIPS CRÍTICOS DÍA DEL EXAMEN
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-red">04</span>
+    <span class="section-title-text">Tips críticos para el día del examen</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="callout callout-rose callout--stack">
+      <div class="callout__head">
+        <span class="callout-icon">🕵️</span>
+        <div class="callout-title ct-rose">CloudTrail ≠ Config</div>
+      </div>
+      <div class="callout-text"><strong>CloudTrail</strong> = "¿quién hizo la acción?" (el culpable). Registra eventos de API. <strong>Config</strong> = "¿cómo cambió el recurso?" (el estado). Evalúa si cumple reglas. Pregunta fácil de diferenciar: si dice "auditoría" o "quién borró" → CloudTrail. Si dice "compliance" o "bucket público" → Config.</div>
+    </div>
+    <div class="callout callout-amber callout--stack">
+      <div class="callout__head">
+        <span class="callout-icon">💰</span>
+        <div class="callout-title ct-amber">Organizations + descuentos</div>
+      </div>
+      <div class="callout-text">AWS Organizations no solo sirve para gobernar — también permite obtener <strong>descuentos por volumen</strong> sumando el consumo de todas las cuentas. Una cuenta sola podría pagar $X, pero 10 cuentas consolidadas pagan menos por GB porque el total activa mejores precios de tier en S3, data transfer, etc.</div>
+    </div>
+    <div class="callout callout-purple callout--stack">
+      <div class="callout__head">
+        <span class="callout-icon">📊</span>
+        <div class="callout-title ct-purple">Modelo de precios AWS</div>
+      </div>
+      <div class="callout-text">AWS tiene 3 drivers de costo principales: <strong>cómputo</strong> (por hora/seg), <strong>almacenamiento</strong> (por GB/mes) y <strong>transferencia de datos de salida</strong> (la entrada a AWS es gratis, la salida se cobra). Entender esto resuelve muchas preguntas de escenario de facturación.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 5 — GLOSARIO RÁPIDO
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-green">05</span>
+    <span class="section-title-text">Glosario rápido</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-blue">
+      <div class="card-title" style="font-size:14px;margin-bottom:8px;">Elasticidad</div>
+      <div class="card-desc" style="font-size:12px;">Subir y bajar recursos según demanda (Auto Scaling, elasticidad de la nube).</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-title" style="font-size:14px;margin-bottom:8px;">Economías de escala</div>
+      <div class="card-desc" style="font-size:12px;">Precios más bajos por volumen de compra de infraestructura a escala masiva.</div>
+    </div>
+    <div class="card c-amber">
+      <div class="card-title" style="font-size:14px;margin-bottom:8px;">Edge Location</div>
+      <div class="card-desc" style="font-size:12px;">Punto de borde para cache y baja latencia (CloudFront); no es una Región completa.</div>
+    </div>
+    <div class="card c-green">
+      <div class="card-title" style="font-size:14px;margin-bottom:8px;">Zona de disponibilidad (AZ)</div>
+      <div class="card-desc" style="font-size:12px;">Uno o más DC discretos dentro de una Región, redundancia de energía y red.</div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-title" style="font-size:14px;margin-bottom:8px;">Trusted Advisor</div>
+      <div class="card-desc" style="font-size:12px;">Recomendaciones en costos, seguridad, límites, tolerancia a fallos, etc.</div>
+    </div>
+    <div class="card c-pink">
+      <div class="card-title" style="font-size:14px;margin-bottom:8px;">Serverless</div>
+      <div class="card-desc" style="font-size:12px;">Lambda, Fargate: sin administrar servidores subyacentes; pago por uso / recurso.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SECCIÓN 6 — AUTO-EVALUACIÓN
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-num sn-purple">06</span>
+    <span class="section-title-text">Preguntas clave para el repaso</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="callout callout-purple">
+    <span class="callout-icon">❓</span>
+    <div class="callout-content">
+      <div class="callout-title ct-purple">Respuesta mental antes de mirar las infografías</div>
+      <div class="callout-text">
+        <ol style="margin:0;padding-left:1.25rem;line-height:1.7;">
+          <li>¿Quién parchea el SO dentro de una instancia EC2 y quién el hipervisor?</li>
+          <li>Un ataque DDoS masivo vs bloquear SQLi en una URL: ¿Shield o WAF?</li>
+          <li>¿Macie o KMS si la pregunta es “administrar claves de cifrado”?</li>
+          <li>¿Organizations o Cost Explorer si necesitas <em>jerarquía de cuentas</em> y SCPs?</li>
+          <li>¿Budgets o CloudWatch si la alerta es “pasamos el presupuesto de 500 USD este mes”?</li>
+          <li>RI/Savings: ¿compromiso sobre capacidad compartida o servidor físico exclusivo?</li>
+          <li>¿SQS o CloudFront para “cola entre microservicios”?</li>
+          <li>¿Direct Connect o Snowmobile para petabytes sin subirlos por internet?</li>
+          <li>Nombra dos políticas de enrutamiento de Route&nbsp;53 distintas de “simple”.</li>
+          <li>Cita dos pilares del Well-Architected Framework aparte de optimización de costos.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+</div><!-- /page-shell -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 05 DE 05 — REPASO FINAL</span>
+  <div class="footer-meta-row">
+    <a class="module-link is-prev" href="semana-04.html"><span class="ml-text">← Semana 4</span></a>
+    <span class="footer-count">Repaso · CLF-C02</span>
+    <span class="footer-complete">✓ PLAN COMPLETO</span>
+    <a class="module-link is-next" href="semana-01.html"><span class="ml-text">Serie · Semana 1 →</span></a>
+  </div>
+</div>
+
+</body>
+</html>

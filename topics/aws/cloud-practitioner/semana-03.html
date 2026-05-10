@@ -16,9 +16,9 @@
     <div>
       <a class="back-link" href="../../../index.html">← dev-notes</a>
       <div class="header-stack">
-        <div class="week-badge">SEMANA 03 / 04</div>
+        <div class="week-badge">SEMANA 03 / 05</div>
         <h1>Bases de Datos<br><span>& Almacenamiento</span></h1>
-        <p class="header-sub">13 servicios para persistir, consultar y mover datos en AWS</p>
+        <p class="header-sub">14 servicios para persistir, consultar y mover datos en AWS</p>
       </div>
     </div>
     <div class="aws-logo">AWS CLF-C02</div>
@@ -293,7 +293,7 @@
     <div class="section-line"></div>
   </div>
 
-  <div class="cards-grid g2">
+  <div class="cards-grid g3">
     <!-- DMS -->
     <div class="card c-amber">
       <div class="card-header">
@@ -324,13 +324,32 @@
       </div>
       <div class="card-keywords">
         <span class="kw kw-pink">Migración física</span>
-        <span class="kw kw-pink">Snowball / Snowcone</span>
+        <span class="kw kw-pink">Snowball · Snowcone · Snowmobile</span>
         <span class="kw kw-pink">Sin internet</span>
         <span class="kw kw-pink">Edge computing</span>
       </div>
       <div class="card-desc">Dispositivos físicos que AWS te envía para transferir grandes volúmenes de datos (desde TB hasta EB) cuando no es viable hacerlo por internet. También permiten procesar datos en ubicaciones sin conectividad.</div>
       <div class="card-example"><strong>Ejemplo:</strong> Tienes 200 TB de datos en un datacenter propio y subirlos por internet tardaría meses — AWS te manda un Snowball Edge, cargas los datos y lo devuelves.</div>
-      <div class="tip-box tip-rose">En el examen: si mencionan "migrar petabytes" o "sin banda ancha suficiente" → Snow Family. Si mencionan migración online con la app corriendo → DMS.</div>
+      <div class="tip-box tip-rose"><strong>Snowmobile</strong> (camión, petabytes) vs <strong>Snowball/Snowcone</strong> (dispositivos portátiles, TB–PB). En examen: “PB físicos”, “sin ancho de banda” → Snow Family. <strong>Vs DMS:</strong> migración online con la app en marcha → DMS, no Snow.</div>
+    </div>
+    <!-- AWS Direct Connect -->
+    <div class="card c-indigo">
+      <div class="card-header">
+        <div class="card-icon icon-indigo">🔌</div>
+        <div>
+          <div class="card-num">12</div>
+          <div class="card-title">AWS Direct Connect</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-indigo">Enlace dedicado</span>
+        <span class="kw kw-indigo">On-prem ↔ AWS</span>
+        <span class="kw kw-indigo">BGP</span>
+        <span class="kw kw-indigo">No es Snow</span>
+      </div>
+      <div class="card-desc"><strong>Conexión de red privada dedicada</strong> entre tu datacenter/oficina y AWS (puerto en un DX Location). Tráfico predecible, menor latencia que VPN por internet público y sin pasar por Snow.</div>
+      <div class="card-example"><strong>Ejemplo:</strong> Enlace 1&nbsp;Gbps o 10&nbsp;Gbps estable para replicar backups hacia VPC todos los días.</div>
+      <div class="tip-box tip-blue"><strong>Vs Snowmobile:</strong> Direct Connect es <strong>circuito de red continuo</strong>; Snowmobile mueve <strong>discos físicos</strong> cuando mover bits por cable no da el ancho de banda o el tiempo.</div>
     </div>
   </div>
 
@@ -418,12 +437,20 @@
       <div class="dt-val"><span class="dt-badge db-teal">OLAP · BI</span></div>
     </div>
     <div class="dt-row">
-      <div class="dt-service"><span class="dt-dot dot-green"></span><span class="dt-sname">ElastiCache</span></div>
-      <div class="dt-val"><span class="dt-badge db-green">In-memory caché</span></div>
-      <div class="dt-val">Acelerar lecturas, sesiones, resultados frecuentes</div>
-      <div class="dt-val">Clusters gestionados</div>
-      <div class="dt-val">Gestionado</div>
-      <div class="dt-val"><span class="dt-badge db-green">Redis · μs</span></div>
+      <div class="dt-service"><span class="dt-dot dot-indigo"></span><span class="dt-sname">Direct Connect</span></div>
+      <div class="dt-val"><span class="dt-badge db-indigo">Red dedicada</span></div>
+      <div class="dt-val">Enlace estable on-prem ↔ AWS (BGP), sin mover discos físicos</div>
+      <div class="dt-val">1&nbsp;Gbps – 100&nbsp;Gbps</div>
+      <div class="dt-val">Tú + partner / AWS</div>
+      <div class="dt-val"><span class="dt-badge db-indigo">VPN lenta · DX estable</span></div>
+    </div>
+    <div class="dt-row">
+      <div class="dt-service"><span class="dt-dot dot-rose"></span><span class="dt-sname">Snow Family</span></div>
+      <div class="dt-val"><span class="dt-badge db-rose">Transferencia física</span></div>
+      <div class="dt-val">Internet insuficiente; Snowmobile para volúmenes extremos</div>
+      <div class="dt-val">TB → EB</div>
+      <div class="dt-val">AWS envía dispositivo</div>
+      <div class="dt-val"><span class="dt-badge db-rose">PB · camión</span></div>
     </div>
   </div>
   </div>
@@ -471,10 +498,16 @@
         <div class="dg-why">Máxima durabilidad al mínimo costo, para datos "fríos" que casi nunca se leen.</div>
       </div>
       <div class="dg-item">
-        <div class="dg-keyword dg-keyword--purple">"Migrar BD sin downtime" · "On-premise a AWS" · "Replicación continua"</div>
+        <div class="dg-keyword dg-keyword--purple">"Petabytes físicos" · "camión" · "sin ancho de banda" · "meses subiendo por internet"</div>
         <div class="dg-arrow">↓</div>
-        <div class="dg-answer">AWS DMS</div>
-        <div class="dg-why">La app sigue corriendo mientras la migración ocurre en segundo plano.</div>
+        <div class="dg-answer">AWS Snow Family / Snowmobile</div>
+        <div class="dg-why">Mover datos en dispositivos o vehículo; no es una VPN ni un enlace permanente.</div>
+      </div>
+      <div class="dg-item">
+        <div class="dg-keyword dg-keyword--blue">"Conexión dedicada estable" · "datacenter a AWS" · "BGP" · "Gbps fijos" · "no migrar discos"</div>
+        <div class="dg-arrow">↓</div>
+        <div class="dg-answer">AWS Direct Connect</div>
+        <div class="dg-why">Red privada de largo plazo; distinto de subir un archivo con Snow o replicar BD online con DMS.</div>
       </div>
     </div>
   </div>
@@ -494,10 +527,10 @@
 
 <!-- FOOTER -->
 <div class="footer">
-  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 03 DE 04 — BASES DE DATOS Y ALMACENAMIENTO</span>
+  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 03 DE 05 — BASES DE DATOS Y ALMACENAMIENTO</span>
   <div class="footer-meta-row">
     <a class="module-link is-prev" href="semana-02.html"><span class="ml-text">← Semana 2</span></a>
-    <span class="footer-count">13 SERVICIOS · CLF-C02</span>
+    <span class="footer-count">14 SERVICIOS · CLF-C02</span>
     <a class="module-link is-next" href="semana-04.html"><span class="ml-text">Siguiente: Semana 4 →</span></a>
   </div>
 </div>

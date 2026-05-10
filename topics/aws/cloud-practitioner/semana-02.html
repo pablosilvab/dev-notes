@@ -16,9 +16,9 @@
     <div>
       <a class="back-link" href="../../../index.html">← dev-notes</a>
       <div class="header-stack">
-        <div class="week-badge">SEMANA 02 / 04</div>
-        <h1>Cómputo, Redes<br><span>& Almacenamiento</span></h1>
-        <p class="header-sub">17 servicios core de AWS para arquitecturas modernas en producción</p>
+        <div class="week-badge">SEMANA 02 / 05</div>
+        <h1>Cómputo, Redes<br><span>& Mensajería</span></h1>
+        <p class="header-sub">14 servicios core de AWS: cómputo, redes, escalado y mensajería (SQS/SNS).</p>
       </div>
     </div>
     <div class="aws-logo">AWS CLF-C02</div>
@@ -26,8 +26,8 @@
   <div class="header-pills">
     <span class="pill pill-a">🖥 Servicios de cómputo</span>
     <span class="pill pill-b">🌐 Redes y entrega</span>
-    <span class="pill pill-c">📦 Almacenamiento</span>
-    <span class="pill pill-d">⚖️ Escalabilidad</span>
+    <span class="pill pill-c">⚖️ Escalabilidad</span>
+    <span class="pill pill-d">📬 Mensajería</span>
   </div>
 </div>
 
@@ -104,6 +104,7 @@
       </div>
       <div class="card-desc">Servidores virtuales en la nube donde tú tienes control total del sistema operativo, red y almacenamiento. Puedes elegir entre cientos de tipos de instancia (CPU optimizada, memoria, GPU, etc.).</div>
       <div class="card-example"><strong>Ejemplo:</strong> Tienes un monolito en Java que necesita un OS específico; lo instalas en una EC2 como si fuera un VPS tradicional.</div>
+      <div class="tip-box tip-blue"><strong>Parcheo del SO invitado:</strong> en EC2, <strong>tú</strong> mantienes el sistema operativo (parches de seguridad de Linux/Windows dentro de la VM). AWS no actualiza el OS de tu instancia — es parte del modelo de responsabilidad compartida (Semana 1 §04).</div>
       <div class="tip-box">Si necesitas correr algo 24/7 o acceso al sistema operativo (SSH), elige EC2. Si solo quieres pagar por los segundos que corre tu código, elige Lambda.</div>
     </div>
     <div class="card c-teal">
@@ -296,7 +297,7 @@
       </div>
       <div class="card-desc">Red de distribución de contenido (CDN) global. Cachea tu contenido en Edge Locations cercanas al usuario para reducir la latencia y el costo de transferencia.</div>
       <div class="card-example"><strong>Ejemplo:</strong> Imágenes y archivos JS cacheados en nodos de Chile para que la web cargue al instante desde Santiago.</div>
-      <div class="tip-box tip-amber">CloudFront también protege contra DDoS integrado con AWS Shield. No solo es para estáticos — sirve también APIs dinámicas.</div>
+      <div class="tip-box tip-amber">CloudFront + <strong>Shield</strong> mitigan DDoS en el borde; reglas HTTP finas (SQLi, rate por IP) van en <strong>WAF</strong> delante de ALB/API Gateway/CloudFront — véase Semana 1 (Shield vs WAF).</div>
     </div>
     <div class="card c-green">
       <div class="card-header">
@@ -314,6 +315,7 @@
       </div>
       <div class="card-desc">Servicio de DNS altamente disponible y escalable. Traduce nombres de dominio a direcciones IP. Soporta health checks para failover automático entre regiones.</div>
       <div class="card-example"><strong>Ejemplo:</strong> Traducir tuapp.com a la IP de tu Load Balancer en AWS. Si la región falla, redirige a otra automáticamente.</div>
+      <div class="tip-box tip-green"><strong>Políticas de enrutamiento (examen):</strong> simple, <strong>weighted</strong> (ponderado), <strong>latency</strong> (menor latencia), <strong>failover</strong>, geolocation, geoproximity… Pregunta que mezcla <strong>DNS + health checks + cambiar destino</strong> si un endpoint cae → Route&nbsp;53. No confundir con CloudFront (CDN) ni con SQS (colas).</div>
     </div>
     <div class="card c-blue">
       <div class="card-header">
@@ -382,100 +384,10 @@
   </div>
 
   <!-- ══════════════════════════════════════════
-       SECCIÓN 4 — ALMACENAMIENTO
+       SECCIÓN 4 — MENSAJERÍA: AWS SNS / SQS
   ══════════════════════════════════════════ -->
   <div class="section-header">
     <span class="section-num">04</span>
-    <span class="section-title-text">Almacenamiento — tipos y cuándo usar cada uno</span>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="cards-grid g3">
-    <div class="card c-amber">
-      <div class="card-header">
-        <div class="card-icon icon-amber">🪣</div>
-        <div>
-          <div class="card-num">13</div>
-          <div class="card-title">Amazon S3</div>
-        </div>
-      </div>
-      <div class="card-keywords">
-        <span class="kw kw-amber">Object Storage</span>
-        <span class="kw kw-amber">Ilimitado</span>
-        <span class="kw kw-amber">Durabilidad 11 nines</span>
-      </div>
-      <div class="card-desc">Almacenamiento de objetos altamente duradero (99.999999999%). Ideal para archivos, imágenes, backups, datasets. No es un sistema de archivos — los objetos se acceden por URL/API.</div>
-      <div class="card-example"><strong>Ejemplo:</strong> Guardar todas las fotos de perfil de usuarios, los reportes generados y los backups de base de datos.</div>
-      <div class="tip-box tip-amber">S3 replica datos en mínimo 3 AZs automáticamente. Es el servicio de almacenamiento más usado de AWS. Tiene clases de storage para optimizar costos (S3 Standard, Infrequent Access, Glacier).</div>
-    </div>
-    <div class="card c-blue">
-      <div class="card-header">
-        <div class="card-icon icon-blue">💾</div>
-        <div>
-          <div class="card-num">14</div>
-          <div class="card-title">Amazon EBS</div>
-        </div>
-      </div>
-      <div class="card-keywords">
-        <span class="kw kw-blue">Block Storage</span>
-        <span class="kw kw-blue">Disco de EC2</span>
-        <span class="kw kw-blue">AZ-level</span>
-      </div>
-      <div class="card-desc">Almacenamiento en bloque de alta performance para EC2. Funciona como un disco duro virtual que adjuntas a tu instancia. Persiste aunque la EC2 se apague.</div>
-      <div class="card-example"><strong>Ejemplo:</strong> El disco donde vive el sistema operativo y los archivos de tu servidor de base de datos PostgreSQL en EC2.</div>
-      <div class="tip-box">Un volumen EBS solo puede estar adjunto a una EC2 a la vez (en la misma AZ). Para compartir entre instancias usa EFS.</div>
-    </div>
-    <div class="card c-teal">
-      <div class="card-header">
-        <div class="card-icon icon-teal">📂</div>
-        <div>
-          <div class="card-num">15</div>
-          <div class="card-title">Amazon EFS</div>
-        </div>
-      </div>
-      <div class="card-keywords">
-        <span class="kw kw-teal">File Storage</span>
-        <span class="kw kw-teal">Multi-instancia</span>
-        <span class="kw kw-teal">Escala automática</span>
-      </div>
-      <div class="card-desc">Sistema de archivos NFS administrado que puede montarse simultáneamente en múltiples instancias EC2 en distintas AZs. Escala automáticamente según el uso.</div>
-      <div class="card-example"><strong>Ejemplo:</strong> Un cluster de 10 EC2 que necesitan acceder y escribir en los mismos archivos de configuración compartidos.</div>
-    </div>
-  </div>
-
-  <!-- Tabla comparativa de storage -->
-  <div class="split-card split-grid-3 mt-10">
-    <div class="split-half sh-amber">
-      <div class="split-label sl-amber">S3 — Object Storage</div>
-      <div class="card-keywords mb-8">
-        <span class="kw kw-amber">Archivos / Multimedia</span>
-        <span class="kw kw-amber">Backups</span>
-      </div>
-      <div class="card-desc card-desc--sm">Acceso por URL. Sin límite de tamaño. Duradero entre múltiples AZs. No se adjunta a EC2.</div>
-    </div>
-    <div class="split-half sh-blue">
-      <div class="split-label sl-blue">EBS — Block Storage</div>
-      <div class="card-keywords mb-8">
-        <span class="kw kw-blue">OS / Bases de datos</span>
-        <span class="kw kw-blue">Alta I/O</span>
-      </div>
-      <div class="card-desc card-desc--sm">Disco virtual para EC2. Alta performance. Solo en 1 AZ. Una instancia a la vez (salvo Multi-Attach).</div>
-    </div>
-    <div class="split-half sh-teal">
-      <div class="split-label sl-teal">EFS — File Storage</div>
-      <div class="card-keywords mb-8">
-        <span class="kw kw-teal">Multi-instancia</span>
-        <span class="kw kw-teal">Archivos compartidos</span>
-      </div>
-      <div class="card-desc card-desc--sm">Sistema de archivos NFS. Múltiples EC2 simultáneas. Escala solo. Más caro que EBS por GB.</div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════
-       SECCIÓN 5 — CONCEPTO EXTRA: AWS SNS / SQS
-  ══════════════════════════════════════════ -->
-  <div class="section-header">
-    <span class="section-num">05</span>
     <span class="section-title-text">Mensajería — desacopla tus servicios</span>
     <div class="section-line"></div>
   </div>
@@ -485,7 +397,7 @@
       <div class="card-header">
         <div class="card-icon icon-purple">📬</div>
         <div>
-          <div class="card-num">16</div>
+          <div class="card-num">13</div>
           <div class="card-title">Amazon SQS</div>
         </div>
       </div>
@@ -502,7 +414,7 @@
       <div class="card-header">
         <div class="card-icon icon-pink">📣</div>
         <div>
-          <div class="card-num">17</div>
+          <div class="card-num">14</div>
           <div class="card-title">Amazon SNS</div>
         </div>
       </div>
@@ -517,16 +429,24 @@
     </div>
   </div>
 
+  <div class="callout callout-purple mt-10">
+    <span class="callout-icon">⚡</span>
+    <div class="callout-content">
+      <div class="callout-title ct-purple">Trampa de examen: SQS no es CloudFront</div>
+      <div class="callout-text"><strong>Amazon SQS</strong> es una <strong>cola de mensajes</strong> para desacoplar microservicios (productor → cola → consumidor asíncrono). <strong>Amazon CloudFront</strong> es una <strong>CDN</strong>: cachea y entrega contenido HTTP(S) desde el borde (imágenes, JS, APIs delante de ALB). Si la pregunta habla de “cola”, “desacoplar”, “procesar después” → SQS. Si habla de “latencia”, “cache”, “usuarios en otro país”, “Edge” → CloudFront.</div>
+    </div>
+  </div>
+
 </div><!-- /body -->
 
 </div><!-- /page-shell -->
 
 <!-- FOOTER -->
 <div class="footer">
-  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 02 DE 04 — CÓMPUTO, REDES Y ALMACENAMIENTO</span>
+  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 02 DE 05 — CÓMPUTO, REDES Y MENSAJERÍA</span>
   <div class="footer-meta-row">
     <a class="module-link is-prev" href="semana-01.html"><span class="ml-text">← Semana 1</span></a>
-    <span class="footer-count">17 SERVICIOS · CLF-C02</span>
+    <span class="footer-count">14 SERVICIOS · CLF-C02</span>
     <a class="module-link is-next" href="semana-03.html"><span class="ml-text">Siguiente: Semana 3 →</span></a>
   </div>
 </div>

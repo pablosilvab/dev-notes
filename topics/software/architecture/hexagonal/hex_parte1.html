@@ -674,6 +674,9 @@
     <div class="dep-rule-note">
       <strong>La regla en una frase:</strong> Las dependencias siempre apuntan <strong>hacia adentro</strong>. La infraestructura conoce la aplicación, la aplicación conoce el dominio, pero el dominio <strong>no conoce a nadie</strong>. Si en tu código el dominio importa algo de infraestructura, la arquitectura hexagonal está rota.
     </div>
+    <div class="tip-box tip-indigo" style="margin-top:14px">
+      <strong>DIP (SOLID):</strong> Este límite es la aplicación <strong>arquitectónica</strong> del <strong>Principio de inversión de dependencias</strong> — el dominio (alto nivel) define <strong>puertos</strong> (abstracciones); los <strong>adaptadores</strong> (detalles) implementan esos contratos y dependen del dominio, no al revés. <a href="../../solid/dip.html" style="color:#C7D2FE;text-decoration:underline">Infografía DIP →</a>
+    </div>
   </div>
 
   <!-- ══════════════════════════════════════════

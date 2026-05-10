@@ -16,9 +16,9 @@
     <div>
       <a class="back-link" href="../../../index.html">← dev-notes</a>
       <div class="header-stack">
-        <div class="week-badge">SEMANA 04 / 04 — FINAL</div>
-        <h1>Facturación, Gobernanza<br><span>& Repaso Final</span></h1>
-        <p class="header-sub">14 servicios y conceptos para controlar costos, auditar y cerrar la certificación</p>
+        <div class="week-badge">SEMANA 04 / 05</div>
+        <h1>Facturación, Gobernanza<br><span>& Auditoría</span></h1>
+        <p class="header-sub">Costos, multi-cuenta, precios EC2 y herramientas de auditoría — el repaso global va en la Semana 5.</p>
       </div>
     </div>
     <div class="aws-logo">AWS CLF-C02</div>
@@ -27,7 +27,7 @@
     <span class="pill pill-a">💰 Gestión de costos</span>
     <span class="pill pill-b">🏢 Gobernanza multi-cuenta</span>
     <span class="pill pill-c">🔍 Auditoría y compliance</span>
-    <span class="pill pill-d">🏛 Well-Architected Framework</span>
+    <span class="pill pill-d">📋 Marketplace · Abuse</span>
   </div>
 </div>
 
@@ -180,6 +180,22 @@
     </div>
   </div>
 
+  <div class="callout callout-amber mt-10">
+    <span class="callout-icon">📌</span>
+    <div class="callout-content">
+      <div class="callout-title ct-amber">Tres herramientas — tres preguntas distintas</div>
+      <div class="callout-text"><strong>Trampa “centralización”:</strong> <strong>AWS Organizations</strong> es quien <strong>agrupa cuentas</strong> en una jerarquía (OU), aplica SCPs y puede <strong>facturación consolidada</strong> — gobernanza y estructura. <strong>AWS Cost Explorer</strong> <strong>no crea</strong> esa jerarquía: solo <strong>analiza y visualiza</strong> gasto (servicios, tags, forecast); puede mostrar datos de varias cuentas si tienes permisos, pero no sustituye a Organizations para gestionar cuentas. <strong>AWS Budgets:</strong> presupuestos en dinero y <strong>alertas</strong> cuando te acercas o superas un umbral (correo, SNS). Cost Explorer no sustituye a Budgets para alertas de presupuesto.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-green mt-10">
+    <span class="callout-icon">📉</span>
+    <div class="callout-content">
+      <div class="callout-title ct-green">CloudWatch ≠ Budgets</div>
+      <div class="callout-text"><strong>Amazon CloudWatch</strong> observa <strong>salud operativa</strong>: métricas (CPU, errores, latencia), logs y <strong>alarmas técnicas</strong> (“si CPU &gt; 80% avísame”). <strong>AWS Budgets</strong> observa <strong>plata</strong>: umbrales de <strong>gasto o uso</strong> frente a un presupuesto y alertas de factura (email/SNS). En examen: “alerta cuando nos pasamos del <strong>presupuesto mensual</strong> en dólares” → <strong>Budgets</strong>. “Alerta cuando la <strong>instancia</strong> se satura” → CloudWatch (y quizá Auto Scaling).</div>
+    </div>
+  </div>
+
   <!-- ══════════════════════════════════════════
        SECCIÓN 3 — MODELOS DE PRECIOS EC2
   ══════════════════════════════════════════ -->
@@ -207,6 +223,7 @@
       <div class="pricing-saving ps-green">Hasta 72% off</div>
       <div class="pricing-saving-label">vs. On-Demand</div>
       <div class="pricing-note">Ideal para: workloads estables y predecibles que corren 24/7 (bases de datos, apps core).</div>
+      <div class="pricing-footnote">No es un “servidor físico dedicado” solo para ti: sigues usando capacidad en la nube compartida; el descuento viene del <strong>compromiso de uso</strong> (1 o 3 años), no de exclusividad de hardware.</div>
     </div>
     <!-- Spot -->
     <div class="pricing-card pc-amber">
@@ -218,6 +235,16 @@
       <div class="pricing-note">Ideal para: procesamiento batch, renderizado, análisis de datos tolerantes a interrupciones.</div>
     </div>
   </div>
+
+  <div class="callout callout-purple mt-10">
+    <span class="callout-icon">💵</span>
+    <div class="callout-content">
+      <div class="callout-title ct-purple">On-Demand vs Reserved — decisión rápida</div>
+      <div class="callout-text"><strong>On-Demand:</strong> sin compromiso, precio base más alto, máxima flexibilidad — pruebas, picos impredecibles o cargas de corto plazo. <strong>Reserved Instances / Savings Plans:</strong> compromiso (1 o 3 años o gasto fijo por hora) a cambio de descuento fuerte — tiene sentido con carga <strong>estable y predecible</strong>. El descuento es por <strong>compromiso de uso</strong>, no porque AWS te reserve un servidor físico exclusivo.</div>
+    </div>
+  </div>
+
+  <div class="tip-box tip-amber mt-10"><strong>RI / Savings ≠ Dedicated Host:</strong> Reserved Instances y Savings Plans aplican sobre capacidad <strong>compartida</strong> con descuento por compromiso. <strong>Dedicated Host</strong> es un <strong>servidor físico dedicado</strong> (afinidad de socket, algunos casos BYOL) — producto y precio distintos; no confundir con “hardware exclusivo” de las RI.</div>
 
   <div class="cards-grid g2 mt-10">
     <!-- Savings Plans -->
@@ -236,6 +263,7 @@
       </div>
       <div class="card-desc">Alternativa más flexible a las Reserved Instances. Te comprometes a gastar un monto fijo por hora (ej: $10/h) durante 1 o 3 años. A cambio, descuento de hasta 66% aplicable a EC2, Lambda y Fargate sin restricción de tipo de instancia.</div>
       <div class="card-example"><strong>Diferencia clave:</strong> Reserved Instances comprometen un tipo de instancia específico. Savings Plans comprometen un gasto en dólares, con más flexibilidad para cambiar de tipo de instancia.</div>
+      <div class="tip-box tip-teal">Igual que las RI: es un <strong>compromiso de gasto</strong> por hora a cambio de descuento; no implica un servidor físico reservado solo para ti.</div>
     </div>
     <!-- Free Tier -->
     <div class="card c-green">
@@ -354,146 +382,11 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════
-       SECCIÓN 5 — WELL-ARCHITECTED FRAMEWORK
-  ══════════════════════════════════════════ -->
-  <div class="section-header">
-    <span class="section-num sn-purple">05</span>
-    <span class="section-title-text">AWS Well-Architected Framework — los 6 pilares</span>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="pillars-grid">
-    <div class="pillar-card pp-amber">
-      <div class="pillar-num">01</div>
-      <span class="pillar-icon">🔐</span>
-      <div class="pillar-name">Seguridad</div>
-      <div class="pillar-key">IAM, cifrado, detección de amenazas, trazabilidad</div>
-    </div>
-    <div class="pillar-card pp-blue">
-      <div class="pillar-num">02</div>
-      <span class="pillar-icon">⚙️</span>
-      <div class="pillar-name">Excelencia Operacional</div>
-      <div class="pillar-key">Automatización, monitoreo, mejora continua, runbooks</div>
-    </div>
-    <div class="pillar-card pp-green">
-      <div class="pillar-num">03</div>
-      <span class="pillar-icon">🏗</span>
-      <div class="pillar-name">Confiabilidad</div>
-      <div class="pillar-key">Alta disponibilidad, recuperación ante fallos, Multi-AZ</div>
-    </div>
-    <div class="pillar-card pp-purple">
-      <div class="pillar-num">04</div>
-      <span class="pillar-icon">⚡</span>
-      <div class="pillar-name">Eficiencia de Performance</div>
-      <div class="pillar-key">Selección de recursos, escalado, arquitecturas serverless</div>
-    </div>
-    <div class="pillar-card pp-teal">
-      <div class="pillar-num">05</div>
-      <span class="pillar-icon">💰</span>
-      <div class="pillar-name">Optimización de Costos</div>
-      <div class="pillar-key">Pago por uso, Reserved, eliminar recursos ociosos</div>
-    </div>
-    <div class="pillar-card pp-rose">
-      <div class="pillar-num">06</div>
-      <span class="pillar-icon">🌱</span>
-      <div class="pillar-name">Sostenibilidad</div>
-      <div class="pillar-key">Reducir huella de carbono, eficiencia energética</div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════
-       SECCIÓN 6 — TABLA RESUMEN DE EXAMEN
-  ══════════════════════════════════════════ -->
-  <div class="section-header">
-    <span class="section-num sn-amber">06</span>
-    <span class="section-title-text">Tabla resumen — keyword → servicio correcto</span>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="tips-table">
-    <div class="tt-header">
-      <div class="tt-cell tt-head">Servicio</div>
-      <div class="tt-cell tt-head">Si el examen dice…</div>
-      <div class="tt-cell tt-head">Elige este servicio porque…</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-amber"></span><span class="tt-sname">AWS Organizations</span></div>
-      <div class="tt-val">"Factura única", "múltiples cuentas", "descuento por volumen", "política centralizada"</div>
-      <div class="tt-val">Gestiona y consolida múltiples cuentas. Los SCPs limitan lo que pueden hacer las cuentas hijas.</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-blue"></span><span class="tt-sname">Cost Explorer</span></div>
-      <div class="tt-val">"Visualizar costos pasados", "gráficos de gasto", "analizar tendencias", "predecir"</div>
-      <div class="tt-val">Herramienta de análisis y visualización retroactiva de costos con filtros y predicciones.</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-green"></span><span class="tt-sname">AWS Budgets</span></div>
-      <div class="tt-val">"Alertas de gasto", "umbral de costo", "notificar si se supera X dólares"</div>
-      <div class="tt-val">Configura alarmas proactivas antes o durante el mes para evitar sorpresas en la factura.</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-amber"></span><span class="tt-sname">Pricing Calculator</span></div>
-      <div class="tt-val">"Estimar antes de crear", "planificar migración", "presupuestar nueva arquitectura"</div>
-      <div class="tt-val">Estimación previa sin crear nada. Para proyectar costos antes de comprometerse.</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-blue"></span><span class="tt-sname">CloudTrail</span></div>
-      <div class="tt-val">"Quién borró el recurso", "auditoría de acciones", "historial de API calls", "el culpable"</div>
-      <div class="tt-val">Registra quién hizo qué y cuándo. Responde preguntas de seguridad forense.</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-amber"></span><span class="tt-sname">AWS Config</span></div>
-      <div class="tt-val">"Bucket S3 público", "compliance", "cómo estaba configurado antes", "reglas de cumplimiento"</div>
-      <div class="tt-val">Evalúa el estado de configuración de recursos vs. reglas. Detecta drift de configuración.</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-rose"></span><span class="tt-sname">Abuse Team</span></div>
-      <div class="tt-val">"Actividad ilegal desde AWS", "spam", "DDoS originado en EC2", "hackeo"</div>
-      <div class="tt-val">No es soporte técnico. Es el equipo legal/de seguridad para reportar abuso de infraestructura AWS.</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-green"></span><span class="tt-sname">Reserved Instances</span></div>
-      <div class="tt-val">"Workload estable", "24/7", "máximo ahorro", "compromiso de largo plazo"</div>
-      <div class="tt-val">Hasta 72% de descuento a cambio de comprometerse 1 o 3 años a un tipo de instancia.</div>
-    </div>
-    <div class="tt-row">
-      <div class="tt-service"><span class="tt-dot td-amber"></span><span class="tt-sname">Spot Instances</span></div>
-      <div class="tt-val">"Batch", "tolerante a interrupciones", "menor costo posible", "procesamiento masivo"</div>
-      <div class="tt-val">Hasta 90% de descuento. AWS puede recuperar la instancia con 2 min de aviso.</div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════
-       CALLOUTS FINALES — TIPS CRÍTICOS
-  ══════════════════════════════════════════ -->
-  <div class="section-header">
-    <span class="section-num sn-red">07</span>
-    <span class="section-title-text">Tips críticos para el día del examen</span>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="cards-grid g3">
-    <div class="callout callout-rose callout--stack">
-      <div class="callout__head">
-        <span class="callout-icon">🕵️</span>
-        <div class="callout-title ct-rose">CloudTrail ≠ Config</div>
-      </div>
-      <div class="callout-text"><strong>CloudTrail</strong> = "¿quién hizo la acción?" (el culpable). Registra eventos de API. <strong>Config</strong> = "¿cómo cambió el recurso?" (el estado). Evalúa si cumple reglas. Pregunta fácil de diferenciar: si dice "auditoría" o "quién borró" → CloudTrail. Si dice "compliance" o "bucket público" → Config.</div>
-    </div>
-    <div class="callout callout-amber callout--stack">
-      <div class="callout__head">
-        <span class="callout-icon">💰</span>
-        <div class="callout-title ct-amber">Organizations + descuentos</div>
-      </div>
-      <div class="callout-text">AWS Organizations no solo sirve para gobernar — también permite obtener <strong>descuentos por volumen</strong> sumando el consumo de todas las cuentas. Una cuenta sola podría pagar $X, pero 10 cuentas consolidadas pagan menos por GB porque el total activa mejores precios de tier en S3, data transfer, etc.</div>
-    </div>
-    <div class="callout callout-purple callout--stack">
-      <div class="callout__head">
-        <span class="callout-icon">📊</span>
-        <div class="callout-title ct-purple">Modelo de precios AWS</div>
-      </div>
-      <div class="callout-text">AWS tiene 3 drivers de costo principales: <strong>cómputo</strong> (por hora/seg), <strong>almacenamiento</strong> (por GB/mes) y <strong>transferencia de datos de salida</strong> (la entrada a AWS es gratis, la salida se cobra). Entender esto resuelve muchas preguntas de escenario de facturación.</div>
+  <div class="callout callout-purple mt-10">
+    <span class="callout-icon">📚</span>
+    <div class="callout-content">
+      <div class="callout-title ct-purple">Siguiente: repaso final del examen</div>
+      <div class="callout-text"><strong>Well-Architected Framework</strong> (6 pilares), la <strong>tabla keyword → servicio</strong> y los <strong>tips para el día del examen</strong> están en la <a href="semana-05.html" style="color:#E9D5FF;text-decoration:underline;">Semana 5 — Repaso final</a>.</div>
     </div>
   </div>
 
@@ -503,12 +396,11 @@
 
 <!-- FOOTER -->
 <div class="footer">
-  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 04 DE 04 — FACTURACIÓN, GOBERNANZA Y CIERRE</span>
+  <span class="footer-text">AWS CLOUD PRACTITIONER — SEMANA 04 DE 05 — FACTURACIÓN Y GOBERNANZA</span>
   <div class="footer-meta-row">
     <a class="module-link is-prev" href="semana-03.html"><span class="ml-text">← Semana 3</span></a>
     <span class="footer-count">14 CONCEPTOS · CLF-C02</span>
-    <span class="footer-complete">✓ PLAN COMPLETO</span>
-    <a class="module-link is-next" href="semana-01.html"><span class="ml-text">Serie · Semana 1 →</span></a>
+    <a class="module-link is-next" href="semana-05.html"><span class="ml-text">Semana 5 · Repaso →</span></a>
   </div>
 </div>
 
