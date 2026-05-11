@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s · Helm y Kustomize</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(168,85,247,0.12) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(59,130,246,0.05) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#A855F7;color:#0A0E1A;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  .header h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  .header h1 span{color:#D8B4FE}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#D8B4FE;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.35);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .header-pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace;letter-spacing:.04em}
+  .pill-a{color:#D8B4FE;border-color:rgba(216,180,254,.35);background:rgba(168,85,247,.08)}
+  .pill-b{color:#93C5FD;border-color:rgba(147,197,253,.3);background:rgba(147,197,253,.07)}
+  .pill-c{color:#FDE68A;border-color:rgba(253,230,138,.3);background:rgba(253,230,138,.07)}
+  .pill-d{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .body{padding:0 56px 56px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-purple{color:#A855F7}.sn-blue{color:#3B82F6}.sn-teal{color:#14B8A6}.sn-yellow{color:#EAB308}
+  .section-title-text{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:#1E2A40}
+  .cards-grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.callouts-row{grid-template-columns:1fr!important}}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .card.c-purple::before{background:#A855F7}.card.c-blue::before{background:#3B82F6}.card.c-teal::before{background:#14B8A6}
+  .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .icon-purple{background:rgba(168,85,247,.15)}.icon-blue{background:rgba(59,130,246,.12)}.icon-teal{background:rgba(20,184,166,.12)}
+  .card-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .card-title{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .card-keywords{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+  .kw-purple{background:rgba(168,85,247,.15);color:#D8B4FE}.kw-blue{background:rgba(59,130,246,.12);color:#93C5FD}
+  .kw-teal{background:rgba(20,184,166,.12);color:#5EEAD4}
+  .card-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .card-example{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .card-example strong{color:#94A3B8;font-weight:500}
+
+  .chart-box{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:24px 28px}
+  .chart-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+  .chart-tree{font-family:'DM Mono',monospace;font-size:11px;color:#94A3B8;line-height:1.85}
+  .chart-tree .f{color:#D8B4FE;font-weight:600}
+  .chart-tree .c{color:#64748B}
+
+  .cmp-table{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;overflow:hidden}
+  .cmp-header{display:grid;grid-template-columns:1fr 1fr 1.2fr;background:#080C17;border-bottom:1px solid #1E2A40}
+  .cmpc{padding:10px 14px;font-size:10px;font-family:'DM Mono',monospace;color:#6B7FA3;border-right:1px solid #1A2236;font-weight:500}
+  .cmpc:last-child{border-right:none}
+  .cmp-row{display:grid;grid-template-columns:1fr 1fr 1.2fr;border-bottom:1px solid #1A2236}
+  .cmp-row:last-child{border-bottom:none}
+  .cmp-cell{padding:12px 14px;font-size:11.5px;color:#64748B;border-right:1px solid #1A2236;line-height:1.5}
+  .cmp-cell:last-child{border-right:none}
+  .cmp-h{font-weight:600;color:#E2E8F0;font-size:12px}
+
+  .cmd-box{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cmd-header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cmd-dot{width:8px;height:8px;border-radius:50%}
+  .cmd-title{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3;margin-left:4px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .c-cmd{color:#93C5FD}.c-flag{color:#FDE68A}.c-out{color:#86EFAC}.c-comment{color:#2D3E5A;font-style:italic}
+  .c-key{color:#5EEAD4}.c-val{color:#86EFAC}
+
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .callout-purple{background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.22)}
+  .callout-teal{background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.2)}
+  .callout-blue{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.2)}
+  .callout-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .callout-title{font-size:12px;font-weight:600;margin-bottom:5px}
+  .ct-purple{color:#D8B4FE}.ct-teal{color:#5EEAD4}.ct-blue{color:#93C5FD}
+  .callout-text{font-size:12px;color:#64748B;line-height:1.6}
+  .callout-text strong{color:#94A3B8}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .footer-text{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .footer-nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .footer-count{font-family:'Space Mono',monospace;font-size:10px;color:#A78BFA;letter-spacing:.06em}
+  .footer-btn{font-family:'Space Mono',monospace;font-size:10px;color:#A78BFA;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.28);padding:4px 12px;border-radius:3px;text-decoration:none;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="semana-04.html">← Config y estado</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">KUBERNETES · HELM Y KUSTOMIZE</div>
+        <h1>Empaquetado<br><span>y overlays declarativos</span></h1>
+        <p class="header-sub">Charts · values · plantillas Go · releases · bases/overlays · patches estratégicos</p>
+      </div>
+    </div>
+    <div class="part-badge">K8S · HELM</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">📦 Chart</span>
+    <span class="pill pill-b">🔁 Release</span>
+    <span class="pill pill-c">🧩 Kustomize</span>
+    <span class="pill pill-d">✅ helm template</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-purple">01</span>
+    <span class="section-title-text">Helm 3 — chart, release y plantillas</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">📦</div>
+        <div>
+          <div class="card-num">CHART</div>
+          <div class="card-title">Paquete versionado de manifiestos</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">Chart.yaml</span>
+        <span class="kw kw-purple">values.yaml</span>
+      </div>
+      <div class="card-desc">Un <strong>chart</strong> agrupa plantillas YAML parametrizadas con el lenguaje de plantillas de Go (<code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">{{ .Values.replicaCount }}</code>). Incluye dependencias opcionales (<code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">charts/</code>) y pruebas en <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">templates/tests</code>.</div>
+      <div class="card-example"><strong>Versionado:</strong> <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">version</code> del chart vs <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">appVersion</code> de la app — no son lo mismo.</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🔁</div>
+        <div>
+          <div class="card-num">RELEASE</div>
+          <div class="card-title">Instancia instalada en el cluster</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">revision</span>
+        <span class="kw kw-blue">history</span>
+      </div>
+      <div class="card-desc">Cada <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">helm upgrade</code> crea una nueva <strong>revisión</strong>. Helm guarda el manifiesto renderizado en el Secret <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">sh.helm.release.v1.*</code> (no en etcd “mágico” aparte: es el mecanismo de almacenamiento por defecto).</div>
+      <div class="card-example"><strong>Rollback:</strong> vuelve a una revisión anterior sin reescribir el chart — útil tras un deploy roto.</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">🧪</div>
+        <div>
+          <div class="card-num">ANTES DE APLICAR</div>
+          <div class="card-title">Renderizar y validar</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">template</span>
+        <span class="kw kw-teal">lint</span>
+      </div>
+      <div class="card-desc"><strong>helm template</strong> imprime YAML final sin tocar el cluster — ideal para CI y revisiones. <strong>helm lint</strong> detecta problemas comunes del chart. Combina con <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">--dry-run</code> en install/upgrade para validar contra el API server.</div>
+      <div class="card-example"><strong>helm diff</strong> (plugin) muestra cambios entre revisiones antes de aplicar.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px" class="chart-box">
+    <div class="chart-title">Estructura típica de un chart</div>
+    <div class="chart-tree">
+<span class="f">mi-app/</span>
+<span class="c">  Chart.yaml          </span><span class="c"># metadatos, nombre, version, dependencias</span>
+<span class="c">  values.yaml         </span><span class="c"># valores por defecto (sobrescribibles con -f o --set)</span>
+<span class="c">  values-prod.yaml</span>
+<span class="f">  templates/</span>
+<span class="c">    deployment.yaml</span>
+<span class="c">    service.yaml</span>
+<span class="c">    ingress.yaml</span>
+<span class="c">    _helpers.tpl      </span><span class="c"># funciones reutilizables {{ include "mi-app.fullname" . }}</span>
+<span class="c">    NOTES.txt</span>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-blue">02</span>
+    <span class="section-title-text">Comandos Helm que usas cada día</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">helm — install, upgrade, historial y rollback</span>
+    </div>
+    <pre><span class="c-comment"># Instalar o actualizar idempotente (patrón CI/CD)</span>
+<span class="c-cmd">helm</span> upgrade <span class="c-flag">--install</span> mi-release ./charts/mi-app <span class="c-flag">-n</span> prod <span class="c-flag">--create-namespace</span> \
+  <span class="c-flag">-f</span> values-prod.yaml <span class="c-flag">--set</span> image.tag=v2.3.1 <span class="c-flag">--wait</span> <span class="c-flag">--timeout</span> 5m
+
+<span class="c-comment"># Ver qué se aplicaría (sin escribir en el cluster)</span>
+<span class="c-cmd">helm</span> template mi-release ./charts/mi-app <span class="c-flag">-f</span> values-prod.yaml | less
+<span class="c-cmd">helm</span> install mi-dryrun ./charts/mi-app <span class="c-flag">--dry-run</span> <span class="c-flag">--debug</span> <span class="c-flag">-f</span> values.yaml
+
+<span class="c-comment"># Historial y rollback</span>
+<span class="c-cmd">helm</span> history mi-release -n prod
+<span class="c-cmd">helm</span> rollback mi-release 4 -n prod
+
+<span class="c-comment"># Dependencias del chart (subcharts)</span>
+<span class="c-cmd">helm</span> dependency update ./charts/mi-app</pre>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-teal">03</span>
+    <span class="section-title-text">Kustomize — mismo YAML, distintos entornos</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">🧩</div>
+        <div>
+          <div class="card-num">KUSTOMIZATION</div>
+          <div class="card-title">Lista de recursos y transformaciones</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">bases</span>
+        <span class="kw kw-teal">patches</span>
+        <span class="kw kw-teal">images</span>
+      </div>
+      <div class="card-desc">El archivo <strong>kustomization.yaml</strong> declara qué manifiestos fusionar, qué imágenes reescribir, qué parches JSON o estratégicos aplicar y cómo generar ConfigMaps desde archivos. <strong>No</strong> usa plantillas con lógica: solo composición y parches sobre YAML existente.</div>
+      <div class="card-example"><strong>Uso:</strong> <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">kubectl apply -k overlays/prod/</code> o integrado en <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">helmfile</code> / pipelines.</div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">📂</div>
+        <div>
+          <div class="card-num">OVERLAYS</div>
+          <div class="card-title">base + prod / staging / dev</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">namePrefix</span>
+        <span class="kw kw-purple">commonLabels</span>
+      </div>
+      <div class="card-desc">Patrón clásico: carpeta <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">base/</code> con manifiestos “neutros” y <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">overlays/staging</code> que referencia la base y añade réplicas, recursos o ConfigMaps distintos.</div>
+      <div class="card-example"><strong>Helm + Kustomize:</strong> puedes renderizar un chart con <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">helm template</code> y luego post-procesar con Kustomize (patrón usado en algunos equipos).</div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px" class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#14B8A6"></div>
+      <div class="cmd-dot" style="background:#6366F1"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">kustomization.yaml — ejemplo mínimo</span>
+    </div>
+    <pre><span class="c-key">apiVersion</span>: <span class="c-val">kustomize.config.k8s.io/v1beta1</span>
+<span class="c-key">kind</span>: <span class="c-val">Kustomization</span>
+<span class="c-key">namespace</span>: <span class="c-val">prod</span>
+<span class="c-key">resources</span>:
+  - <span class="c-val">../../base</span>
+<span class="c-key">patchesStrategicMerge</span>:
+  - <span class="c-val">replicas-patch.yaml</span>
+<span class="c-key">images</span>:
+  - <span class="c-key">name</span>: <span class="c-val">mi-app</span>
+    <span class="c-key">newTag</span>: <span class="c-val">v2.3.1</span>
+<span class="c-key">configMapGenerator</span>:
+  - <span class="c-key">name</span>: <span class="c-val">app-config</span>
+    <span class="c-key">files</span>:
+      - <span class="c-val">application.properties</span></pre>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-yellow">04</span>
+    <span class="section-title-text">Helm vs Kustomize — cuándo usar cada uno</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmp-table">
+    <div class="cmp-header">
+      <div class="cmpc">Criterio</div>
+      <div class="cmpc">Helm</div>
+      <div class="cmpc">Kustomize</div>
+    </div>
+    <div class="cmp-row">
+      <div class="cmp-cell"><span class="cmp-h">Parametrización</span></div>
+      <div class="cmp-cell">Plantillas con lógica, bucles, helpers — mucha flexibilidad</div>
+      <div class="cmp-cell">Sin lógica en plantilla: parches y generadores sobre YAML fijo</div>
+    </div>
+    <div class="cmp-row">
+      <div class="cmp-cell"><span class="cmp-h">Curva y revisión</span></div>
+      <div class="cmp-cell">Equipo debe entender Go templates y patrones del chart</div>
+      <div class="cmp-cell">Diffs más lineales; menos “magia” en el YAML final</div>
+    </div>
+    <div class="cmp-row">
+      <div class="cmp-cell"><span class="cmp-h">Lifecyle / releases</span></div>
+      <div class="cmp-cell">Primera clase: historial, rollback, hooks pre/post deploy</div>
+      <div class="cmp-cell">Gestión de revisiones la haces tú (Git, Argo CD, kubectl)</div>
+    </div>
+    <div class="cmp-row">
+      <div class="cmp-cell"><span class="cmp-h">Ecosistema</span></div>
+      <div class="cmp-cell">Artifact Hub, charts oficiales, operators empaquetados</div>
+      <div class="cmp-cell">Nativo en kubectl; encaja con GitOps “manifestos por carpeta”</div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px" class="callouts-row">
+    <div class="callout callout-purple">
+      <span class="callout-icon">🔐</span>
+      <div>
+        <div class="callout-title ct-purple">Secretos en charts</div>
+        <div class="callout-text">No commitees valores sensibles en <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">values.yaml</code>. Usa <strong>Sealed Secrets</strong>, <strong>SOPS</strong>, <strong>Vault</strong> o CI que inyecte <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">--set-file</code> en runtime.</div>
+      </div>
+    </div>
+    <div class="callout callout-teal">
+      <span class="callout-icon">📌</span>
+      <div>
+        <div class="callout-title ct-teal">Hooks de Helm</div>
+        <div class="callout-text">Jobs anotados con <strong>helm.sh/hook</strong> (pre-install, post-upgrade…) para migraciones o tests. Ojo: pueden bloquear el release si fallan o si los TTL no están bien definidos.</div>
+      </div>
+    </div>
+    <div class="callout callout-blue">
+      <span class="callout-icon">🤝</span>
+      <div>
+        <div class="callout-title ct-blue">Convive con GitOps</div>
+        <div class="callout-text">Argo CD y Flux entienden Helm charts y/o carpetas Kustomize. El manifiesto “fuente de verdad” suele vivir en Git; Helm/Kustomize son la capa de <strong>renderizado</strong> hacia el cluster.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">KUBERNETES · HELM Y KUSTOMIZE</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="semana-04.html">← Config y estado</a>
+    <span class="footer-count">Charts · releases · kustomization · overlays</span>
+    <a class="footer-btn" href="semana-06.html">Observabilidad →</a>
+  </div>
+</div>
+</body>
+</html>

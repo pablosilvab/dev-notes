@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s · Seguridad y resource management</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(244,63,94,0.1) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(234,179,8,0.05) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#F43F5E;color:#fff;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  .header h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  .header h1 span{color:#FDA4AF}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#FDA4AF;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.35);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .header-pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace;letter-spacing:.04em}
+  .pill-a{color:#FDA4AF;border-color:rgba(253,164,175,.35);background:rgba(244,63,94,.08)}
+  .pill-b{color:#93C5FD;border-color:rgba(147,197,253,.3);background:rgba(147,197,253,.07)}
+  .pill-c{color:#FDE68A;border-color:rgba(253,230,138,.3);background:rgba(253,230,138,.07)}
+  .pill-d{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .body{padding:0 56px 56px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-rose{color:#F43F5E}.sn-blue{color:#3B82F6}.sn-yellow{color:#EAB308}.sn-green{color:#22C55E}
+  .section-title-text{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:#1E2A40}
+  .cards-grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.callouts-row{grid-template-columns:1fr!important}}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .card.c-rose::before{background:#F43F5E}.card.c-blue::before{background:#3B82F6}.card.c-yellow::before{background:#EAB308}
+  .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .icon-rose{background:rgba(244,63,94,.15)}.icon-blue{background:rgba(59,130,246,.12)}.icon-yellow{background:rgba(234,179,8,.12)}
+  .card-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .card-title{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .card-keywords{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+  .kw-rose{background:rgba(244,63,94,.12);color:#FDA4AF}.kw-blue{background:rgba(59,130,246,.12);color:#93C5FD}
+  .kw-yellow{background:rgba(234,179,8,.12);color:#FDE68A}
+  .card-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .card-example{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .card-example strong{color:#94A3B8;font-weight:500}
+
+  .rbac-flow{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:24px 28px}
+  .rbac-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px}
+  .rbac-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:#94A3B8}
+  .rbac-box{padding:12px 18px;border-radius:8px;border:1px solid}
+  .rb-sa{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.28);color:#93C5FD}
+  .rb-bind{background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.28);color:#FDA4AF}
+  .rb-role{background:rgba(234,179,8,.08);border-color:rgba(234,179,8,.28);color:#FDE68A}
+  .rbac-arrow{color:#2D3E5A}
+
+  .tbl{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;overflow:hidden}
+  .tbl-h{display:grid;grid-template-columns:1fr 1fr 1.2fr;background:#080C17;border-bottom:1px solid #1E2A40}
+  .tbl-c{padding:10px 14px;font-size:10px;font-family:'DM Mono',monospace;color:#6B7FA3;border-right:1px solid #1A2236;font-weight:500}
+  .tbl-c:last-child{border-right:none}
+  .tbl-r{display:grid;grid-template-columns:1fr 1fr 1.2fr;border-bottom:1px solid #1A2236}
+  .tbl-r:last-child{border-bottom:none}
+  .tbl-d{padding:12px 14px;font-size:11.5px;color:#64748B;border-right:1px solid #1A2236;line-height:1.5}
+  .tbl-d:last-child{border-right:none}
+  .tbl-n{font-weight:600;color:#E2E8F0;font-size:12px}
+
+  .cmd-box{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cmd-header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cmd-dot{width:8px;height:8px;border-radius:50%}
+  .cmd-title{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3;margin-left:4px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .c-cmd{color:#93C5FD}.c-flag{color:#FDE68A}.c-comment{color:#2D3E5A;font-style:italic}
+
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .callout-rose{background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.22)}
+  .callout-blue{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.2)}
+  .callout-yellow{background:rgba(234,179,8,.05);border:1px solid rgba(234,179,8,.2)}
+  .callout-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .callout-title{font-size:12px;font-weight:600;margin-bottom:5px}
+  .ct-rose{color:#FDA4AF}.ct-blue{color:#93C5FD}.ct-yellow{color:#FDE68A}
+  .callout-text{font-size:12px;color:#64748B;line-height:1.6}
+  .callout-text strong{color:#94A3B8}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .footer-text{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .footer-nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .footer-count{font-family:'Space Mono',monospace;font-size:10px;color:#FB7185;letter-spacing:.06em}
+  .footer-btn{font-family:'Space Mono',monospace;font-size:10px;color:#FB7185;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.28);padding:4px 12px;border-radius:3px;text-decoration:none;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="semana-06.html">← Observabilidad</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">KUBERNETES · SEGURIDAD</div>
+        <h1>Seguridad<br><span>y resource management</span></h1>
+        <p class="header-sub">RBAC · NetworkPolicy · Pod Security · Requests/limits · Quotas y QoS</p>
+      </div>
+    </div>
+    <div class="part-badge">K8S · SEC</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🔐 RBAC</span>
+    <span class="pill pill-b">🛡 NetworkPolicy</span>
+    <span class="pill pill-c">📊 Quotas</span>
+    <span class="pill pill-d">⚡ QoS</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-rose">01</span>
+    <span class="section-title-text">RBAC — quién puede hacer qué</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-rose">
+      <div class="card-header">
+        <div class="card-icon icon-rose">👤</div>
+        <div>
+          <div class="card-num">IDENTIDAD</div>
+          <div class="card-title">Usuarios, grupos y ServiceAccounts</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-rose">ServiceAccount</span>
+        <span class="kw kw-rose">token projected</span>
+      </div>
+      <div class="card-desc">Dentro del cluster lo habitual es un <strong>ServiceAccount</strong> por workload. El token montado en el Pod identifica al cliente ante el API server. Evita usar el <strong>default</strong> SA salvo casos triviales.</div>
+      <div class="card-example"><strong>IRSA / Workload Identity:</strong> en cloud, el SA de K8s se mapea a un rol IAM/GCP — sin credenciales largas en Secret.</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">📜</div>
+        <div>
+          <div class="card-num">ROL</div>
+          <div class="card-title">Role vs ClusterRole</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">verbs</span>
+        <span class="kw kw-blue">resources</span>
+      </div>
+      <div class="card-desc"><strong>Role</strong> es namespaced; <strong>ClusterRole</strong> aplica al cluster (o se referencia desde un RoleBinding en un namespace). Los <strong>verbs</strong> (<code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">get, list, watch, create…</code>) definen la acción.</div>
+      <div class="card-example"><strong>Principio:</strong> mínimo privilegio — un deployer no necesita <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">*</code> sobre <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">secrets</code>.</div>
+    </div>
+    <div class="card c-yellow">
+      <div class="card-header">
+        <div class="card-icon icon-yellow">🔗</div>
+        <div>
+          <div class="card-num">BINDING</div>
+          <div class="card-title">RoleBinding / ClusterRoleBinding</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-yellow">subjects</span>
+      </div>
+      <div class="card-desc">Une sujetos (User, Group, ServiceAccount) con un Role o ClusterRole. Un <strong>ClusterRoleBinding</strong> otorga permisos globales — revisión obligatoria en auditorías.</div>
+      <div class="card-example"><strong>Comprueba:</strong> <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">kubectl auth can-i delete pods -n prod --as=system:serviceaccount:prod:ci-bot</code></div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px" class="rbac-flow">
+    <div class="rbac-title">Cadena RBAC típica</div>
+    <div class="rbac-row">
+      <div class="rbac-box rb-sa">Pod + ServiceAccount</div>
+      <span class="rbac-arrow">→</span>
+      <div class="rbac-box rb-bind">RoleBinding</div>
+      <span class="rbac-arrow">→</span>
+      <div class="rbac-box rb-role">Role / ClusterRole</div>
+      <span class="rbac-arrow">→</span>
+      <span style="color:#64748B">API Server autoriza la petición</span>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-blue">02</span>
+    <span class="section-title-text">Red y endurecimiento del Pod</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🛡</div>
+        <div>
+          <div class="card-num">NETWORK POLICY</div>
+          <div class="card-title">Firewall declarativo entre Pods</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">ingress</span>
+        <span class="kw kw-blue">egress</span>
+        <span class="kw kw-blue">CNI</span>
+      </div>
+      <div class="card-desc">Sin políticas, muchos CNI permiten <strong>todo el tráfico este-oeste</strong>. Un <strong>NetworkPolicy</strong> selecciona Pods con labels y define qué orígenes/destinos y puertos están permitidos. Requiere un CNI compatible (Calico, Cilium, etc.).</div>
+      <div class="card-example"><strong>Patrón:</strong> default deny en ingress y luego políticas explícitas por app; egress restringido a DNS y APIs conocidas.</div>
+    </div>
+    <div class="card c-rose">
+      <div class="card-header">
+        <div class="card-icon icon-rose">🔒</div>
+        <div>
+          <div class="card-num">POD SECURITY</div>
+          <div class="card-title">PSA, context y admission</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-rose">restricted</span>
+        <span class="kw kw-rose">baseline</span>
+      </div>
+      <div class="card-desc"><strong>Pod Security Admission</strong> (sucesor de PSP) etiqueta namespaces con niveles <em>privileged / baseline / restricted</em>. <strong>securityContext</strong> en Pod o contenedor: <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">runAsNonRoot</code>, <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">readOnlyRootFilesystem</code>, <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">capabilities.drop: ["ALL"]</code>.</div>
+      <div class="card-example">Validating/Mutating <strong>webhooks</strong> (OPA Gatekeeper, Kyverno) centralizan políticas: etiquetas obligatorias, imágenes firmadas, etc.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-yellow">03</span>
+    <span class="section-title-text">CPU, memoria y fairness</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="tbl">
+    <div class="tbl-h">
+      <div class="tbl-c">Concepto</div>
+      <div class="tbl-c">Qué hace</div>
+      <div class="tbl-c">Por qué importa</div>
+    </div>
+    <div class="tbl-r">
+      <div class="tbl-d"><span class="tbl-n">Requests</span></div>
+      <div class="tbl-d">Reserva para scheduling — el scheduler coloca el Pod donde “cabe”</div>
+      <div class="tbl-d">Sin requests, el cluster no puede planificar de forma equilibrada; <strong>Bin Packing</strong> y prioridades dependen de números reales.</div>
+    </div>
+    <div class="tbl-r">
+      <div class="tbl-d"><span class="tbl-n">Limits</span></div>
+      <div class="tbl-d">Techo duro (mem) o throttling (CPU cgroup v1)</div>
+      <div class="tbl-d">Mem sin limit = riesgo de <strong>OOM</strong> en el nodo; CPU sin limit puede hambrear a otros Pods.</div>
+    </div>
+    <div class="tbl-r">
+      <div class="tbl-d"><span class="tbl-n">QoS class</span></div>
+      <div class="tbl-d">Guaranteed / Burstable / BestEffort</div>
+      <div class="tbl-d">En presión de memoria, el kubelet mata <strong>BestEffort</strong> primero, luego Burstable que exceden requests, etc.</div>
+    </div>
+    <div class="tbl-r">
+      <div class="tbl-d"><span class="tbl-n">ResourceQuota</span></div>
+      <div class="tbl-d">Límite agregado por namespace (CPU, mem, count de objetos)</div>
+      <div class="tbl-d">Evita que un equipo monopolice el cluster; combina con <strong>LimitRange</strong> para defaults por Pod.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-green">04</span>
+    <span class="section-title-text">Comandos útiles</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">kubectl — RBAC, quotas y políticas</span>
+    </div>
+    <pre><span class="c-comment"># ¿Puede este SA crear pods en staging?</span>
+<span class="c-cmd">kubectl</span> auth can-i create pods -n staging <span class="c-flag">--as=system:serviceaccount:staging:deployer</span>
+
+<span class="c-comment"># Listar roles y bindings del namespace</span>
+<span class="c-cmd">kubectl</span> get rolebindings,roles,clusterrolebindings,clusterroles -n prod
+
+<span class="c-comment"># Quotas y limit ranges</span>
+<span class="c-cmd">kubectl</span> describe resourcequota -n prod
+<span class="c-cmd">kubectl</span> describe limitrange -n prod
+
+<span class="c-comment"># Ver QoS de cada Pod</span>
+<span class="c-cmd">kubectl</span> get pods -n prod -o custom-columns=NAME:.metadata.name,QOS:.status.qosClass</pre>
+  </div>
+
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px" class="callouts-row">
+    <div class="callout callout-rose">
+      <span class="callout-icon">🎯</span>
+      <div>
+        <div class="callout-title ct-rose">RBAC no es seguridad de red</div>
+        <div class="callout-text">RBAC controla el <strong>API</strong>. Para tráfico entre Pods necesitas <strong>NetworkPolicy</strong> (y TLS/mTLS entre servicios si aplica).</div>
+      </div>
+    </div>
+    <div class="callout callout-blue">
+      <span class="callout-icon">📓</span>
+      <div>
+        <div class="callout-title ct-blue">Auditoría</div>
+        <div class="callout-text">Activa <strong>audit logs</strong> del API server (nivel Metadata/RequestResponse según compliance). Sin logs, no hay post-mortem de “quién escaló ese RoleBinding”.</div>
+      </div>
+    </div>
+    <div class="callout callout-yellow">
+      <span class="callout-icon">⚖️</span>
+      <div>
+        <div class="callout-title ct-yellow">Requests = promesa</div>
+        <div class="callout-text">Pedir 100m CPU y usar constantemente 4 cores rompe el supuesto del scheduler. Ajusta con métricas reales (VPA/describe node) y revisa <strong>PriorityClass</strong> antes de abusar de prioridades.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">KUBERNETES · SEGURIDAD</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="semana-06.html">← Observabilidad</a>
+    <span class="footer-count">RBAC · NetworkPolicy · PSA · Quotas · QoS</span>
+    <a class="footer-btn" href="semana-08.html">GitOps →</a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s · Workloads</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(249,115,22,0.09) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(234,179,8,0.05) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#F97316;color:#fff;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  .header h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  .header h1 span{color:#F97316}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#F97316;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .header-pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace;letter-spacing:.04em}
+  .pill-a{color:#FDBA74;border-color:rgba(253,186,116,.3);background:rgba(253,186,116,.07)}
+  .pill-b{color:#FDE68A;border-color:rgba(253,230,138,.3);background:rgba(253,230,138,.07)}
+  .pill-c{color:#D8B4FE;border-color:rgba(216,180,254,.3);background:rgba(216,180,254,.07)}
+  .pill-d{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .body{padding:0 56px 56px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-orange{color:#F97316}.sn-yellow{color:#EAB308}.sn-purple{color:#A855F7}.sn-green{color:#22C55E}.sn-rose{color:#F43F5E}.sn-blue{color:#3B82F6}
+  .section-title-text{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:#1E2A40}
+  .cards-grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .card.c-orange::before{background:#F97316}.card.c-yellow::before{background:#EAB308}.card.c-purple::before{background:#A855F7}
+  .card.c-green::before{background:#22C55E}.card.c-blue::before{background:#3B82F6}.card.c-rose::before{background:#F43F5E}
+  .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .icon-orange{background:rgba(249,115,22,.12)}.icon-yellow{background:rgba(234,179,8,.12)}.icon-purple{background:rgba(168,85,247,.12)}
+  .icon-green{background:rgba(34,197,94,.12)}.icon-blue{background:rgba(59,130,246,.12)}.icon-rose{background:rgba(244,63,94,.12)}
+  .card-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .card-title{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .card-keywords{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+  .kw-orange{background:rgba(249,115,22,.12);color:#FDBA74}.kw-yellow{background:rgba(234,179,8,.12);color:#FDE68A}
+  .kw-purple{background:rgba(168,85,247,.12);color:#D8B4FE}.kw-green{background:rgba(34,197,94,.12);color:#86EFAC}
+  .kw-blue{background:rgba(59,130,246,.12);color:#93C5FD}.kw-rose{background:rgba(244,63,94,.12);color:#FDA4AF}
+  .card-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .card-example{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .card-example strong{color:#94A3B8;font-weight:500}
+
+  /* HIERARCHY */
+  .hierarchy{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:24px 28px}
+  .hier-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+  .hier-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .hier-node{padding:10px 16px;border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;white-space:nowrap}
+  .hn-orange{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:#FDBA74}
+  .hn-yellow{background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);color:#FDE68A}
+  .hn-green{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#86EFAC}
+  .hn-blue{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:#93C5FD}
+  .hier-arrow{color:#2D3E5A;font-size:16px}
+  .hier-desc{font-size:11.5px;color:#64748B;line-height:1.4}
+
+  /* STRATEGY COMPARE */
+  .strategy-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .strategy-card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;overflow:hidden}
+  .sc-top{height:4px}
+  .sc-green{background:#22C55E}.sc-rose{background:#F43F5E}.sc-orange{background:#F97316}.sc-purple{background:#A855F7}
+  .sc-body{padding:18px 20px}
+  .sc-label{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.1em;margin-bottom:6px}
+  .scl-green{color:#22C55E}.scl-rose{color:#F43F5E}.scl-orange{color:#F97316}.scl-purple{color:#A855F7}
+  .sc-title{font-size:14px;font-weight:600;color:#E2E8F0;margin-bottom:8px}
+  .sc-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:12px}
+  .sc-pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .spc-panel{background:#0A0E1A;border-radius:6px;padding:8px 10px}
+  .spc-label{font-size:9px;font-family:'DM Mono',monospace;margin-bottom:4px}
+  .spc-good{color:#22C55E}.spc-bad{color:#F43F5E}
+  .spc-item{font-size:10px;color:#64748B;line-height:1.6}
+
+  /* VISUAL DEPLOY */
+  .deploy-visual{background:#0A0E1A;border-radius:8px;padding:12px 14px;margin-top:10px}
+  .dv-label{font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;margin-bottom:8px;letter-spacing:.08em}
+  .dv-pods{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+  .dv-pod{width:28px;height:28px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'DM Mono',monospace}
+  .pod-v1{background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.4);color:#93C5FD}
+  .pod-v2{background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.4);color:#86EFAC}
+  .pod-new{background:rgba(249,115,22,.2);border:1px solid rgba(249,115,22,.4);color:#FDBA74}
+  .pod-dead{background:rgba(244,63,94,.1);border:1px dashed rgba(244,63,94,.3);color:#FDA4AF;opacity:.5}
+  .dv-sep{color:#2D3E5A;font-size:12px;margin:0 6px}
+
+  /* CMD BOX */
+  .cmd-box{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cmd-header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cmd-dot{width:8px;height:8px;border-radius:50%}
+  .cmd-title{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3;margin-left:4px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .c-cmd{color:#93C5FD}.c-flag{color:#FDE68A}.c-out{color:#86EFAC}.c-comment{color:#2D3E5A;font-style:italic}.c-key{color:#FDBA74}.c-val{color:#86EFAC}
+
+  /* CALLOUT */
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .callout-orange{background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.2)}
+  .callout-green{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.2)}
+  .callout-rose{background:rgba(244,63,94,.05);border:1px solid rgba(244,63,94,.2)}
+  .callout-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .callout-title{font-size:12px;font-weight:600;margin-bottom:5px}
+  .ct-orange{color:#FDBA74}.ct-green{color:#86EFAC}.ct-rose{color:#FDA4AF}
+  .callout-text{font-size:12px;color:#64748B;line-height:1.6}
+  .callout-text strong{color:#94A3B8}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center}
+  .footer-text{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .footer-nav{display:flex;align-items:center;gap:12px}
+  .footer-count{font-family:'Space Mono',monospace;font-size:10px;color:#F97316;letter-spacing:.06em}
+  .footer-btn{font-family:'Space Mono',monospace;font-size:10px;color:#F97316;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);padding:4px 12px;border-radius:3px;text-decoration:none;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="semana-01.html">← Arquitectura interna</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">KUBERNETES · WORKLOADS</div>
+        <h1>Primitivas de<br><span>Aplicación</span></h1>
+        <p class="header-sub">Pods · Deployments · StatefulSets · Jobs/CronJobs · Estrategias de despliegue</p>
+      </div>
+    </div>
+    <div class="part-badge">K8S · WORKLOADS</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">📦 Pod</span>
+    <span class="pill pill-b">🚀 Deployment</span>
+    <span class="pill pill-c">🗃️ StatefulSet</span>
+    <span class="pill pill-d">⏱️ Job/CronJob</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- S1: JERARQUÍA -->
+  <div class="section-header">
+    <span class="section-num sn-orange">01</span>
+    <span class="section-title-text">Jerarquía de objetos — quién gestiona a quién</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="hierarchy">
+    <div class="hier-title">Cadena de ownership — Deployment → ReplicaSet → Pod → Container</div>
+
+    <div class="hier-row">
+      <div class="hier-node hn-orange">🚀 Deployment</div>
+      <div class="hier-arrow">→ gestiona →</div>
+      <div class="hier-node hn-yellow">📋 ReplicaSet (v1, v2...)</div>
+      <div class="hier-arrow">→ gestiona →</div>
+      <div class="hier-node hn-green">📦 Pod × N</div>
+      <div class="hier-arrow">→ contiene →</div>
+      <div class="hier-node hn-blue">🐳 Container(s)</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px">
+      <div style="padding:12px;background:#0A0E1A;border:1px solid #1A2236;border-radius:8px">
+        <div style="font-size:10px;font-weight:700;color:#FDBA74;font-family:'DM Mono',monospace;margin-bottom:6px">DEPLOYMENT</div>
+        <div style="font-size:11px;color:#64748B;line-height:1.5">Define estrategia de update, historial de versiones y rollback. Tú lo gestionas.</div>
+      </div>
+      <div style="padding:12px;background:#0A0E1A;border:1px solid #1A2236;border-radius:8px">
+        <div style="font-size:10px;font-weight:700;color:#FDE68A;font-family:'DM Mono',monospace;margin-bottom:6px">REPLICASET</div>
+        <div style="font-size:11px;color:#64748B;line-height:1.5">Mantiene N réplicas del Pod. Lo crea el Deployment automáticamente — <em>no lo edites directo</em>.</div>
+      </div>
+      <div style="padding:12px;background:#0A0E1A;border:1px solid #1A2236;border-radius:8px">
+        <div style="font-size:10px;font-weight:700;color:#86EFAC;font-family:'DM Mono',monospace;margin-bottom:6px">POD</div>
+        <div style="font-size:11px;color:#64748B;line-height:1.5">Unidad mínima desplegable. Uno o más contenedores que comparten red y volúmenes. <em>Efímero</em> por diseño.</div>
+      </div>
+      <div style="padding:12px;background:#0A0E1A;border:1px solid #1A2236;border-radius:8px">
+        <div style="font-size:10px;font-weight:700;color:#93C5FD;font-family:'DM Mono',monospace;margin-bottom:6px">CONTAINER</div>
+        <div style="font-size:11px;color:#64748B;line-height:1.5">El proceso Docker real. Los sidecars (Istio, Fluentd) son contenedores adicionales en el mismo Pod.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2: TIPOS DE WORKLOAD -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">02</span>
+    <span class="section-title-text">Tipos de workload — cuándo usar cada uno</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-orange">
+      <div class="card-header">
+        <div class="card-icon icon-orange">🚀</div>
+        <div>
+          <div class="card-num">WORKLOAD · 01</div>
+          <div class="card-title">Deployment — apps stateless</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-orange">Stateless</span>
+        <span class="kw kw-green">Self-healing</span>
+        <span class="kw kw-blue">Rolling Update</span>
+        <span class="kw kw-yellow">Rollback</span>
+      </div>
+      <div class="card-desc">El objeto más usado. Para APIs, frontends y microservicios sin estado persistente. Gestiona el historial de ReplicaSets — permite rollback a cualquier versión anterior con un comando.</div>
+      <div class="card-example">
+        <strong>Úsalo para:</strong> APIs REST, GraphQL, frontends, workers sin estado. Cualquier cosa donde los Pods son intercambiables y el estado vive en una DB externa.
+        <div style="margin-top:8px"><strong>No lo uses para:</strong> bases de datos, caches persistentes o cualquier app que necesite identidad de Pod estable.</div>
+      </div>
+    </div>
+
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🗃️</div>
+        <div>
+          <div class="card-num">WORKLOAD · 02</div>
+          <div class="card-title">StatefulSet — apps con estado</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">Stable identity</span>
+        <span class="kw kw-blue">Ordered deploy</span>
+        <span class="kw kw-green">PVC per Pod</span>
+      </div>
+      <div class="card-desc">Como un Deployment pero cada Pod tiene identidad estable: nombre predecible (<code style="font-family:'DM Mono',monospace;font-size:10px;color:#D8B4FE">mysql-0</code>, <code style="font-family:'DM Mono',monospace;font-size:10px;color:#D8B4FE">mysql-1</code>), DNS propio y PVC propio. Los Pods se crean y borran en orden.</div>
+      <div class="card-example">
+        <strong>Úsalo para:</strong> PostgreSQL, MySQL, MongoDB, Redis con persistencia, Elasticsearch, Kafka, ZooKeeper. Cualquier sistema de clustering que necesite saber quién es quién.
+        <div style="margin-top:8px"><strong>Por qué importa el orden:</strong> en un cluster de BD, el nodo 0 es el master — debe existir antes que los replicas.</div>
+      </div>
+    </div>
+
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🔲</div>
+        <div>
+          <div class="card-num">WORKLOAD · 03</div>
+          <div class="card-title">DaemonSet — uno por nodo</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">Node-level</span>
+        <span class="kw kw-green">System agent</span>
+        <span class="kw kw-yellow">kube-proxy</span>
+      </div>
+      <div class="card-desc">Garantiza que exactamente un Pod corre en cada Node (o en los Nodes seleccionados). Cuando se añade un Node nuevo, el DaemonSet crea el Pod automáticamente.</div>
+      <div class="card-example">
+        <strong>Úsalo para:</strong> agentes de logging (Fluentd, Filebeat), agentes de monitoreo (Datadog, Prometheus Node Exporter), CNI plugins y kube-proxy mismo. Cualquier cosa que deba vivir en cada máquina del cluster.
+      </div>
+    </div>
+
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">⏱️</div>
+        <div>
+          <div class="card-num">WORKLOAD · 04</div>
+          <div class="card-title">Job / CronJob — tareas finitas</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">Completions</span>
+        <span class="kw kw-yellow">Parallelism</span>
+        <span class="kw kw-blue">Schedule</span>
+        <span class="kw kw-orange">Backoff limit</span>
+      </div>
+      <div class="card-desc">Job ejecuta Pods hasta que completan con éxito. CronJob crea Jobs según un schedule cron. A diferencia de Deployment, un Job termina — no reinicia los Pods indefinidamente.</div>
+      <div class="card-example">
+        <strong>Úsalo para:</strong> migraciones de DB, reportes nocturnos, backups, procesamiento batch, envío de emails masivos, tareas de limpieza. Configura <code style="font-family:'DM Mono',monospace;font-size:10px;color:#86EFAC">backoffLimit</code> para controlar reintentos.
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: ESTRATEGIAS DEPLOYMENT -->
+  <div class="section-header">
+    <span class="section-num sn-purple">03</span>
+    <span class="section-title-text">Estrategias de despliegue — RollingUpdate vs Recreate</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="strategy-grid">
+    <div class="strategy-card">
+      <div class="sc-top sc-green"></div>
+      <div class="sc-body">
+        <div class="sc-label scl-green">● ESTRATEGIA RECOMENDADA</div>
+        <div class="sc-title">🔄 RollingUpdate (por defecto)</div>
+        <div class="sc-desc">Sustituye los Pods antiguos gradualmente por los nuevos. En ningún momento el servicio está completamente down. Controlas el ritmo con <code style="font-family:'DM Mono',monospace;font-size:10px;color:#86EFAC">maxSurge</code> y <code style="font-family:'DM Mono',monospace;font-size:10px;color:#86EFAC">maxUnavailable</code>.</div>
+
+        <div class="deploy-visual">
+          <div class="dv-label">PROGRESIÓN DEL UPDATE → (3 réplicas, maxSurge=1, maxUnavailable=1)</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:4px">
+              <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;width:40px">ANTES</div>
+              <div class="dv-pod pod-v1">v1</div>
+              <div class="dv-pod pod-v1">v1</div>
+              <div class="dv-pod pod-v1">v1</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;width:40px">PASO 1</div>
+              <div class="dv-pod pod-v1">v1</div>
+              <div class="dv-pod pod-v1">v1</div>
+              <div class="dv-pod pod-dead">💀</div>
+              <div class="dv-pod pod-v2">v2</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;width:40px">PASO 2</div>
+              <div class="dv-pod pod-v1">v1</div>
+              <div class="dv-pod pod-dead">💀</div>
+              <div class="dv-pod pod-v2">v2</div>
+              <div class="dv-pod pod-v2">v2</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;width:40px">FINAL</div>
+              <div class="dv-pod pod-v2">v2</div>
+              <div class="dv-pod pod-v2">v2</div>
+              <div class="dv-pod pod-v2">v2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sc-pros-cons" style="margin-top:10px">
+          <div class="spc-panel">
+            <div class="spc-label spc-good">✅ VENTAJAS</div>
+            <div class="spc-item">Zero downtime<br>Rollback inmediato<br>Tráfico continuo</div>
+          </div>
+          <div class="spc-panel">
+            <div class="spc-label spc-bad">⚠️ CUIDADO</div>
+            <div class="spc-item">2 versiones coexisten<br>DB debe ser compatible<br>v1 y v2 a la vez</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="sc-top sc-rose"></div>
+      <div class="sc-body">
+        <div class="sc-label scl-rose">● ESTRATEGIA CON DOWNTIME</div>
+        <div class="sc-title">💥 Recreate</div>
+        <div class="sc-desc">Borra <em>todos</em> los Pods viejos y luego crea los nuevos. Hay un período de downtime entre ambas fases. Simple pero disruptivo.</div>
+
+        <div class="deploy-visual">
+          <div class="dv-label">PROGRESIÓN DEL UPDATE → (downtime garantizado)</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:4px">
+              <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;width:40px">ANTES</div>
+              <div class="dv-pod pod-v1">v1</div>
+              <div class="dv-pod pod-v1">v1</div>
+              <div class="dv-pod pod-v1">v1</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;width:40px">DOWN</div>
+              <div class="dv-pod pod-dead">💀</div>
+              <div class="dv-pod pod-dead">💀</div>
+              <div class="dv-pod pod-dead">💀</div>
+              <div style="font-size:10px;color:#F43F5E;font-family:'DM Mono',monospace;margin-left:8px">⚠️ 0 Pods activos</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px">
+              <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;width:40px">FINAL</div>
+              <div class="dv-pod pod-v2">v2</div>
+              <div class="dv-pod pod-v2">v2</div>
+              <div class="dv-pod pod-v2">v2</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sc-pros-cons" style="margin-top:10px">
+          <div class="spc-panel">
+            <div class="spc-label spc-good">✅ CUÁNDO USARLO</div>
+            <div class="spc-item">Cambios de schema DB<br>Migraciones disruptivas<br>Dev/QA sin SLA</div>
+          </div>
+          <div class="spc-panel">
+            <div class="spc-label spc-bad">❌ EVITAR EN</div>
+            <div class="spc-item">Producción con SLA<br>Apps de cara al usuario<br>Cualquier 24/7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: ROLLBACK -->
+  <div class="section-header">
+    <span class="section-num sn-rose">04</span>
+    <span class="section-title-text">Rollback — cómo deshacer un deploy fallido</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">kubectl — rollout, rollback y gestión de versiones</span>
+    </div>
+    <pre><span class="c-comment"># Ver el estado del rollout en curso</span>
+<span class="c-cmd">kubectl</span> rollout status deployment/my-app
+
+<span class="c-comment"># Ver historial de revisiones (ReplicaSets anteriores)</span>
+<span class="c-cmd">kubectl</span> rollout history deployment/my-app
+
+<span class="c-comment"># Output esperado:</span>
+<span class="c-out">REVISION  CHANGE-CAUSE
+1         kubectl apply --image=nginx:1.23 (initial)
+2         kubectl set image deployment/my-app app=nginx:1.24
+3         kubectl set image deployment/my-app app=nginx:1.25-broken</span>
+
+<span class="c-comment"># Rollback a la versión anterior (revision 2)</span>
+<span class="c-cmd">kubectl</span> rollout undo deployment/my-app
+
+<span class="c-comment"># Rollback a una revisión específica</span>
+<span class="c-cmd">kubectl</span> rollout undo deployment/my-app <span class="c-flag">--to-revision=</span>2
+
+<span class="c-comment"># Escalar réplicas manualmente</span>
+<span class="c-cmd">kubectl</span> scale deployment/my-app <span class="c-flag">--replicas=</span>5
+
+<span class="c-comment"># Forzar restart de todos los Pods (sin cambiar imagen)</span>
+<span class="c-cmd">kubectl</span> rollout restart deployment/my-app
+
+<span class="c-comment"># Pausar un rollout para inspeccionarlo</span>
+<span class="c-cmd">kubectl</span> rollout pause deployment/my-app
+<span class="c-cmd">kubectl</span> rollout resume deployment/my-app</pre>
+  </div>
+
+  <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <div class="callout callout-orange">
+      <span class="callout-icon">🔑</span>
+      <div>
+        <div class="callout-title ct-orange">Pod — la unidad mínima</div>
+        <div class="callout-text">Un Pod es efímero. <strong>Nunca edites un Pod directamente en producción</strong> — edita el Deployment. Los Pods son reemplazables; el Deployment es la fuente de verdad.</div>
+      </div>
+    </div>
+    <div class="callout callout-green">
+      <span class="callout-icon">🗃️</span>
+      <div>
+        <div class="callout-title ct-green">StatefulSet — identidad estable</div>
+        <div class="callout-text">El Pod <code style="font-family:'DM Mono',monospace;font-size:10px;color:#86EFAC">mysql-0</code> siempre se llama igual, siempre monta el mismo PVC y tiene el mismo DNS. Eso es lo que necesita una BD para funcionar en cluster.</div>
+      </div>
+    </div>
+    <div class="callout callout-rose">
+      <span class="callout-icon">⚠️</span>
+      <div>
+        <div class="callout-title ct-rose">RollingUpdate y BD — precaución</div>
+        <div class="callout-text">Con RollingUpdate, durante el update <strong>v1 y v2 corren en paralelo</strong>. La DB debe soportar ambos schemas simultáneamente. Usa migraciones backward-compatible (Expand/Contract pattern).</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">KUBERNETES · WORKLOADS</span>
+  <div class="footer-nav">
+    <span class="footer-count">4 tipos de workload · 2 estrategias · rollback</span>
+    <a class="footer-btn" href="semana-03.html">Networking →</a>
+  </div>
+</div>
+</body>
+</html>

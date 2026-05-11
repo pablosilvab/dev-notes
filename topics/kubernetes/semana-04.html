@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s · Config, Secrets y persistencia</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(234,179,8,0.09) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(244,63,94,0.05) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#EAB308;color:#0A0E1A;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  .header h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  .header h1 span{color:#EAB308}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#EAB308;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.3);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .header-pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace;letter-spacing:.04em}
+  .pill-a{color:#FDE68A;border-color:rgba(253,230,138,.3);background:rgba(253,230,138,.07)}
+  .pill-b{color:#FDA4AF;border-color:rgba(253,164,175,.3);background:rgba(253,164,175,.07)}
+  .pill-c{color:#93C5FD;border-color:rgba(147,197,253,.3);background:rgba(147,197,253,.07)}
+  .pill-d{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .body{padding:0 56px 56px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-yellow{color:#EAB308}.sn-rose{color:#F43F5E}.sn-blue{color:#3B82F6}.sn-green{color:#22C55E}.sn-purple{color:#A855F7}
+  .section-title-text{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:#1E2A40}
+  .cards-grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .card.c-yellow::before{background:#EAB308}.card.c-rose::before{background:#F43F5E}.card.c-blue::before{background:#3B82F6}
+  .card.c-green::before{background:#22C55E}.card.c-purple::before{background:#A855F7}
+  .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .icon-yellow{background:rgba(234,179,8,.12)}.icon-rose{background:rgba(244,63,94,.12)}.icon-blue{background:rgba(59,130,246,.12)}
+  .icon-green{background:rgba(34,197,94,.12)}.icon-purple{background:rgba(168,85,247,.12)}
+  .card-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .card-title{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .card-keywords{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+  .kw-yellow{background:rgba(234,179,8,.12);color:#FDE68A}.kw-rose{background:rgba(244,63,94,.12);color:#FDA4AF}
+  .kw-blue{background:rgba(59,130,246,.12);color:#93C5FD}.kw-green{background:rgba(34,197,94,.12);color:#86EFAC}
+  .kw-purple{background:rgba(168,85,247,.12);color:#D8B4FE}
+  .card-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .card-example{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .card-example strong{color:#94A3B8;font-weight:500}
+
+  /* STORAGE DIAGRAM */
+  .storage-diagram{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:28px 32px}
+  .sd-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+  .sd-flow{display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap}
+  .sd-box{text-align:center;padding:16px 20px;border-radius:10px;min-width:130px}
+  .sdb-green{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25)}
+  .sdb-blue{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25)}
+  .sdb-yellow{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.25)}
+  .sdb-purple{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25)}
+  .sd-icon{font-size:24px;display:block;margin-bottom:6px}
+  .sd-name{font-size:12px;font-weight:700;color:#E2E8F0;margin-bottom:3px}
+  .sd-sub{font-size:10px;font-family:'DM Mono',monospace;color:#64748B}
+  .sd-arrow{color:#2D3E5A;font-size:22px}
+  .sd-note{margin-top:20px;padding:12px 16px;background:#0A0E1A;border:1px solid #1A2236;border-radius:8px;font-size:11.5px;color:#64748B;line-height:1.55;text-align:center}
+
+  /* COMPARISON */
+  .compare-table{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;overflow:hidden}
+  .ct-header{display:grid;grid-template-columns:1.2fr 1fr 1fr 1.2fr;background:#080C17;border-bottom:1px solid #1E2A40}
+  .ctc{padding:10px 14px;font-size:10px;font-family:'DM Mono',monospace;color:#6B7FA3;border-right:1px solid #1A2236;font-weight:500}
+  .ctc:last-child{border-right:none}
+  .ct-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1.2fr;border-bottom:1px solid #1A2236}
+  .ct-row:last-child{border-bottom:none}
+  .ct-row:hover{background:rgba(255,255,255,.012)}
+  .ct-cell{padding:12px 14px;font-size:11.5px;color:#64748B;border-right:1px solid #1A2236;line-height:1.5}
+  .ct-cell:last-child{border-right:none}
+  .ct-name{font-size:12px;font-weight:600;color:#E2E8F0}
+  .badge{display:inline-block;font-size:9px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:3px}
+  .b-yellow{background:rgba(234,179,8,.12);color:#FDE68A}.b-rose{background:rgba(244,63,94,.12);color:#FDA4AF}
+  .b-blue{background:rgba(59,130,246,.12);color:#93C5FD}.b-green{background:rgba(34,197,94,.12);color:#86EFAC}
+
+  /* CMD */
+  .cmd-box{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cmd-header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cmd-dot{width:8px;height:8px;border-radius:50%}
+  .cmd-title{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3;margin-left:4px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .c-cmd{color:#93C5FD}.c-flag{color:#FDE68A}.c-out{color:#86EFAC}.c-comment{color:#2D3E5A;font-style:italic}
+  .c-key{color:#5EEAD4}.c-val{color:#86EFAC}
+
+  /* CALLOUT */
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .callout-yellow{background:rgba(234,179,8,.05);border:1px solid rgba(234,179,8,.2)}
+  .callout-rose{background:rgba(244,63,94,.05);border:1px solid rgba(244,63,94,.2)}
+  .callout-green{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.2)}
+  .callout-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .callout-title{font-size:12px;font-weight:600;margin-bottom:5px}
+  .ct-yellow{color:#FDE68A}.ct-rose{color:#FDA4AF}.ct-green{color:#86EFAC}
+  .callout-text{font-size:12px;color:#64748B;line-height:1.6}
+  .callout-text strong{color:#94A3B8}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .footer-text{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .footer-nav{display:flex;align-items:center;gap:12px}
+  .footer-count{font-family:'Space Mono',monospace;font-size:10px;color:#EAB308;letter-spacing:.06em}
+  .footer-btn{font-family:'Space Mono',monospace;font-size:10px;color:#EAB308;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);padding:4px 12px;border-radius:3px;text-decoration:none;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="semana-03.html">← Networking</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">KUBERNETES · CONFIG Y PERSISTENCIA</div>
+        <h1>Config, Secrets<br><span>y Persistencia</span></h1>
+        <p class="header-sub">ConfigMaps · Secrets · Volumes · PV y PVC · Separar código de datos</p>
+      </div>
+    </div>
+    <div class="part-badge">K8S · CONFIG</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">⚙️ ConfigMap</span>
+    <span class="pill pill-b">🔐 Secret</span>
+    <span class="pill pill-c">💾 PV / PVC</span>
+    <span class="pill pill-d">📂 Volumes</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- S1: CONFIGMAP VS SECRET -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">01</span>
+    <span class="section-title-text">ConfigMap vs Secret — separar código de configuración</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="compare-table">
+    <div class="ct-header">
+      <div class="ctc">Objeto</div>
+      <div class="ctc">Datos</div>
+      <div class="ctc">Descripción y uso</div>
+      <div class="ctc">Cómo inyectarlo</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><span class="ct-name">⚙️ ConfigMap</span></div>
+      <div class="ct-cell"><span class="badge b-yellow">No sensibles</span></div>
+      <div class="ct-cell">Variables de entorno, archivos de configuración, flags de feature. En texto plano, visible para cualquiera con acceso al namespace.</div>
+      <div class="ct-cell">env var · envFrom · volumeMount (archivo)</div>
+    </div>
+    <div class="ct-row">
+      <div class="ct-cell"><span class="ct-name">🔐 Secret</span></div>
+      <div class="ct-cell"><span class="badge b-rose">Sensibles</span></div>
+      <div class="ct-cell">Passwords, API keys, certs TLS, tokens. Almacenado en Base64 <em>(no encriptado por defecto en Etcd)</em>. Usa Sealed Secrets o Vault para cifrado real.</div>
+      <div class="ct-cell">env var · envFrom · volumeMount (archivo)</div>
+    </div>
+  </div>
+
+  <div class="cmd-box" style="margin-top:10px">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">configmap-secret.yaml — inyección como env vars y como archivo</span>
+    </div>
+    <pre><span class="c-comment"># ConfigMap</span>
+<span class="c-key">apiVersion</span>: <span class="c-val">v1</span>
+<span class="c-key">kind</span>: <span class="c-val">ConfigMap</span>
+<span class="c-key">metadata</span>: { <span class="c-key">name</span>: <span class="c-val">app-config</span> }
+<span class="c-key">data</span>:
+  <span class="c-key">APP_ENV</span>: <span class="c-val">production</span>
+  <span class="c-key">LOG_LEVEL</span>: <span class="c-val">info</span>
+  <span class="c-key">app.properties</span>: |    <span class="c-comment"># archivo completo</span>
+    <span class="c-val">timeout=30</span>
+    <span class="c-val">max-connections=100</span>
+<span class="c-comment">---</span>
+<span class="c-comment"># Secret (valores en base64: echo -n "mi-pass" | base64)</span>
+<span class="c-key">apiVersion</span>: <span class="c-val">v1</span>
+<span class="c-key">kind</span>: <span class="c-val">Secret</span>
+<span class="c-key">metadata</span>: { <span class="c-key">name</span>: <span class="c-val">db-secret</span> }
+<span class="c-key">type</span>: <span class="c-val">Opaque</span>
+<span class="c-key">data</span>:
+  <span class="c-key">DB_PASSWORD</span>: <span class="c-val">bWktcGFzc3dvcmQ=</span>   <span class="c-comment"># base64("mi-password")</span>
+  <span class="c-key">DB_URL</span>: <span class="c-val">cG9zdGdyZXMuZXhhbXBsZQ==</span>
+<span class="c-comment">---</span>
+<span class="c-comment"># Pod que usa ambos</span>
+<span class="c-key">spec</span>:
+  <span class="c-key">containers</span>:
+  - <span class="c-key">name</span>: <span class="c-val">app</span>
+    <span class="c-key">envFrom</span>:                       <span class="c-comment"># todas las keys como env vars</span>
+    - <span class="c-key">configMapRef</span>: { <span class="c-key">name</span>: <span class="c-val">app-config</span> }
+    - <span class="c-key">secretRef</span>: { <span class="c-key">name</span>: <span class="c-val">db-secret</span> }
+    <span class="c-key">volumeMounts</span>:
+    - <span class="c-key">name</span>: <span class="c-val">config-vol</span>
+      <span class="c-key">mountPath</span>: <span class="c-val">/etc/config</span>      <span class="c-comment"># app.properties como archivo</span>
+  <span class="c-key">volumes</span>:
+  - <span class="c-key">name</span>: <span class="c-val">config-vol</span>
+    <span class="c-key">configMap</span>: { <span class="c-key">name</span>: <span class="c-val">app-config</span> }</pre>
+  </div>
+
+  <!-- S2: STORAGE -->
+  <div class="section-header">
+    <span class="section-num sn-blue">02</span>
+    <span class="section-title-text">Persistencia — PV, PVC y StorageClass</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="storage-diagram">
+    <div class="sd-title">Flujo de aprovisionamiento de almacenamiento persistente</div>
+    <div class="sd-flow">
+      <div class="sd-box sdb-green">
+        <span class="sd-icon">👤</span>
+        <div class="sd-name">Developer</div>
+        <div class="sd-sub">define PVC<br>"necesito 10Gi SSD"</div>
+      </div>
+      <div class="sd-arrow">→</div>
+      <div class="sd-box sdb-blue">
+        <span class="sd-icon">📋</span>
+        <div class="sd-name">PVC</div>
+        <div class="sd-sub">PersistentVolumeClaim<br>solicitud de almacenamiento</div>
+      </div>
+      <div class="sd-arrow">→</div>
+      <div class="sd-box sdb-yellow">
+        <span class="sd-icon">⚙️</span>
+        <div class="sd-name">StorageClass</div>
+        <div class="sd-sub">provisioner automático<br>AWS EBS / GCP PD / NFS</div>
+      </div>
+      <div class="sd-arrow">→</div>
+      <div class="sd-box sdb-purple">
+        <span class="sd-icon">💾</span>
+        <div class="sd-name">PV</div>
+        <div class="sd-sub">PersistentVolume<br>disco real aprovisionado</div>
+      </div>
+    </div>
+    <div class="sd-note">
+      🔑 <strong style="color:#94A3B8">El desarrollador solo ve el PVC</strong> — no le importa qué disco físico hay detrás. El Admin configura StorageClasses una vez. El PVC sobrevive al Pod — el disco persiste aunque el Pod se reinicie o se mueva de Node.
+    </div>
+  </div>
+
+  <div class="cards-grid g2" style="margin-top:10px">
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">💾</div>
+        <div>
+          <div class="card-num">STORAGE · PV Y PVC</div>
+          <div class="card-title">PersistentVolume y PersistentVolumeClaim</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">Reclaim Policy</span>
+        <span class="kw kw-green">Access Modes</span>
+        <span class="kw kw-yellow">StorageClass</span>
+      </div>
+      <div class="card-desc">PV es el disco real (aprovisionado por el admin o el StorageClass provisioner). PVC es la petición del desarrollador. K8s los empareja automáticamente por capacidad, access mode y StorageClass.</div>
+      <div class="card-example">
+        <strong>Access Modes:</strong>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#64748B;margin-top:6px;line-height:1.8">
+          <span style="color:#93C5FD">ReadWriteOnce (RWO)</span> → un Node puede escribir (EBS, discos)<br>
+          <span style="color:#93C5FD">ReadOnlyMany (ROX)</span>  → N Nodes pueden leer<br>
+          <span style="color:#93C5FD">ReadWriteMany (RWX)</span> → N Nodes pueden escribir (NFS, EFS)
+        </div>
+        <div style="margin-top:8px"><strong>Reclaim Policy:</strong> <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDE68A">Retain</code> (datos seguros) vs <code style="font-family:'DM Mono',monospace;font-size:10px;color:#FDA4AF">Delete</code> (se borra el disco al borrar PVC).</div>
+      </div>
+    </div>
+
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">📂</div>
+        <div>
+          <div class="card-num">STORAGE · TIPOS DE VOLUME</div>
+          <div class="card-title">Volumes efímeros vs persistentes</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">emptyDir</span>
+        <span class="kw kw-blue">hostPath</span>
+        <span class="kw kw-yellow">persistentVolumeClaim</span>
+      </div>
+      <div class="card-desc">Dentro de un Pod puedes montar distintos tipos de volumen según la necesidad. No todos persisten cuando el Pod muere — elige el tipo correcto para cada caso.</div>
+      <div class="card-example">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#64748B;line-height:1.8">
+          <span style="color:#86EFAC">emptyDir</span>     → temporal, vive con el Pod (caché, tmp)<br>
+          <span style="color:#86EFAC">hostPath</span>     → monta un directorio del Node ⚠️<br>
+          <span style="color:#86EFAC">configMap</span>    → monta ConfigMap como archivos<br>
+          <span style="color:#86EFAC">secret</span>       → monta Secret como archivos<br>
+          <span style="color:#86EFAC">persistentVolumeClaim</span> → disco persistente real<br>
+          <span style="color:#86EFAC">projected</span>    → combina varios en uno
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: YAML PVC -->
+  <div class="section-header">
+    <span class="section-num sn-green">03</span>
+    <span class="section-title-text">Práctica — DB con almacenamiento persistente</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">postgres-with-pvc.yaml — StatefulSet + PVC para base de datos</span>
+    </div>
+    <pre><span class="c-key">apiVersion</span>: <span class="c-val">apps/v1</span>
+<span class="c-key">kind</span>: <span class="c-val">StatefulSet</span>
+<span class="c-key">metadata</span>: { <span class="c-key">name</span>: <span class="c-val">postgres</span> }
+<span class="c-key">spec</span>:
+  <span class="c-key">replicas</span>: <span class="c-val">1</span>
+  <span class="c-key">selector</span>: { <span class="c-key">matchLabels</span>: { <span class="c-key">app</span>: <span class="c-val">postgres</span> } }
+  <span class="c-key">template</span>:
+    <span class="c-key">spec</span>:
+      <span class="c-key">containers</span>:
+      - <span class="c-key">name</span>: <span class="c-val">postgres</span>
+        <span class="c-key">image</span>: <span class="c-val">postgres:15</span>
+        <span class="c-key">env</span>:
+        - <span class="c-key">name</span>: <span class="c-val">POSTGRES_PASSWORD</span>
+          <span class="c-key">valueFrom</span>:
+            <span class="c-key">secretKeyRef</span>: { <span class="c-key">name</span>: <span class="c-val">db-secret</span>, <span class="c-key">key</span>: <span class="c-val">DB_PASSWORD</span> }
+        <span class="c-key">volumeMounts</span>:
+        - <span class="c-key">name</span>: <span class="c-val">postgres-data</span>
+          <span class="c-key">mountPath</span>: <span class="c-val">/var/lib/postgresql/data</span>
+  <span class="c-key">volumeClaimTemplates</span>:         <span class="c-comment"># PVC automático por Pod</span>
+  - <span class="c-key">metadata</span>: { <span class="c-key">name</span>: <span class="c-val">postgres-data</span> }
+    <span class="c-key">spec</span>:
+      <span class="c-key">accessModes</span>: [<span class="c-val">ReadWriteOnce</span>]
+      <span class="c-key">storageClassName</span>: <span class="c-val">fast-ssd</span>   <span class="c-comment"># StorageClass del cloud</span>
+      <span class="c-key">resources</span>:
+        <span class="c-key">requests</span>: { <span class="c-key">storage</span>: <span class="c-val">20Gi</span> }
+<span class="c-comment">---</span>
+<span class="c-comment"># Verificar PVC creado automáticamente</span>
+<span class="c-cmd">kubectl</span> get pvc
+<span class="c-out">NAME                     STATUS   VOLUME            CAPACITY   ACCESS
+postgres-data-postgres-0 Bound    pvc-abc123        20Gi       RWO</span>
+
+<span class="c-comment"># Si borras el Pod, el PVC (y los datos) sobreviven</span>
+<span class="c-cmd">kubectl</span> delete pod postgres-0
+<span class="c-comment"># K8s recrea postgres-0 y monta el MISMO PVC — datos intactos ✅</span></pre>
+  </div>
+
+  <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <div class="callout callout-yellow">
+      <span class="callout-icon">⚙️</span>
+      <div>
+        <div class="callout-title ct-yellow">ConfigMap vs env vars en Dockerfile</div>
+        <div class="callout-text">Nunca hardcodees config en la imagen Docker. Un ConfigMap en K8s te permite cambiar config <strong>sin reconstruir la imagen</strong>. La misma imagen va a dev, QA y prod — solo cambia el ConfigMap.</div>
+      </div>
+    </div>
+    <div class="callout callout-rose">
+      <span class="callout-icon">🔐</span>
+      <div>
+        <div class="callout-title ct-rose">Secret ≠ seguro por defecto</div>
+        <div class="callout-text">Base64 <strong>no es cifrado</strong> — es encoding. En Etcd, los Secrets están en claro por defecto. Para producción usa <strong>Sealed Secrets</strong> (Bitnami) o <strong>External Secrets Operator</strong> integrado con Vault o AWS Secrets Manager.</div>
+      </div>
+    </div>
+    <div class="callout callout-green">
+      <span class="callout-icon">💾</span>
+      <div>
+        <div class="callout-title ct-green">PVC — el disco sobrevive al Pod</div>
+        <div class="callout-text">Si el Pod de postgres muere, el PVC permanece. K8s crea un nuevo Pod y monta el mismo disco. <strong>Los datos no se pierden.</strong> Esto es exactamente lo que no puedes hacer con un Deployment normal.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">KUBERNETES · CONFIG &amp; STATE</span>
+  <div class="footer-nav">
+    <span class="footer-count">ConfigMap · Secret · PV/PVC · StorageClass</span>
+    <a class="footer-btn" href="semana-05.html">Helm →</a>
+    <a class="footer-btn" href="semana-06.html">Observabilidad →</a>
+  </div>
+</div>
+</body>
+</html>

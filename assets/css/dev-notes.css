@@ -359,6 +359,7 @@ body.dn-home .tg-bar-fill  { height: 100%; border-radius: 2px; background: #FF99
 body.dn-home .tg-bar-fill--0   { width: 0%; }
 body.dn-home .tg-bar-fill--25  { width: 25%; }
 body.dn-home .tg-bar-fill--50  { width: 50%; }
+body.dn-home .tg-bar-fill--62  { width: 62.5%; }
 body.dn-home .tg-bar-fill--75  { width: 75%; background: #14B8A6; }
 body.dn-home .tg-bar-fill--100 { width: 100%; }
 body.dn-home .tg-pct { font-family: 'Space Mono', monospace; font-size: 9px; color: #FF9900; }

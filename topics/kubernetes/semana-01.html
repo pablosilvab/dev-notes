@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s · Arquitectura interna</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+
+  /* HEADER */
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(59,130,246,0.09) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(168,85,247,0.05) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#3B82F6;color:#fff;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  .header h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  .header h1 span{color:#3B82F6}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#3B82F6;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .header-pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace;letter-spacing:.04em}
+  .pill-a{color:#93C5FD;border-color:rgba(147,197,253,.3);background:rgba(147,197,253,.07)}
+  .pill-b{color:#D8B4FE;border-color:rgba(216,180,254,.3);background:rgba(216,180,254,.07)}
+  .pill-c{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .pill-d{color:#FDE68A;border-color:rgba(253,230,138,.3);background:rgba(253,230,138,.07)}
+
+  /* BODY */
+  .body{padding:0 56px 56px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-blue{color:#3B82F6}.sn-purple{color:#A855F7}.sn-green{color:#22C55E}.sn-yellow{color:#EAB308}.sn-rose{color:#F43F5E}.sn-teal{color:#14B8A6}
+  .section-title-text{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:#1E2A40}
+
+  /* CARDS */
+  .cards-grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .card.c-blue::before{background:#3B82F6}.card.c-purple::before{background:#A855F7}.card.c-green::before{background:#22C55E}
+  .card.c-yellow::before{background:#EAB308}.card.c-rose::before{background:#F43F5E}.card.c-teal::before{background:#14B8A6}
+  .card.c-orange::before{background:#F97316}
+  .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .icon-blue{background:rgba(59,130,246,.12)}.icon-purple{background:rgba(168,85,247,.12)}.icon-green{background:rgba(34,197,94,.12)}
+  .icon-yellow{background:rgba(234,179,8,.12)}.icon-rose{background:rgba(244,63,94,.12)}.icon-teal{background:rgba(20,184,166,.12)}
+  .icon-orange{background:rgba(249,115,22,.12)}
+  .card-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .card-title{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .card-keywords{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+  .kw-blue{background:rgba(59,130,246,.12);color:#93C5FD}.kw-purple{background:rgba(168,85,247,.12);color:#D8B4FE}
+  .kw-green{background:rgba(34,197,94,.12);color:#86EFAC}.kw-yellow{background:rgba(234,179,8,.12);color:#FDE68A}
+  .kw-rose{background:rgba(244,63,94,.12);color:#FDA4AF}.kw-teal{background:rgba(20,184,166,.12);color:#5EEAD4}
+  .kw-orange{background:rgba(249,115,22,.12);color:#FDBA74}
+  .card-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .card-example{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .card-example strong{color:#94A3B8;font-weight:500}
+
+  /* ARCHITECTURE DIAGRAM */
+  .arch-diagram{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:28px 32px}
+  .arch-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:24px}
+  .arch-layout{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:start}
+  .arch-plane{border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px}
+  .plane-cp{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.25)}
+  .plane-worker{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.25)}
+  .plane-label{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.12em;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid}
+  .pl-blue{color:#3B82F6;border-color:rgba(59,130,246,.2)}.pl-green{color:#22C55E;border-color:rgba(34,197,94,.2)}
+  .comp-row{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px}
+  .comp-blue{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2)}
+  .comp-purple{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2)}
+  .comp-teal{background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.2)}
+  .comp-green{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)}
+  .comp-orange{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2)}
+  .comp-yellow{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2)}
+  .comp-icon{font-size:18px;flex-shrink:0}
+  .comp-info .comp-name{font-size:12px;font-weight:700;color:#E2E8F0}
+  .comp-info .comp-role{font-size:10px;color:#64748B;font-family:'DM Mono',monospace;margin-top:1px}
+  .arch-mid{display:flex;align-items:center;justify-content:center}
+  .arch-arrow{writing-mode:vertical-lr;text-orientation:mixed;color:#2D3E5A;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.08em;padding:0 4px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .arch-arrow span{font-size:16px}
+
+  /* RECONCILIATION LOOP */
+  .loop-diagram{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:24px 28px}
+  .loop-steps{display:flex;align-items:center;justify-content:space-between;gap:0}
+  .loop-step{flex:1;text-align:center;padding:14px 10px;border-radius:10px;position:relative}
+  .ls-blue{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25)}
+  .ls-purple{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25)}
+  .ls-green{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25)}
+  .ls-yellow{background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.25)}
+  .loop-icon{font-size:22px;display:block;margin-bottom:6px}
+  .loop-name{font-size:12px;font-weight:700;color:#E2E8F0;margin-bottom:3px}
+  .loop-sub{font-size:10px;color:#64748B;font-family:'DM Mono',monospace}
+  .loop-arrow{color:#2D3E5A;font-size:22px;padding:0 6px;flex-shrink:0}
+  .loop-note{margin-top:16px;padding:10px 14px;background:#0A0E1A;border:1px solid #1A2236;border-radius:8px;font-size:11.5px;color:#64748B;line-height:1.55;text-align:center}
+
+  /* CMD BOX */
+  .cmd-box{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cmd-header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cmd-dot{width:8px;height:8px;border-radius:50%}
+  .cmd-title{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3;margin-left:4px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .c-cmd{color:#93C5FD}.c-flag{color:#FDE68A}.c-out{color:#86EFAC}.c-comment{color:#2D3E5A;font-style:italic}
+
+  /* CALLOUT */
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .callout-blue{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.2)}
+  .callout-yellow{background:rgba(234,179,8,.05);border:1px solid rgba(234,179,8,.2)}
+  .callout-green{background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.2)}
+  .callout-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .callout-title{font-size:12px;font-weight:600;margin-bottom:5px}
+  .ct-blue{color:#93C5FD}.ct-yellow{color:#FDE68A}.ct-green{color:#86EFAC}
+  .callout-text{font-size:12px;color:#64748B;line-height:1.6}
+  .callout-text strong{color:#94A3B8}
+
+  /* FOOTER */
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center}
+  .footer-text{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .footer-nav{display:flex;align-items:center;gap:12px}
+  .footer-count{font-family:'Space Mono',monospace;font-size:10px;color:#3B82F6;letter-spacing:.06em}
+  .footer-btn{font-family:'Space Mono',monospace;font-size:10px;color:#3B82F6;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);padding:4px 12px;border-radius:3px;text-decoration:none;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="../../index.html">← dev-notes</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">KUBERNETES · ARQUITECTURA INTERNA</div>
+        <h1>Arquitectura<br><span>Interna de K8s</span></h1>
+        <p class="header-sub">Control Plane vs Worker Nodes · Modelo declarativo · Reconciliation Loop</p>
+      </div>
+    </div>
+    <div class="part-badge">K8S · ARQUITECTURA</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🧠 Control Plane</span>
+    <span class="pill pill-b">⚙️ Worker Nodes</span>
+    <span class="pill pill-c">🔄 Reconciliation Loop</span>
+    <span class="pill pill-d">📋 Modelo Declarativo</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- S1: DIAGRAMA ARQUITECTURA -->
+  <div class="section-header">
+    <span class="section-num sn-blue">01</span>
+    <span class="section-title-text">Arquitectura — Control Plane vs Worker Nodes</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="arch-diagram">
+    <div class="arch-title">Kubernetes Cluster — componentes y responsabilidades</div>
+    <div class="arch-layout">
+
+      <!-- CONTROL PLANE -->
+      <div class="arch-plane plane-cp">
+        <div class="plane-label pl-blue">🧠 CONTROL PLANE (Master)</div>
+
+        <div class="comp-row comp-blue">
+          <span class="comp-icon">🌐</span>
+          <div class="comp-info">
+            <div class="comp-name">API Server</div>
+            <div class="comp-role">kube-apiserver · única puerta de entrada al cluster</div>
+          </div>
+        </div>
+
+        <div class="comp-row comp-purple">
+          <span class="comp-icon">🗄️</span>
+          <div class="comp-info">
+            <div class="comp-name">Etcd</div>
+            <div class="comp-role">Base de datos distribuida (KV) · el estado deseado del cluster</div>
+          </div>
+        </div>
+
+        <div class="comp-row comp-teal">
+          <span class="comp-icon">📅</span>
+          <div class="comp-info">
+            <div class="comp-name">Scheduler</div>
+            <div class="comp-role">kube-scheduler · decide en qué Node vive cada Pod</div>
+          </div>
+        </div>
+
+        <div class="comp-row comp-yellow">
+          <span class="comp-icon">🔁</span>
+          <div class="comp-info">
+            <div class="comp-name">Controller Manager</div>
+            <div class="comp-role">Loops de reconciliación · Deployment, Node, Job controllers</div>
+          </div>
+        </div>
+
+        <div class="comp-row comp-orange" style="margin-top:4px;opacity:.7">
+          <span class="comp-icon">☁️</span>
+          <div class="comp-info">
+            <div class="comp-name">Cloud Controller Manager</div>
+            <div class="comp-role">Integración con AWS/GCP/Azure (LBs, discos, IPs)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLECHA -->
+      <div class="arch-mid">
+        <div class="arch-arrow">
+          <span>⇅</span>
+          <span style="font-size:9px;writing-mode:vertical-lr;color:#2D3E5A">kubectl<br>+ HTTPS</span>
+        </div>
+      </div>
+
+      <!-- WORKER NODE -->
+      <div class="arch-plane plane-worker">
+        <div class="plane-label pl-green">⚙️ WORKER NODE (×N)</div>
+
+        <div class="comp-row comp-green">
+          <span class="comp-icon">🤖</span>
+          <div class="comp-info">
+            <div class="comp-name">Kubelet</div>
+            <div class="comp-role">Agente local · ejecuta Pods · reporta estado al API Server</div>
+          </div>
+        </div>
+
+        <div class="comp-row comp-blue">
+          <span class="comp-icon">🔀</span>
+          <div class="comp-info">
+            <div class="comp-name">Kube-proxy</div>
+            <div class="comp-role">Reglas iptables/IPVS · implementa los Services en red</div>
+          </div>
+        </div>
+
+        <div class="comp-row comp-teal">
+          <span class="comp-icon">🐳</span>
+          <div class="comp-info">
+            <div class="comp-name">Container Runtime</div>
+            <div class="comp-role">containerd / CRI-O · ejecuta los contenedores reales</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;padding:12px;background:#0A0E1A;border:1px solid #1A2236;border-radius:8px">
+          <div style="font-size:9px;font-family:'DM Mono',monospace;color:#3B4C68;margin-bottom:8px;letter-spacing:.08em">PODS EN EL NODE</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:6px;padding:6px 10px;font-size:10px;color:#86EFAC;font-family:'DM Mono',monospace">📦 Pod A</div>
+            <div style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:6px;padding:6px 10px;font-size:10px;color:#93C5FD;font-family:'DM Mono',monospace">📦 Pod B</div>
+            <div style="background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.3);border-radius:6px;padding:6px 10px;font-size:10px;color:#D8B4FE;font-family:'DM Mono',monospace">📦 Pod C</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loop-note" style="margin-top:20px">
+      🔑 <strong style="color:#94A3B8">kubectl habla sólo con el API Server.</strong> Nunca con Kubelet directamente. El API Server valida, persiste en Etcd y notifica a los controllers. El Kubelet hace polling al API Server para saber qué Pods debe ejecutar en su Node.
+    </div>
+  </div>
+
+  <!-- S2: COMPONENTES DEEP DIVE -->
+  <div class="section-header">
+    <span class="section-num sn-purple">02</span>
+    <span class="section-title-text">Componentes en profundidad — lo que debes saber para la entrevista</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🗄️</div>
+        <div>
+          <div class="card-num">COMPONENTE · 01</div>
+          <div class="card-title">Etcd — la fuente de verdad</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">Raft consensus</span>
+        <span class="kw kw-blue">KV store</span>
+        <span class="kw kw-rose">Single source of truth</span>
+      </div>
+      <div class="card-desc">Almacena <em>todo</em> el estado del cluster: Pods, Services, ConfigMaps, Secrets, RBAC. Es el único componente stateful del Control Plane. Usa el algoritmo Raft para consenso distribuido — necesitas quórum (2n+1 nodos) para escrituras.</div>
+      <div class="card-example">
+        <strong>Pregunta de entrevista:</strong> ¿Qué pasa si Etcd cae? El cluster sigue ejecutando los Pods actuales (Kubelet los mantiene vivos) pero no puede aceptar cambios — no hay Deployments, escalados ni rollbacks hasta que Etcd vuelva.
+      </div>
+    </div>
+
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🌐</div>
+        <div>
+          <div class="card-num">COMPONENTE · 02</div>
+          <div class="card-title">API Server — el único punto de entrada</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">REST API</span>
+        <span class="kw kw-green">Admission Controllers</span>
+        <span class="kw kw-yellow">Watch mechanism</span>
+      </div>
+      <div class="card-desc">Expone la API REST de Kubernetes. Valida (schema) y autentica/autoriza cada request (RBAC). Persiste en Etcd. El mecanismo Watch permite a los controllers recibir notificaciones push en vez de hacer polling.</div>
+      <div class="card-example">
+        <strong>Admission Controllers:</strong> interceptores antes de persistir en Etcd. <code style="font-family:'DM Mono',monospace;font-size:10px;color:#93C5FD">MutatingAdmissionWebhook</code> puede modificar objetos; <code style="font-family:'DM Mono',monospace;font-size:10px;color:#93C5FD">ValidatingAdmissionWebhook</code> puede rechazarlos. Aquí vive OPA/Gatekeeper.
+      </div>
+    </div>
+
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">📅</div>
+        <div>
+          <div class="card-num">COMPONENTE · 03</div>
+          <div class="card-title">Scheduler — el cerebro de ubicación</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">Node affinity</span>
+        <span class="kw kw-yellow">Taints/Tolerations</span>
+        <span class="kw kw-blue">Resource requests</span>
+      </div>
+      <div class="card-desc">Toma Pods sin Node asignado (Pending) y decide dónde colocarlos. Primero filtra Nodes que no cumplen requisitos (Filtering), luego puntúa los restantes (Scoring) y elige el mejor.</div>
+      <div class="card-example">
+        <strong>Criterios de decisión:</strong> recursos disponibles (CPU/RAM requests), Node Affinity/Anti-Affinity, Taints y Tolerations, Pod Topology Spread, y políticas de prioridad. Si ningún Node pasa el filtro, el Pod queda en <code style="font-family:'DM Mono',monospace;font-size:10px;color:#5EEAD4">Pending</code>.
+      </div>
+    </div>
+
+    <div class="card c-yellow">
+      <div class="card-header">
+        <div class="card-icon icon-yellow">🔁</div>
+        <div>
+          <div class="card-num">COMPONENTE · 04</div>
+          <div class="card-title">Controller Manager — los loops</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-yellow">Control Loop</span>
+        <span class="kw kw-blue">Desired vs Actual</span>
+        <span class="kw kw-green">Self-healing</span>
+      </div>
+      <div class="card-desc">Agrupa múltiples controllers en un proceso. Cada controller observa el estado actual, lo compara con el deseado, y actúa. El Deployment Controller crea ReplicaSets; el ReplicaSet Controller crea Pods; el Node Controller detecta Nodes caídos.</div>
+      <div class="card-example">
+        <strong>Ejemplo:</strong> borras un Pod manualmente → ReplicaSet controller detecta que actual=2, deseado=3 → crea un nuevo Pod. Este es el self-healing de K8s.
+      </div>
+    </div>
+
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">🤖</div>
+        <div>
+          <div class="card-num">COMPONENTE · 05</div>
+          <div class="card-title">Kubelet — el agente del nodo</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">Node agent</span>
+        <span class="kw kw-teal">CRI interface</span>
+        <span class="kw kw-blue">Pod lifecycle</span>
+      </div>
+      <div class="card-desc">Se ejecuta en cada Node (incluido el master en setups single-node). Recibe PodSpecs del API Server y garantiza que los contenedores estén corriendo y sanos. Reporta el estado de vuelta al API Server vía heartbeats.</div>
+      <div class="card-example">
+        <strong>Responsabilidades:</strong> ejecutar contenedores via CRI (containerd), gestionar volúmenes montados, ejecutar Liveness/Readiness probes, y reportar métricas de CPU/RAM del Pod al Metrics Server.
+      </div>
+    </div>
+
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🔀</div>
+        <div>
+          <div class="card-num">COMPONENTE · 06</div>
+          <div class="card-title">Kube-proxy — networking real</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">iptables</span>
+        <span class="kw kw-purple">IPVS</span>
+        <span class="kw kw-teal">Service VIP</span>
+      </div>
+      <div class="card-desc">Implementa la abstracción de Service en cada Node. Mantiene reglas iptables (o IPVS) que redirigen tráfico a la IP virtual del Service hacia los Pods reales. Se actualiza cuando los Pods cambian.</div>
+      <div class="card-example">
+        <strong>Nota moderna:</strong> en clusters con CNI plugins avanzados (Cilium con eBPF), kube-proxy puede eliminarse completamente — Cilium gestiona el networking sin iptables, con mejor performance.
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: RECONCILIATION LOOP -->
+  <div class="section-header">
+    <span class="section-num sn-green">03</span>
+    <span class="section-title-text">El Reconciliation Loop — el corazón del modelo declarativo</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="loop-diagram">
+    <div style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px">
+      El ciclo que hace a K8s self-healing y declarativo
+    </div>
+    <div class="loop-steps">
+      <div class="loop-step ls-blue">
+        <span class="loop-icon">📋</span>
+        <div class="loop-name">DESIRED STATE</div>
+        <div class="loop-sub">Tú defines en YAML</div>
+        <div style="font-size:11px;color:#64748B;margin-top:6px;line-height:1.4">replicas: 3<br>image: nginx:1.25</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step ls-purple">
+        <span class="loop-icon">👁️</span>
+        <div class="loop-name">OBSERVE</div>
+        <div class="loop-sub">Controller lee Etcd</div>
+        <div style="font-size:11px;color:#64748B;margin-top:6px;line-height:1.4">Actual: 2 Pods<br>corriendo</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step ls-yellow">
+        <span class="loop-icon">⚖️</span>
+        <div class="loop-name">DIFF</div>
+        <div class="loop-sub">Deseado vs Actual</div>
+        <div style="font-size:11px;color:#64748B;margin-top:6px;line-height:1.4">Faltan 1 Pod<br>→ actuar</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step ls-green">
+        <span class="loop-icon">⚡</span>
+        <div class="loop-name">ACT</div>
+        <div class="loop-sub">Controller crea Pod</div>
+        <div style="font-size:11px;color:#64748B;margin-top:6px;line-height:1.4">POST /pods al<br>API Server</div>
+      </div>
+      <div class="loop-arrow">↩</div>
+    </div>
+    <div class="loop-note">
+      🔑 <strong style="color:#94A3B8">Imperativo vs Declarativo:</strong> con Docker dices <em>"crea este contenedor"</em> (imperativo). Con K8s dices <em>"quiero 3 réplicas de nginx"</em> (declarativo) — K8s se encarga de llegar ahí y mantenerlo, aunque caigan Pods o Nodes.
+    </div>
+  </div>
+
+  <!-- S4: COMANDOS DE EXPLORACIÓN -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">04</span>
+    <span class="section-title-text">Práctica — explorar los componentes con kubectl</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">kubectl — explorar el Control Plane en minikube/kind</span>
+    </div>
+    <pre><span class="c-comment"># Ver todos los componentes del Control Plane</span>
+<span class="c-cmd">kubectl</span> get pods <span class="c-flag">-n</span> kube-system
+
+<span class="c-comment"># Output esperado:</span>
+<span class="c-out">NAME                               READY   STATUS    RESTARTS
+coredns-xxx-yyy                    1/1     Running   0
+etcd-minikube                      1/1     Running   0
+kube-apiserver-minikube            1/1     Running   0
+kube-controller-manager-minikube   1/1     Running   0
+kube-proxy-xxxxx                   1/1     Running   0
+kube-scheduler-minikube            1/1     Running   0</span>
+
+<span class="c-comment"># Ver logs del API Server</span>
+<span class="c-cmd">kubectl</span> logs <span class="c-flag">-n</span> kube-system kube-apiserver-minikube
+
+<span class="c-comment"># Ver estado y capacidad de los Nodes</span>
+<span class="c-cmd">kubectl</span> get nodes <span class="c-flag">-o</span> wide
+<span class="c-cmd">kubectl</span> describe node minikube
+
+<span class="c-comment"># Ver todos los recursos de un namespace</span>
+<span class="c-cmd">kubectl</span> get all <span class="c-flag">-n</span> kube-system
+
+<span class="c-comment"># Inspeccionar etcd desde el Pod (minikube)</span>
+<span class="c-cmd">kubectl</span> exec <span class="c-flag">-it</span> <span class="c-flag">-n</span> kube-system etcd-minikube <span class="c-flag">--</span> etcdctl \
+  <span class="c-flag">--cacert</span> /var/lib/minikube/certs/etcd/ca.crt \
+  <span class="c-flag">--cert</span> /var/lib/minikube/certs/etcd/server.crt \
+  <span class="c-flag">--key</span> /var/lib/minikube/certs/etcd/server.key \
+  get / <span class="c-flag">--prefix</span> <span class="c-flag">--keys-only</span> | head -20</pre>
+  </div>
+
+  <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="callout callout-blue">
+      <span class="callout-icon">💡</span>
+      <div>
+        <div class="callout-title ct-blue">Modelo declarativo — la mentalidad clave</div>
+        <div class="callout-text">No pienses en comandos para <em>crear</em> cosas. Piensa en YAML que <em>describe</em> el estado que quieres. K8s hace el resto. Si algo falla, K8s lo detecta y corrige. Tu trabajo es definir el estado deseado, no gestionar procesos.</div>
+      </div>
+    </div>
+    <div class="callout callout-yellow">
+      <span class="callout-icon">⚠️</span>
+      <div>
+        <div class="callout-title ct-yellow">Etcd es el único stateful — protégelo</div>
+        <div class="callout-text">En producción, Etcd debe tener snapshots automáticos y estar en nodos dedicados con discos SSD. Un cluster K8s sin backup de Etcd es un cluster que puedes perder completamente. La mayoría de los proveedores gestionados (EKS, GKE) se encargan de esto.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">KUBERNETES · ARQUITECTURA INTERNA</span>
+  <div class="footer-nav">
+    <span class="footer-count">6 componentes · Reconciliation Loop · kubectl</span>
+    <a class="footer-btn" href="semana-02.html">Workloads →</a>
+  </div>
+</div>
+</body>
+</html>

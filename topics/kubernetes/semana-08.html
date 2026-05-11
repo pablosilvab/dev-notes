@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s · GitOps y ecosistema cloud</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(16,185,129,0.12) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(59,130,246,0.06) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#10B981;color:#042f2e;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  .header h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  .header h1 span{color:#6EE7B7}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#6EE7B7;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.35);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .header-pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace;letter-spacing:.04em}
+  .pill-a{color:#6EE7B7;border-color:rgba(110,231,183,.35);background:rgba(16,185,129,.08)}
+  .pill-b{color:#93C5FD;border-color:rgba(147,197,253,.3);background:rgba(147,197,253,.07)}
+  .pill-c{color:#FDE68A;border-color:rgba(253,230,138,.3);background:rgba(253,230,138,.07)}
+  .pill-d{color:#FDA4AF;border-color:rgba(253,164,175,.3);background:rgba(253,164,175,.07)}
+  .body{padding:0 56px 56px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-emerald{color:#10B981}.sn-blue{color:#3B82F6}.sn-purple{color:#A855F7}.sn-yellow{color:#EAB308}
+  .section-title-text{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:#1E2A40}
+  .cards-grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.callouts-row{grid-template-columns:1fr!important}}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .card.c-emerald::before{background:#10B981}.card.c-blue::before{background:#3B82F6}.card.c-purple::before{background:#A855F7}
+  .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .icon-emerald{background:rgba(16,185,129,.15)}.icon-blue{background:rgba(59,130,246,.12)}.icon-purple{background:rgba(168,85,247,.12)}
+  .card-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .card-title{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .card-keywords{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+  .kw-emerald{background:rgba(16,185,129,.12);color:#6EE7B7}.kw-blue{background:rgba(59,130,246,.12);color:#93C5FD}
+  .kw-purple{background:rgba(168,85,247,.12);color:#D8B4FE}
+  .card-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .card-example{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .card-example strong{color:#94A3B8;font-weight:500}
+
+  .gitops-loop{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:24px 28px}
+  .gl-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
+  .gl-flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;font-family:'DM Mono',monospace;font-size:11px;color:#94A3B8}
+  .gl-box{padding:12px 16px;border-radius:8px;border:1px solid}
+  .gl-git{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.28);color:#6EE7B7}
+  .gl-cd{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.28);color:#93C5FD}
+  .gl-cl{background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.28);color:#D8B4FE}
+  .gl-ar{color:#2D3E5A;font-size:16px}
+
+  .cmp{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;overflow:hidden}
+  .cmp-h{display:grid;grid-template-columns:1fr 1fr 1.15fr;background:#080C17;border-bottom:1px solid #1E2A40}
+  .cmp-c{padding:10px 14px;font-size:10px;font-family:'DM Mono',monospace;color:#6B7FA3;border-right:1px solid #1A2236;font-weight:500}
+  .cmp-c:last-child{border-right:none}
+  .cmp-r{display:grid;grid-template-columns:1fr 1fr 1.15fr;border-bottom:1px solid #1A2236}
+  .cmp-r:last-child{border-bottom:none}
+  .cmp-d{padding:12px 14px;font-size:11.5px;color:#64748B;border-right:1px solid #1A2236;line-height:1.5}
+  .cmp-d:last-child{border-right:none}
+  .cmp-n{font-weight:600;color:#E2E8F0;font-size:12px}
+
+  .cmd-box{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cmd-header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cmd-dot{width:8px;height:8px;border-radius:50%}
+  .cmd-title{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3;margin-left:4px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .c-cmd{color:#93C5FD}.c-flag{color:#FDE68A}.c-comment{color:#2D3E5A;font-style:italic}
+
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .callout-emerald{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.22)}
+  .callout-blue{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.2)}
+  .callout-purple{background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2)}
+  .callout-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .callout-title{font-size:12px;font-weight:600;margin-bottom:5px}
+  .ct-emerald{color:#6EE7B7}.ct-blue{color:#93C5FD}.ct-purple{color:#D8B4FE}
+  .callout-text{font-size:12px;color:#64748B;line-height:1.6}
+  .callout-text strong{color:#94A3B8}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .footer-text{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .footer-nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .footer-count{font-family:'Space Mono',monospace;font-size:10px;color:#34D399;letter-spacing:.06em}
+  .footer-btn{font-family:'Space Mono',monospace;font-size:10px;color:#34D399;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.28);padding:4px 12px;border-radius:3px;text-decoration:none;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="semana-07.html">← Seguridad</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">KUBERNETES · GITOPS &amp; CLOUD</div>
+        <h1>GitOps<br><span>y ecosistema cloud</span></h1>
+        <p class="header-sub">Git como fuente de verdad · Argo CD / Flux · Clusters gestionados · EKS / GKE / AKS</p>
+      </div>
+    </div>
+    <div class="part-badge">K8S · GITOPS</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">📂 Repo → cluster</span>
+    <span class="pill pill-b">🔄 Reconcile loop</span>
+    <span class="pill pill-c">☁ Managed</span>
+    <span class="pill pill-d">🧩 Add-ons</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-emerald">01</span>
+    <span class="section-title-text">GitOps — principios</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-emerald">
+      <div class="card-header">
+        <div class="card-icon icon-emerald">📌</div>
+        <div>
+          <div class="card-num">DECLARATIVO</div>
+          <div class="card-title">El estado deseado vive en Git</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-emerald">PR</span>
+        <span class="kw kw-emerald">review</span>
+      </div>
+      <div class="card-desc">Cambios al cluster = <strong>merge</strong> a la rama que observa el operador. Rollback = revert del commit. Auditoría y diffs legibles por diseño.</div>
+      <div class="card-example"><strong>No:</strong> <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">kubectl apply</code> manual en prod sin reflejar en repo (drift).</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🔁</div>
+        <div>
+          <div class="card-num">PULL-BASED</div>
+          <div class="card-title">El agente aplica desde dentro</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">outbound</span>
+      </div>
+      <div class="card-desc">El controlador en el cluster <strong>tira</strong> de Git (o de OCI Helm). No hace falta exponer el API del cluster a la CI con permisos admin — reduce superficie de ataque.</div>
+      <div class="card-example">La CI construye y publica imagen; GitOps actualiza solo el tag o digest en manifiestos.</div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">⚖️</div>
+        <div>
+          <div class="card-num">DRIFT</div>
+          <div class="card-title">Detección y autocorrección</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">sync</span>
+        <span class="kw kw-purple">prune</span>
+      </div>
+      <div class="card-desc">Si alguien muta recursos a mano, el siguiente sync puede <strong>sobrescribir</strong> o marcar <strong>OutOfSync</strong> según política. Define si permites “self-heal” automático.</div>
+      <div class="card-example">Políticas de <strong>prune</strong> con cuidado: borrar namespaces por error duele.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px" class="gitops-loop">
+    <div class="gl-title">Bucle típico GitOps</div>
+    <div class="gl-flow">
+      <div class="gl-box gl-git">Git (main)</div>
+      <span class="gl-ar">→</span>
+      <div class="gl-box gl-cd">Argo CD / Flux</div>
+      <span class="gl-ar">→</span>
+      <div class="gl-box gl-cl">API Server</div>
+      <span class="gl-ar">→</span>
+      <span style="color:#64748B">workloads alineados con el commit</span>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-blue">02</span>
+    <span class="section-title-text">Argo CD vs Flux — encaje rápido</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmp">
+    <div class="cmp-h">
+      <div class="cmp-c">Aspecto</div>
+      <div class="cmp-c">Argo CD</div>
+      <div class="cmp-c">Flux v2</div>
+    </div>
+    <div class="cmp-r">
+      <div class="cmp-d"><span class="cmp-n">Modelo mental</span></div>
+      <div class="cmp-d">Aplicaciones como objetos CRD con UI CLI potentes; “App of Apps”</div>
+      <div class="cmp-d">Controllers modulares (source, kustomize, helm, notification); GitOps Toolkit</div>
+    </div>
+    <div class="cmp-r">
+      <div class="cmp-d"><span class="cmp-n">Helm</span></div>
+      <div class="cmp-d">Soporte nativo de charts y parámetros por UI</div>
+      <div class="cmp-d">HelmRelease CRD + reconciler dedicado</div>
+    </div>
+    <div class="cmp-r">
+      <div class="cmp-d"><span class="cmp-n">Multi-repo / multi-cluster</span></div>
+      <div class="cmp-d">Proyectos, permisos granulares, patrones maduros en enterprise</div>
+      <div class="cmp-d">Composición con dependencias entre sources; encaja en pipelines Git-native</div>
+    </div>
+    <div class="cmp-r">
+      <div class="cmp-d"><span class="cmp-n">Cuándo elegir</span></div>
+      <div class="cmp-d">Equipos que quieren <strong>UI</strong> y visibilidad de sync unificada</div>
+      <div class="cmp-d">Equipos muy orientados a <strong>controllers + YAML</strong> y CNCF pura</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-purple">03</span>
+    <span class="section-title-text">Kubernetes gestionado — qué delegas</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">🅰</div>
+        <div>
+          <div class="card-num">EKS</div>
+          <div class="card-title">AWS</div>
+        </div>
+      </div>
+      <div class="card-desc">Control plane gestionado; integración con <strong>IAM</strong>, ALB/NLB, VPC CNI. Tú gestionas nodos (Managed Node Groups, Karpenter, Fargate profiles) y add-ons (CNI, CoreDNS, kube-proxy / legacy).</div>
+      <div class="card-example"><strong>Actualizaciones:</strong> versiones de Kubernetes en cadencia AWS; planifica ventanas y prueba en staging.</div>
+    </div>
+    <div class="card c-emerald">
+      <div class="card-header">
+        <div class="card-icon icon-emerald">🅶</div>
+        <div>
+          <div class="card-num">GKE</div>
+          <div class="card-title">Google Cloud</div>
+        </div>
+      </div>
+      <div class="card-desc">Autopilot vs Standard: en <strong>Autopilot</strong> Google administra más la capa de nodos y límites de seguridad. Buena integración con Artifact Registry e IAM de workload.</div>
+      <div class="card-example"><strong>Red:</strong> Network Endpoint Groups (NEG) para Ingress/Gateway con backends fine-grained.</div>
+    </div>
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🅼</div>
+        <div>
+          <div class="card-num">AKS</div>
+          <div class="card-title">Azure</div>
+        </div>
+      </div>
+      <div class="card-desc">Control plane gratis (modelo de precios distinto); integración con <strong>Entra ID</strong>, Azure CNI, Application Gateway. Node pools por SKU/OS.</div>
+      <div class="card-example"><strong>Windows containers</strong> y escenarios híbridos on-prem↔cloud son frecuentes en clientes Azure.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-yellow">04</span>
+    <span class="section-title-text">CLI — inspeccionar GitOps</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">Argo CD CLI (ejemplos)</span>
+    </div>
+    <pre><span class="c-comment"># Login (SSO o admin bootstrap solo en lab)</span>
+<span class="c-cmd">argocd</span> login argocd.mi-dominio.com
+
+<span class="c-comment"># Estado de aplicaciones</span>
+<span class="c-cmd">argocd</span> app list
+<span class="c-cmd">argocd</span> app get mi-app -o wide
+
+<span class="c-comment"># Forzar reconciliación / sync manual (según política)</span>
+<span class="c-cmd">argocd</span> app sync mi-app --prune
+
+<span class="c-comment"># Flux: ver Kustomizations y fuentes</span>
+<span class="c-cmd">flux</span> get kustomizations -n flux-system
+<span class="c-cmd">flux</span> get sources git -n flux-system</pre>
+  </div>
+
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px" class="callouts-row">
+    <div class="callout callout-emerald">
+      <span class="callout-icon">🌿</span>
+      <div>
+        <div class="callout-title ct-emerald">Un repo vs muchos</div>
+        <div class="callout-text">Monorepo simplifica dependencias; multirepo aísla blast radius. Ambos funcionan con GitOps si el <strong>árbol de aplicaciones</strong> está claro.</div>
+      </div>
+    </div>
+    <div class="callout callout-blue">
+      <span class="callout-icon">🔐</span>
+      <div>
+        <div class="callout-title ct-blue">Secretos en Git</div>
+        <div class="callout-text">Nunca en claro. <strong>SOPS</strong>, Sealed Secrets o vault agent + referencias. GitOps y seguridad van en el mismo barco.</div>
+      </div>
+    </div>
+    <div class="callout callout-purple">
+      <span class="callout-icon">🧭</span>
+      <div>
+        <div class="callout-title ct-purple">Versión del control plane</div>
+        <div class="callout-text">En managed, deprecations y APIs beta te alcanzan igual. Sigue el <strong>changelog</strong> del proveedor y prueba upgrades en cluster espejo.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">KUBERNETES · GITOPS &amp; CLOUD</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="semana-07.html">← Seguridad</a>
+    <span class="footer-count">Git · Argo/Flux · EKS · GKE · AKS</span>
+    <a class="footer-btn" href="../../index.html">dev-notes →</a>
+  </div>
+</div>
+</body>
+</html>

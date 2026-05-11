@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s · Observabilidad y troubleshooting</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(99,102,241,0.12) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(244,63,94,0.06) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#6366F1;color:#fff;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  .header h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  .header h1 span{color:#A5B4FC}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#A5B4FC;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.35);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .header-pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace;letter-spacing:.04em}
+  .pill-a{color:#A5B4FC;border-color:rgba(165,180,252,.35);background:rgba(99,102,241,.08)}
+  .pill-b{color:#93C5FD;border-color:rgba(147,197,253,.3);background:rgba(147,197,253,.07)}
+  .pill-c{color:#FDA4AF;border-color:rgba(253,164,175,.3);background:rgba(253,164,175,.07)}
+  .pill-d{color:#86EFAC;border-color:rgba(134,239,172,.3);background:rgba(134,239,172,.07)}
+  .body{padding:0 56px 56px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-indigo{color:#818CF8}.sn-blue{color:#3B82F6}.sn-rose{color:#F43F5E}.sn-green{color:#22C55E}.sn-teal{color:#14B8A6}
+  .section-title-text{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:#1E2A40}
+  .cards-grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.callouts-row{grid-template-columns:1fr!important}}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .card.c-indigo::before{background:#6366F1}.card.c-blue::before{background:#3B82F6}.card.c-rose::before{background:#F43F5E}
+  .card.c-green::before{background:#22C55E}.card.c-teal::before{background:#14B8A6}
+  .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .icon-indigo{background:rgba(99,102,241,.15)}.icon-blue{background:rgba(59,130,246,.12)}.icon-rose{background:rgba(244,63,94,.12)}
+  .icon-green{background:rgba(34,197,94,.12)}.icon-teal{background:rgba(20,184,166,.12)}
+  .card-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .card-title{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .card-keywords{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+  .kw-indigo{background:rgba(99,102,241,.15);color:#A5B4FC}.kw-blue{background:rgba(59,130,246,.12);color:#93C5FD}
+  .kw-rose{background:rgba(244,63,94,.12);color:#FDA4AF}.kw-green{background:rgba(34,197,94,.12);color:#86EFAC}
+  .card-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .card-example{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .card-example strong{color:#94A3B8;font-weight:500}
+
+  .obs-flow{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:28px 32px}
+  .obs-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
+  .obs-rows{display:flex;flex-direction:column;gap:12px}
+  .obs-row{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
+  .obs-cell{border-radius:10px;padding:14px 18px;flex:1;min-width:140px}
+  .oc-pod{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.22)}
+  .oc-col{background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.28)}
+  .oc-back{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.22)}
+  .oc-lbl{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.08em;margin-bottom:6px;color:#818CF8}
+  .oc-lbl.g{color:#22C55E}.oc-lbl.b{color:#3B82F6}
+  .oc-txt{font-size:11.5px;color:#8899B8;line-height:1.55}
+  .oc-arrow{align-self:center;color:#2D3E5A;font-size:18px;padding:0 4px}
+
+  .tri-table{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;overflow:hidden}
+  .tt-header{display:grid;grid-template-columns:1fr 1.1fr 1.2fr 1.1fr;background:#080C17;border-bottom:1px solid #1E2A40}
+  .ttc{padding:10px 14px;font-size:10px;font-family:'DM Mono',monospace;color:#6B7FA3;border-right:1px solid #1A2236;font-weight:500}
+  .ttc:last-child{border-right:none}
+  .tt-row{display:grid;grid-template-columns:1fr 1.1fr 1.2fr 1.1fr;border-bottom:1px solid #1A2236}
+  .tt-row:last-child{border-bottom:none}
+  .tt-cell{padding:12px 14px;font-size:11.5px;color:#64748B;border-right:1px solid #1A2236;line-height:1.5}
+  .tt-cell:last-child{border-right:none}
+  .tt-name{font-size:12px;font-weight:600;color:#E2E8F0}
+
+  .cmd-box{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cmd-header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cmd-dot{width:8px;height:8px;border-radius:50%}
+  .cmd-title{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3;margin-left:4px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .c-cmd{color:#93C5FD}.c-flag{color:#FDE68A}.c-out{color:#86EFAC}.c-comment{color:#2D3E5A;font-style:italic}
+  .c-key{color:#5EEAD4}.c-val{color:#86EFAC}
+
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .callout-indigo{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.22)}
+  .callout-rose{background:rgba(244,63,94,.05);border:1px solid rgba(244,63,94,.2)}
+  .callout-teal{background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.2)}
+  .callout-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .callout-title{font-size:12px;font-weight:600;margin-bottom:5px}
+  .ct-indigo{color:#A5B4FC}.ct-rose{color:#FDA4AF}.ct-teal{color:#5EEAD4}
+  .callout-text{font-size:12px;color:#64748B;line-height:1.6}
+  .callout-text strong{color:#94A3B8}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .footer-text{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .footer-nav{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .footer-count{font-family:'Space Mono',monospace;font-size:10px;color:#818CF8;letter-spacing:.06em}
+  .footer-btn{font-family:'Space Mono',monospace;font-size:10px;color:#818CF8;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);padding:4px 12px;border-radius:3px;text-decoration:none;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="semana-05.html">← Helm y Kustomize</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">KUBERNETES · OBSERVABILIDAD</div>
+        <h1>Observabilidad<br><span>y troubleshooting</span></h1>
+        <p class="header-sub">Métricas · Logs · Trazas · kubectl · Eventos · Probes y estados de Pod</p>
+      </div>
+    </div>
+    <div class="part-badge">K8S · OPS</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">📈 Métricas</span>
+    <span class="pill pill-b">📜 Logs</span>
+    <span class="pill pill-c">🔎 Trazas</span>
+    <span class="pill pill-d">🛠 kubectl debug</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <div class="section-header">
+    <span class="section-num sn-indigo">01</span>
+    <span class="section-title-text">Tres pilares — qué miras cuando algo falla</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g3">
+    <div class="card c-indigo">
+      <div class="card-header">
+        <div class="card-icon icon-indigo">📈</div>
+        <div>
+          <div class="card-num">MÉTRICAS</div>
+          <div class="card-title">¿Cuánto y qué tan rápido?</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-indigo">RED / USE</span>
+        <span class="kw kw-indigo">SLO / SLI</span>
+        <span class="kw kw-indigo">Prometheus</span>
+      </div>
+      <div class="card-desc">Series temporales: CPU, memoria, latencia, ratio de errores, colas. En K8s suele entrar <strong>metrics-server</strong> (HPA, <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">kubectl top</code>) y stacks tipo <strong>Prometheus + Grafana</strong> para dashboards y alertas.</div>
+      <div class="card-example"><strong>Pregunta clave:</strong> ¿el nodo o el Pod se queda sin CPU/RAM? ¿subió la latencia p95 a la vez que un rollout?</div>
+    </div>
+    <div class="card c-blue">
+      <div class="card-header">
+        <div class="card-icon icon-blue">📜</div>
+        <div>
+          <div class="card-num">LOGS</div>
+          <div class="card-title">¿Qué dijo la aplicación?</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-blue">stdout/stderr</span>
+        <span class="kw kw-blue">agregación</span>
+      </div>
+      <div class="card-desc">Por convención, todo va a <strong>stdout/stderr</strong>; el runtime y el kubelet redirigen. Los agentes (DaemonSet o sidecar) envían líneas a Loki, OpenSearch, CloudWatch, etc. Correlaciona con <strong>timestamp</strong> y <strong>trace-id</strong> si existe.</div>
+      <div class="card-example"><strong>Ojo:</strong> rotación y nivel de log en producción; un Pod en crash loop puede llenar disco si no hay límites en el nodo.</div>
+    </div>
+    <div class="card c-rose">
+      <div class="card-header">
+        <div class="card-icon icon-rose">🔎</div>
+        <div>
+          <div class="card-num">TRAZAS</div>
+          <div class="card-title">¿Qué servicio en la cadena falló?</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-rose">OpenTelemetry</span>
+        <span class="kw kw-rose">W3C traceparent</span>
+      </div>
+      <div class="card-desc">Sigue una petición a través de microservicios. Requiere instrumentación (SDK OTel) y un backend (Tempo, Jaeger, X-Ray). En entornos service-mesh, el mesh puede inyectar trazas; sin eso, <strong>tú</strong> propagas cabeceras.</div>
+      <div class="card-example"><strong>Útil cuando:</strong> métricas y logs se ven “bien” por servicio pero el usuario ve timeouts — la traza muestra el cuello de botella inter-servicio.</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-blue">02</span>
+    <span class="section-title-text">Dónde vive la señal en el cluster</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="obs-flow">
+    <div class="obs-title">Flujo típico — del Pod al backend de observabilidad</div>
+    <div class="obs-rows">
+      <div class="obs-row">
+        <div class="obs-cell oc-pod">
+          <div class="oc-lbl g">PODS</div>
+          <div class="oc-txt">Procesos exponen métricas (endpoint <code style="font-family:'DM Mono',monospace;font-size:10px;color:#86EFAC">/metrics</code>), escriben logs y (opcional) emiten spans OTel.</div>
+        </div>
+        <span class="oc-arrow">→</span>
+        <div class="obs-cell oc-col">
+          <div class="oc-lbl">RECOLECCIÓN EN NODO</div>
+          <div class="oc-txt"><strong>kubelet</strong> + cAdvisor exponen uso de contenedor. DaemonSets (node-exporter, Fluent Bit, OTel Collector) scrapean o leen logs del filesystem del contenedor.</div>
+        </div>
+        <span class="oc-arrow">→</span>
+        <div class="obs-cell oc-back">
+          <div class="oc-lbl b">BACKENDS</div>
+          <div class="oc-txt">Prometheus, Thanos · Loki / ELK · Tempo / Jaeger. Alertmanager o reglas equivalentes para paging.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:14px" class="tri-table">
+    <div class="tt-header">
+      <div class="ttc">Pilar</div>
+      <div class="ttc">En Kubernetes</div>
+      <div class="ttc">Herramientas habituales</div>
+      <div class="ttc">Qué te responde</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-cell"><span class="tt-name">Métricas</span></div>
+      <div class="tt-cell">ServiceMonitor/PodMonitor (operator), anotaciones scrape, HPA con metrics-server</div>
+      <div class="tt-cell">Prometheus, Grafana, Datadog agent, CloudWatch Container Insights</div>
+      <div class="tt-cell">“¿Está saturado o lento el workload?”</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-cell"><span class="tt-name">Logs</span></div>
+      <div class="tt-cell">Logs por contenedor vía kubelet; labels <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">pod, namespace, container</code></div>
+      <div class="tt-cell">Loki, OpenSearch, Splunk, CloudWatch Logs</div>
+      <div class="tt-cell">“¿Qué excepción o mensaje hubo justo antes del fallo?”</div>
+    </div>
+    <div class="tt-row">
+      <div class="tt-cell"><span class="tt-name">Trazas</span></div>
+      <div class="tt-cell">Sidecars o SDK en app; mallas (Istio/Linkerd) pueden generar spans</div>
+      <div class="tt-cell">Tempo, Jaeger, Zipkin, X-Ray</div>
+      <div class="tt-cell">“¿En qué hop se fue el presupuesto de latencia?”</div>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-rose">03</span>
+    <span class="section-title-text">kubectl — playbook de incidentes</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">Comandos que usas en bucle cuando algo está rojo</span>
+    </div>
+    <pre><span class="c-comment"># Estado resumido y reciente</span>
+<span class="c-cmd">kubectl</span> get pods -n prod -o wide
+<span class="c-cmd">kubectl</span> get events -n prod --sort-by=<span class="c-val">.lastTimestamp</span> | tail -n 25
+
+<span class="c-comment"># Por qué está Pending / CrashLoop / ImagePull</span>
+<span class="c-cmd">kubectl</span> describe pod mi-app-7d4f9c6b5-xxxxx -n prod
+
+<span class="c-comment"># Logs (actual y contenedor anterior tras restart)</span>
+<span class="c-cmd">kubectl</span> logs -f deployment/mi-app -n prod --tail=200
+<span class="c-cmd">kubectl</span> logs mi-app-xxx -n prod -c sidecar --previous
+
+<span class="c-comment"># Recursos reales vs requests/limits</span>
+<span class="c-cmd">kubectl</span> top pods -n prod --sort-by=memory
+<span class="c-cmd">kubectl</span> top nodes
+
+<span class="c-comment"># Shell rápido y contenedor efímero de depuración (K8s 1.23+)</span>
+<span class="c-cmd">kubectl</span> exec -it mi-app-xxx -n prod -- sh
+<span class="c-cmd">kubectl</span> debug mi-app-xxx -n prod -it --image=busybox --target=mi-app</pre>
+  </div>
+
+  <div class="section-header">
+    <span class="section-num sn-green">04</span>
+    <span class="section-title-text">Probes y estados de Pod que más ves en producción</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-green">
+      <div class="card-header">
+        <div class="card-icon icon-green">🩺</div>
+        <div>
+          <div class="card-num">PROBES</div>
+          <div class="card-title">Liveness, readiness, startup</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-green">HTTP / TCP / exec</span>
+      </div>
+      <div class="card-desc"><strong>Readiness:</strong> el Service <strong>no enruta tráfico</strong> hasta que pase — útil durante arranque o dependencias no listas. <strong>Liveness:</strong> si falla, kubelet <strong>mata y reinicia</strong> el contenedor; mal calibrada puede reiniciar en bucle mientras la app aún arranca. <strong>Startup</strong> (1.16+): da margen largo al boot antes de evaluar liveness.</div>
+      <div class="card-example"><strong>Error típico:</strong> readiness igual que health “profundo” que llama a la DB — si la DB tarda, sacas todos los endpoints del balanceo.</div>
+    </div>
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">⚠️</div>
+        <div>
+          <div class="card-num">ESTADOS</div>
+          <div class="card-title">CrashLoopBackOff, OOMKilled, ImagePullBackOff…</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-indigo">describe</span>
+        <span class="kw kw-rose">Last State</span>
+      </div>
+      <div class="card-desc"><strong>CrashLoopBackOff:</strong> el contenedor sale con código ≠ 0 — mira <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">kubectl logs --previous</code>. <strong>OOMKilled:</strong> límite de memoria bajo; sube limit o perfila fugas. <strong>ImagePullBackOff:</strong> tag incorrecto, credenciales del registry o rate limit. <strong>CreateContainerConfigError:</strong> Secret/ConfigMap montado que no existe o key mal nombrada.</div>
+      <div class="card-example"><strong>Pending:</strong> a menudo scheduling (recursos, affinities, taints) o volumen aún no adjuntado — <code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">describe pod</code> muestra el mensaje del scheduler o del attach de volumen.</div>
+    </div>
+  </div>
+
+  <div class="callouts-row" style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <div class="callout callout-indigo">
+      <span class="callout-icon">🔗</span>
+      <div>
+        <div class="callout-title ct-indigo">Correlación antes que más dashboards</div>
+        <div class="callout-text">Une <strong>deployment.revision</strong>, hora del rollout, picos en métricas y primera línea de error en logs. Muchos incidentes son un despliegue + condición de carrera, no “misterio del cluster”.</div>
+      </div>
+    </div>
+    <div class="callout callout-rose">
+      <span class="callout-icon">⏱️</span>
+      <div>
+        <div class="callout-title ct-rose">Los eventos caducan</div>
+        <div class="callout-text"><code style="font-family:'DM Mono',monospace;font-size:10px;color:#94A3B8">kubectl get events</code> solo muestra ventana reciente. Para post-mortem usa el historial del proveedor, logs del control plane (según permisos) o exportación a SIEM.</div>
+      </div>
+    </div>
+    <div class="callout callout-teal">
+      <span class="callout-icon">🧪</span>
+      <div>
+        <div class="callout-title ct-teal">Staging con misma forma que prod</div>
+        <div class="callout-text">Mismos probes, mismos requests/limits de orden de magnitud y misma ruta de logs. Si solo en prod falla, compara <strong>variables de entorno</strong>, <strong>versión de imagen</strong> y <strong>políticas de red</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">KUBERNETES · OBSERVABILIDAD</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="semana-05.html">← Helm y Kustomize</a>
+    <span class="footer-count">Métricas · Logs · Trazas · kubectl · Probes</span>
+    <a class="footer-btn" href="semana-07.html">Seguridad →</a>
+  </div>
+</div>
+</body>
+</html>

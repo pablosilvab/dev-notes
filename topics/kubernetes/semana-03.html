@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K8s · Networking y service discovery</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0A0E1A;font-family:'DM Sans',sans-serif;width:100%;max-width:1200px;margin:0 auto}
+  .header{padding:48px 56px 32px;border-bottom:1px solid #1E2A40;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-80px;right:-80px;width:440px;height:440px;background:radial-gradient(circle,rgba(20,184,166,0.09) 0%,transparent 70%);pointer-events:none}
+  .header::after{content:'';position:absolute;bottom:-60px;left:80px;width:300px;height:300px;background:radial-gradient(circle,rgba(59,130,246,0.05) 0%,transparent 65%);pointer-events:none}
+  .header-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+  .topic-badge{background:#14B8A6;color:#0A0E1A;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 12px;border-radius:2px;letter-spacing:.1em;margin-bottom:12px;display:inline-block}
+  .header h1{font-size:42px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.1}
+  .header h1 span{color:#14B8A6}
+  .header-sub{font-size:15px;color:#6B7FA3;margin-top:8px}
+  .part-badge{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#14B8A6;background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.3);padding:8px 16px;border-radius:4px;letter-spacing:.12em;white-space:nowrap}
+  .header-pills{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+  .pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1px solid;font-family:'DM Mono',monospace;letter-spacing:.04em}
+  .pill-a{color:#5EEAD4;border-color:rgba(94,234,212,.3);background:rgba(94,234,212,.07)}
+  .pill-b{color:#93C5FD;border-color:rgba(147,197,253,.3);background:rgba(147,197,253,.07)}
+  .pill-c{color:#D8B4FE;border-color:rgba(216,180,254,.3);background:rgba(216,180,254,.07)}
+  .pill-d{color:#FDE68A;border-color:rgba(253,230,138,.3);background:rgba(253,230,138,.07)}
+  .body{padding:0 56px 56px}
+  .section-header{display:flex;align-items:center;gap:12px;padding:32px 0 16px}
+  .section-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em}
+  .sn-teal{color:#14B8A6}.sn-blue{color:#3B82F6}.sn-purple{color:#A855F7}.sn-yellow{color:#EAB308}.sn-green{color:#22C55E}
+  .section-title-text{font-size:11px;font-weight:600;color:#6B7FA3;letter-spacing:.12em;text-transform:uppercase}
+  .section-line{flex:1;height:1px;background:#1E2A40}
+  .cards-grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px}
+  .card.c-teal::before{background:#14B8A6}.card.c-blue::before{background:#3B82F6}.card.c-purple::before{background:#A855F7}
+  .card.c-green::before{background:#22C55E}.card.c-yellow::before{background:#EAB308}.card.c-orange::before{background:#F97316}
+  .card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+  .card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .icon-teal{background:rgba(20,184,166,.12)}.icon-blue{background:rgba(59,130,246,.12)}.icon-purple{background:rgba(168,85,247,.12)}
+  .icon-green{background:rgba(34,197,94,.12)}.icon-yellow{background:rgba(234,179,8,.12)}.icon-orange{background:rgba(249,115,22,.12)}
+  .card-num{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;margin-top:2px}
+  .card-title{font-size:14px;font-weight:600;color:#E2E8F0;line-height:1.2}
+  .card-keywords{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+  .kw{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+  .kw-teal{background:rgba(20,184,166,.12);color:#5EEAD4}.kw-blue{background:rgba(59,130,246,.12);color:#93C5FD}
+  .kw-purple{background:rgba(168,85,247,.12);color:#D8B4FE}.kw-green{background:rgba(34,197,94,.12);color:#86EFAC}
+  .kw-yellow{background:rgba(234,179,8,.12);color:#FDE68A}.kw-orange{background:rgba(249,115,22,.12);color:#FDBA74}
+  .card-desc{font-size:12px;color:#8899B8;line-height:1.6;margin-bottom:10px}
+  .card-example{font-size:11.5px;color:#64748B;line-height:1.55;border-top:1px solid #1A2236;padding-top:10px}
+  .card-example strong{color:#94A3B8;font-weight:500}
+
+  /* NETWORK DIAGRAM */
+  .net-diagram{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;padding:28px 32px}
+  .net-title{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#3B4C68;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+  .net-layers{display:flex;flex-direction:column;gap:10px}
+  .net-layer{border-radius:10px;padding:16px 20px}
+  .nl-ext{background:rgba(234,179,8,.04);border:1px solid rgba(234,179,8,.2)}
+  .nl-lb{background:rgba(249,115,22,.04);border:1px solid rgba(249,115,22,.2)}
+  .nl-ingress{background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.25)}
+  .nl-svc{background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.2)}
+  .nl-pod{background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.2)}
+  .nl-label{font-family:'Space Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.1em;margin-bottom:8px}
+  .nll-yellow{color:#EAB308}.nll-orange{color:#F97316}.nll-purple{color:#A855F7}.nll-blue{color:#3B82F6}.nll-green{color:#22C55E}
+  .nl-content{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .nl-box{font-family:'DM Mono',monospace;font-size:10px;padding:6px 12px;border-radius:6px;white-space:nowrap}
+  .nlb-yellow{background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.25);color:#FDE68A}
+  .nlb-orange{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);color:#FDBA74}
+  .nlb-purple{background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);color:#D8B4FE}
+  .nlb-blue{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:#93C5FD}
+  .nlb-green{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#86EFAC}
+  .nl-arrow{color:#2D3E5A;font-size:18px;text-align:center}
+  .nl-desc{font-size:11px;color:#64748B;font-family:'DM Mono',monospace;opacity:.8}
+
+  /* SVC TABLE */
+  .svc-table{background:#0F1625;border:1px solid #1E2A40;border-radius:12px;overflow:hidden}
+  .st-header{display:grid;grid-template-columns:1fr 1.2fr 1.6fr 1.2fr;background:#080C17;border-bottom:1px solid #1E2A40}
+  .stc{padding:10px 14px;font-size:10px;font-family:'DM Mono',monospace;color:#6B7FA3;border-right:1px solid #1A2236;font-weight:500}
+  .stc:last-child{border-right:none}
+  .st-row{display:grid;grid-template-columns:1fr 1.2fr 1.6fr 1.2fr;border-bottom:1px solid #1A2236}
+  .st-row:last-child{border-bottom:none}
+  .st-row:hover{background:rgba(255,255,255,.012)}
+  .st-cell{padding:12px 14px;font-size:11.5px;color:#64748B;border-right:1px solid #1A2236;line-height:1.5}
+  .st-cell:last-child{border-right:none}
+  .st-name{font-size:12px;font-weight:600;color:#E2E8F0}
+  .badge{display:inline-block;font-size:9px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:3px}
+  .b-teal{background:rgba(20,184,166,.12);color:#5EEAD4}.b-blue{background:rgba(59,130,246,.12);color:#93C5FD}
+  .b-orange{background:rgba(249,115,22,.12);color:#FDBA74}.b-green{background:rgba(34,197,94,.12);color:#86EFAC}
+  .b-rose{background:rgba(244,63,94,.12);color:#FDA4AF}
+
+  /* CMD */
+  .cmd-box{background:#080C17;border:1px solid #1E2A40;border-radius:10px;overflow:hidden}
+  .cmd-header{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #1A2236;background:#0A0E1A}
+  .cmd-dot{width:8px;height:8px;border-radius:50%}
+  .cmd-title{font-family:'DM Mono',monospace;font-size:10px;color:#6B7FA3;margin-left:4px}
+  pre{padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.65;color:#64748B;margin:0;overflow-x:auto}
+  .c-cmd{color:#93C5FD}.c-flag{color:#FDE68A}.c-out{color:#86EFAC}.c-comment{color:#2D3E5A;font-style:italic}
+  .c-key{color:#5EEAD4}.c-val{color:#86EFAC}.c-host{color:#FDBA74}
+
+  /* CALLOUT */
+  .callout{border-radius:10px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start}
+  .callout-teal{background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.2)}
+  .callout-purple{background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2)}
+  .callout-blue{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.2)}
+  .callout-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+  .callout-title{font-size:12px;font-weight:600;margin-bottom:5px}
+  .ct-teal{color:#5EEAD4}.ct-purple{color:#D8B4FE}.ct-blue{color:#93C5FD}
+  .callout-text{font-size:12px;color:#64748B;line-height:1.6}
+  .callout-text strong{color:#94A3B8}
+
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;color:#3B4C68;text-decoration:none}
+  .footer{background:#080C17;border-top:1px solid #1E2A40;padding:20px 56px;display:flex;justify-content:space-between;align-items:center}
+  .footer-text{font-family:'Space Mono',monospace;font-size:10px;color:#2D3E5A;letter-spacing:.06em}
+  .footer-nav{display:flex;align-items:center;gap:12px}
+  .footer-count{font-family:'Space Mono',monospace;font-size:10px;color:#14B8A6;letter-spacing:.06em}
+  .footer-btn{font-family:'Space Mono',monospace;font-size:10px;color:#14B8A6;background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.2);padding:4px 12px;border-radius:3px;text-decoration:none;letter-spacing:.06em}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <a class="back-link" href="semana-02.html">← Workloads</a>
+      <div style="margin-top:10px">
+        <div class="topic-badge">KUBERNETES · NETWORKING</div>
+        <h1>Networking y<br><span>Service Discovery</span></h1>
+        <p class="header-sub">Services · Ingress Controllers · CoreDNS · Tráfico interno y externo</p>
+      </div>
+    </div>
+    <div class="part-badge">K8S · NETWORKING</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-a">🔌 ClusterIP</span>
+    <span class="pill pill-b">🌐 LoadBalancer</span>
+    <span class="pill pill-c">🚪 Ingress</span>
+    <span class="pill pill-d">🔤 CoreDNS</span>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- S1: CAPAS DE RED -->
+  <div class="section-header">
+    <span class="section-num sn-teal">01</span>
+    <span class="section-title-text">Capas de red — del internet al Pod</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="net-diagram">
+    <div class="net-title">Flujo de tráfico externo → Ingress → Service → Pod</div>
+    <div class="net-layers">
+
+      <div class="net-layer nl-ext">
+        <div class="nl-label nll-yellow">🌍 INTERNET / CLIENTE</div>
+        <div class="nl-content">
+          <div class="nl-box nlb-yellow">api.miempresa.com</div>
+          <div class="nl-desc">→ resuelve via DNS público → IP del LoadBalancer</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;color:#2D3E5A;font-size:20px">↓</div>
+
+      <div class="net-layer nl-lb">
+        <div class="nl-label nll-orange">☁️ CLOUD LOAD BALANCER (Service tipo LoadBalancer)</div>
+        <div class="nl-content">
+          <div class="nl-box nlb-orange">AWS ALB / GCP GLB</div>
+          <div class="nl-box nlb-orange">IP Pública: 34.x.x.x</div>
+          <div class="nl-desc">→ puerto 443/80 → NodePort del cluster</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;color:#2D3E5A;font-size:20px">↓</div>
+
+      <div class="net-layer nl-ingress">
+        <div class="nl-label nll-purple">🚪 INGRESS CONTROLLER (Nginx / Traefik / Istio)</div>
+        <div class="nl-content">
+          <div class="nl-box nlb-purple">host: api.miempresa.com</div>
+          <div class="nl-box nlb-purple">path: /users → svc/users-svc:80</div>
+          <div class="nl-box nlb-purple">path: /orders → svc/orders-svc:80</div>
+          <div class="nl-desc">→ TLS termination · routing por host/path · rate limiting</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;color:#2D3E5A;font-size:20px">↓</div>
+
+      <div class="net-layer nl-svc">
+        <div class="nl-label nll-blue">🔌 SERVICE (ClusterIP — virtual IP interna)</div>
+        <div class="nl-content">
+          <div class="nl-box nlb-blue">users-svc · ClusterIP: 10.96.x.x</div>
+          <div class="nl-box nlb-blue">selector: app=users</div>
+          <div class="nl-desc">→ kube-proxy balancea entre los Pods que matchean el selector</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;color:#2D3E5A;font-size:20px">↓</div>
+
+      <div class="net-layer nl-pod">
+        <div class="nl-label nll-green">📦 PODS (IPs reales de Pod — efímeras)</div>
+        <div class="nl-content">
+          <div class="nl-box nlb-green">users-pod-abc · 172.16.0.5</div>
+          <div class="nl-box nlb-green">users-pod-def · 172.16.0.6</div>
+          <div class="nl-box nlb-green">users-pod-ghi · 172.16.0.7</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2: TIPOS DE SERVICE -->
+  <div class="section-header">
+    <span class="section-num sn-blue">02</span>
+    <span class="section-title-text">Tipos de Service — cuándo usar cada uno</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="svc-table">
+    <div class="st-header">
+      <div class="stc">Tipo</div>
+      <div class="stc">Accesibilidad</div>
+      <div class="stc">Descripción y caso de uso</div>
+      <div class="stc">Cuándo usarlo</div>
+    </div>
+    <div class="st-row">
+      <div class="st-cell"><span class="st-name">ClusterIP</span></div>
+      <div class="st-cell"><span class="badge b-teal">Solo interno</span></div>
+      <div class="st-cell">IP virtual solo accesible dentro del cluster. Es el tipo por defecto. Otros Pods acceden por DNS: <code style="font-family:'DM Mono',monospace;font-size:10px;color:#5EEAD4">svc-name.namespace.svc.cluster.local</code></div>
+      <div class="st-cell">Comunicación interna entre microservicios. La gran mayoría de tus Services.</div>
+    </div>
+    <div class="st-row">
+      <div class="st-cell"><span class="st-name">NodePort</span></div>
+      <div class="st-cell"><span class="badge b-blue">Node IP + puerto</span></div>
+      <div class="st-cell">Abre un puerto (30000-32767) en <em>cada</em> Node del cluster. Accesible desde fuera via <code style="font-family:'DM Mono',monospace;font-size:10px;color:#93C5FD">NodeIP:NodePort</code></div>
+      <div class="st-cell">Desarrollo local, testing rápido. <span class="badge b-rose">Evitar en producción</span> — expone puertos en todos los Nodes.</div>
+    </div>
+    <div class="st-row">
+      <div class="st-cell"><span class="st-name">LoadBalancer</span></div>
+      <div class="st-cell"><span class="badge b-orange">IP pública cloud</span></div>
+      <div class="st-cell">Provisiona un Load Balancer del cloud provider (AWS ALB, GCP GLB). La IP pública apunta al Service. Caro si tienes muchos Services.</div>
+      <div class="st-cell">Un LB por Ingress Controller (no uno por Service). O para TCP/UDP que no puede pasar por Ingress HTTP.</div>
+    </div>
+    <div class="st-row">
+      <div class="st-cell"><span class="st-name">ExternalName</span></div>
+      <div class="st-cell"><span class="badge b-green">DNS alias</span></div>
+      <div class="st-cell">Crea un alias DNS interno que apunta a un FQDN externo. <code style="font-family:'DM Mono',monospace;font-size:10px;color:#86EFAC">my-db → rds.amazonaws.com</code> Útil para integrar servicios externos sin cambiar el código.</div>
+      <div class="st-cell">Bases de datos RDS, servicios SaaS externos, migración gradual a K8s.</div>
+    </div>
+    <div class="st-row">
+      <div class="st-cell"><span class="st-name">Headless</span></div>
+      <div class="st-cell"><span class="badge b-teal">DNS por Pod</span></div>
+      <div class="st-cell"><code style="font-family:'DM Mono',monospace;font-size:10px;color:#5EEAD4">clusterIP: None</code> — sin IP virtual. DNS resuelve directamente a las IPs de cada Pod. Usado por StatefulSets para que los Pods se conozcan entre sí.</div>
+      <div class="st-cell">Clustering de bases de datos (Kafka, Elasticsearch, MySQL cluster).</div>
+    </div>
+  </div>
+
+  <!-- S3: INGRESS -->
+  <div class="section-header">
+    <span class="section-num sn-purple">03</span>
+    <span class="section-title-text">Ingress — routing HTTP/HTTPS avanzado</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cards-grid g2">
+    <div class="card c-purple">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🚪</div>
+        <div>
+          <div class="card-num">INGRESS · CONCEPTO</div>
+          <div class="card-title">Ingress Resource vs Ingress Controller</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-purple">HTTP routing</span>
+        <span class="kw kw-teal">TLS termination</span>
+        <span class="kw kw-blue">Host-based routing</span>
+      </div>
+      <div class="card-desc">El <strong style="color:#D8B4FE">Ingress Resource</strong> es el YAML con las reglas de routing (declarativo). El <strong style="color:#D8B4FE">Ingress Controller</strong> (Nginx, Traefik, Istio Gateway) es el Pod que lee esas reglas y las implementa. Sin Controller, el Resource no hace nada.</div>
+      <div class="card-example">
+        <strong>Instalar Nginx Ingress Controller:</strong>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#64748B;margin-top:6px;background:#0A0E1A;padding:8px;border-radius:4px">helm install nginx-ingress ingress-nginx/ingress-nginx<br>--set controller.replicaCount=2</div>
+      </div>
+    </div>
+
+    <div class="card c-teal">
+      <div class="card-header">
+        <div class="card-icon icon-teal">🔤</div>
+        <div>
+          <div class="card-num">DNS INTERNO · COREDNS</div>
+          <div class="card-title">CoreDNS — service discovery automático</div>
+        </div>
+      </div>
+      <div class="card-keywords">
+        <span class="kw kw-teal">FQDN</span>
+        <span class="kw kw-green">Service discovery</span>
+        <span class="kw kw-blue">Namespace DNS</span>
+      </div>
+      <div class="card-desc">CoreDNS corre en <code style="font-family:'DM Mono',monospace;font-size:10px;color:#5EEAD4">kube-system</code> y resuelve nombres de Services automáticamente. Cada Pod tiene CoreDNS configurado como su resolver.</div>
+      <div class="card-example">
+        <strong>Formato DNS de Service:</strong>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#64748B;margin-top:6px;background:#0A0E1A;padding:8px;border-radius:4px;line-height:1.7">
+          <span style="color:#5EEAD4">my-svc</span>                        <span style="color:#3B4C68"># mismo namespace</span><br>
+          <span style="color:#5EEAD4">my-svc.my-ns</span>                  <span style="color:#3B4C68"># otro namespace</span><br>
+          <span style="color:#5EEAD4">my-svc.my-ns.svc.cluster.local</span> <span style="color:#3B4C68"># FQDN completo</span><br>
+          <span style="color:#5EEAD4">pod-0.my-svc.my-ns.svc.local</span>  <span style="color:#3B4C68"># StatefulSet Pod</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: YAML INGRESS + PRACTICE -->
+  <div class="section-header">
+    <span class="section-num sn-yellow">04</span>
+    <span class="section-title-text">YAML de Ingress y práctica — exponer tu app al mundo</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="cmd-box">
+    <div class="cmd-header">
+      <div class="cmd-dot" style="background:#F43F5E"></div>
+      <div class="cmd-dot" style="background:#EAB308"></div>
+      <div class="cmd-dot" style="background:#22C55E"></div>
+      <span class="cmd-title">ingress.yaml — routing por host y path con TLS</span>
+    </div>
+    <pre><span class="c-key">apiVersion</span>: <span class="c-val">networking.k8s.io/v1</span>
+<span class="c-key">kind</span>: <span class="c-val">Ingress</span>
+<span class="c-key">metadata</span>:
+  <span class="c-key">name</span>: <span class="c-val">app-ingress</span>
+  <span class="c-key">annotations</span>:
+    <span class="c-key">nginx.ingress.kubernetes.io/rewrite-target</span>: <span class="c-val">/</span>
+    <span class="c-key">nginx.ingress.kubernetes.io/ssl-redirect</span>: <span class="c-val">"true"</span>
+<span class="c-key">spec</span>:
+  <span class="c-key">ingressClassName</span>: <span class="c-val">nginx</span>
+  <span class="c-key">tls</span>:
+  - <span class="c-key">hosts</span>: [<span class="c-val">api.miempresa.com</span>]
+    <span class="c-key">secretName</span>: <span class="c-val">tls-secret</span>   <span class="c-comment"># Secret con cert.pem + key.pem</span>
+  <span class="c-key">rules</span>:
+  - <span class="c-key">host</span>: <span class="c-val">api.miempresa.com</span>
+    <span class="c-key">http</span>:
+      <span class="c-key">paths</span>:
+      - <span class="c-key">path</span>: <span class="c-val">/users</span>
+        <span class="c-key">pathType</span>: <span class="c-val">Prefix</span>
+        <span class="c-key">backend</span>:
+          <span class="c-key">service</span>: { <span class="c-key">name</span>: <span class="c-val">users-svc</span>, <span class="c-key">port</span>: { <span class="c-key">number</span>: <span class="c-val">80</span> } }
+      - <span class="c-key">path</span>: <span class="c-val">/orders</span>
+        <span class="c-key">pathType</span>: <span class="c-val">Prefix</span>
+        <span class="c-key">backend</span>:
+          <span class="c-key">service</span>: { <span class="c-key">name</span>: <span class="c-val">orders-svc</span>, <span class="c-key">port</span>: { <span class="c-key">number</span>: <span class="c-val">80</span> } }
+<span class="c-comment">---</span>
+<span class="c-comment"># Verificar el Ingress</span>
+<span class="c-cmd">kubectl</span> get ingress
+<span class="c-out">NAME          CLASS   HOSTS               ADDRESS         PORTS     AGE
+app-ingress   nginx   api.miempresa.com   34.12.34.56     80, 443   5m</span>
+
+<span class="c-comment"># Debug: ver los endpoints del Service (¿apunta a los Pods correctos?)</span>
+<span class="c-cmd">kubectl</span> get endpoints users-svc
+<span class="c-out">NAME        ENDPOINTS                                         AGE
+users-svc   172.16.0.5:8080,172.16.0.6:8080,172.16.0.7:8080   10m</span></pre>
+  </div>
+
+  <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+    <div class="callout callout-teal">
+      <span class="callout-icon">🔑</span>
+      <div>
+        <div class="callout-title ct-teal">Service selector — la magia del balanceo</div>
+        <div class="callout-text">Un Service encuentra sus Pods por <strong>labels selector</strong>. Añadir/quitar Pods con ese label actualiza automáticamente el balanceo — sin reiniciar nada.</div>
+      </div>
+    </div>
+    <div class="callout callout-purple">
+      <span class="callout-icon">🚪</span>
+      <div>
+        <div class="callout-title ct-purple">Un LB para todo — el patrón correcto</div>
+        <div class="callout-text">Un solo Service LoadBalancer apunta al Ingress Controller. El Controller hace el routing interno. <strong>No crees un LB por microservicio</strong> — es caro y difícil de gestionar.</div>
+      </div>
+    </div>
+    <div class="callout callout-blue">
+      <span class="callout-icon">🔤</span>
+      <div>
+        <div class="callout-title ct-blue">DNS interno — zero config</div>
+        <div class="callout-text">No necesitas configurar nada. Desde cualquier Pod, <code style="font-family:'DM Mono',monospace;font-size:10px;color:#93C5FD">curl users-svc</code> funciona si estás en el mismo namespace. <strong>CoreDNS resuelve automáticamente</strong> al crear el Service.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span class="footer-text">KUBERNETES · NETWORKING</span>
+  <div class="footer-nav">
+    <a class="footer-btn" href="semana-02.html">← Workloads</a>
+    <span class="footer-count">5 tipos de Service · Ingress · CoreDNS</span>
+    <a class="footer-btn" href="semana-04.html">Config y estado →</a>
+  </div>
+</div>
+</body>
+</html>
